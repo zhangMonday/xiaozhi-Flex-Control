@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>灵活接口demo</title>
+  <link rel="icon" href="data:,">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .grid-auto {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .dark .card {
+      background: #1e293b;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+    }
+    .field {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      background: white;
+      transition: all 0.15s ease;
+    }
+    .dark .field {
+      background: #334155;
+      border-color: #475569;
+      color: white;
+    }
+    .field:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+    }
+    .tab {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem 0.375rem 0 0;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .tab-active {
+      background: white;
+      color: #2563eb;
+      box-shadow: 0 -2px 0 #2563eb inset;
+    }
+    .dark .tab-active {
+      background: #1e293b;
+    }
+    .tab-idle {
+      background: transparent;
+      color: #64748b;
+    }
+    .tab-idle:hover {
+      background: #f1f5f9;
+    }
+    .dark .tab-idle:hover {
+      background: #334155;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #d1d5db;
+    }
+    .dark .btn-secondary {
+      background: #334155;
+      color: #e5e7eb;
+      border-color: #475569;
+    }
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+    .dark .btn-secondary:hover {
+      background: #475569;
+    }
+    .badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(to bottom, white 0%, white 90%, transparent 100%);
+      z-index: 10;
+      padding: 0.75rem 0;
+    }
+    .dark .sticky-header {
+      background: linear-gradient(to bottom, #0f172a 0%, #0f172a 90%, transparent 100%);
+    }
+    @media (max-width: 640px) {
+      .grid-auto {
+        grid-template-columns: 1fr;
+      }
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .slider {
+      flex: 1;
+      height: 5px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #d1d5db;
+      border-radius: 5px;
+      outline: none;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+    }
+    .slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+      border: none;
+    }
+    .slider-value {
+      width: 75px;
+      min-width: 75px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .slider-input {
+      width: 75px;
+      text-align: center;
+    }
+    .upload-btn {
+      margin-top: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background: #3b82f6;
+      color: white;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .upload-btn:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
+  <header class="max-w-6xl mx-auto px-4 pt-6 pb-3">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">远控小智(配套灵活固件)-By zhangMonday</h1>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pb-16 space-y-5">
+    <section class="card p-5">
+      <div class="grid-auto">
+        <div>
+          <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">设备ID</label>
+          <input id="deviceId" class="field mt-1" placeholder="问小智它id编号并填写在这里，字母+数字（如果是纯数字就换问法）" />
+        </div>
+      </div>
+    </section>
+
+    <section class="sticky-header">
+      <div id="tabs" class="flex flex-wrap gap-2.5">
+      </div>
+    </section>
+
+    <section class="card p-5">
+      <div id="formArea" class="space-y-5">
+      </div>
+      <div class="flex flex-wrap gap-3 mt-5 border-t border-neutral-100 dark:border-neutral-700 pt-5">
+        <button id="btnSend" class="btn btn-primary flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+          发送指令
+        </button>
+        <button id="btnCopy" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+          </svg>
+          复制请求数据
+        </button>
+        <button id="btnReset" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          重置
+        </button>
+      </div>
+    </section>
+
+    <section class="card p-5">
+      <h2 class="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        请求数据
+      </h2>
+      <pre id="jsonPreview" class="mono text-sm overflow-auto p-4 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
+    </section>
+
+    <section class="card p-5">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          返回结果
+        </h2>
+        <span id="statusBadge" class="badge bg-neutral-100 dark:bg-neutral-700 animate-pulse">等待操作</span>
+      </div>
+      <pre id="resultBox" class="mono text-sm overflow-auto p-4 mt-3 max-h-80 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
+    </section>
+  </main>
+
+  <script>
+console.log(`
+来控制台干什么，快来陪我van♂
+　               ▃▆█▇▄▖
+         　 　▟◤▖　　　◥█▎
+       　　◢◤　 ▐　　　　▐▉
+        ▗◤　　　▂　▗▖　　▕█▎
+        ◤　▗▅▖◥▄　▀◣　　█▊
+       ▐　▕▎◥▖◣◤　　　◢██
+       █◣　◥▅█▀　   ▐██◤
+       ▐█▙▂　　　      ██◤
+        ◥██◣　　　 ◢▄◤
+              ▀██▅▇▀
+`);
+
+    const INTERFACES = [
+      { key: "chat",     label: "远程对话",     type: "chat",    fields: [
+          { id:"text", label:"内容", placeholder:"例如：播放邓紫棋的多远都要在一起", type:"text" }
+        ]},
+      { key: "audio",    label: "发送音频",    type: "audio",   fields: [
+          { id:"url",  label:"链接", placeholder:"https://example.com/xxx.mp3", type:"text" },
+          { id:"text", label:"简介",    placeholder:"将显示在设备的信息胶囊", type:"text" }
+        ]},
+      { key: "music",    label: "播放音乐",    type: "music",   fields: [
+          { id:"text", label:"关键词", placeholder:"多远都要在一起 邓紫棋", type:"text" }
+        ]},
+      { key: "radio",    label: "播放电台",    type: "radio",   fields: [
+          { id:"id",   label:"ID", placeholder:"数字 ID", type:"number", attrs:{min:1} },
+          { id:"text", label:"名称", placeholder:"电台名称", type:"text" }
+        ]},
+      { key: "message",  label: "发消息",  type: "message", fields: [
+          { id:"text",    label:"标题",  placeholder:"不要太长的标题", type:"text" },
+          { id:"content", label:"内容",placeholder:"留言内容", type:"textarea" },
+          { id:"sound",   label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
+        ]},
+      { key: "qrcode",   label: "投送二维码",   type: "qrcode",  fields: [
+          { id:"content", label:"内容", placeholder:"https://example.com 或文本", type:"text" },
+          { id:"text",    label:"文案",    placeholder:"显示在信息胶囊", type:"text" },
+          { id:"sound",   label:"提示音",       placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
+        ]},
+      { key: "volume",   label: "改音量",   type: "volume",  fields: [
+          { id:"value", label:"值", placeholder:"音量值", type:"slider", attrs:{min:0,max:100} },
+          { id:"save",  label:"是否保存", type:"checkbox", default:false }
+        ]},
+      { key: "brightness", label:"改亮度", type:"brightness", fields: [
+          { id:"value", label:"值", placeholder:"亮度值", type:"slider", attrs:{min:0,max:100} },
+          { id:"save",  label:"是否保存", type:"checkbox", default:false }
+        ]},
+      { key: "theme",    label:"改主题",    type: "theme",    fields: [
+          { id:"value", label:"模式", type:"select", options:["light","dark"] }
+        ]},
+      { key: "image",    label: "发图片(等群主实现)",    type: "image",   fields: [
+          { id:"url",  label:"链接", placeholder:"https://example.com/xxx.jpg", type:"text" },
+          { id:"text", label:"文案",    placeholder:"显示在设备的信息胶囊", type:"text" },
+          { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
+        ]}
+    ];
+
+    const tabsEl      = document.getElementById('tabs');
+    const formAreaEl  = document.getElementById('formArea');
+    const jsonPreview = document.getElementById('jsonPreview');
+    const resultBox   = document.getElementById('resultBox');
+    const statusBadge = document.getElementById('statusBadge');
+    const deviceIdEl  = document.getElementById('deviceId');
+    const btnSend     = document.getElementById('btnSend');
+    const btnCopy     = document.getElementById('btnCopy');
+    const btnReset    = document.getElementById('btnReset');
+
+    let activeKey = 'chat';
+    const state = {};
+
+    const el = (tag, attrs={}, children=[]) => {
+      const n = document.createElement(tag);
+      for (const [k,v] of Object.entries(attrs)) {
+        if (k === 'class') n.className = v;
+        else if (k === 'text') n.textContent = v;
+        else if (k.startsWith('on') && typeof v === 'function') n[k] = v;
+        else n.setAttribute(k, v);
+      }
+      (Array.isArray(children) ? children : [children]).filter(Boolean).forEach(c => n.appendChild(c));
+      return n;
+    };
+
+    const pretty = (obj) => JSON.stringify(obj, null, 2);
+
+    function buildPayload(){
+      const devId = (deviceIdEl.value || '').trim();
+      const def   = INTERFACES.find(x => x.key === activeKey);
+      const payload = { device_id: devId, type: def.type };
+      const values = state[activeKey] || {};
+      for (const f of def.fields) {
+        const val = values[f.id];
+        if (f.type === 'checkbox') {
+          if (typeof val === 'boolean') payload[f.id] = val;
+        } else if (val !== undefined && val !== null && val !== '') {
+          if (f.type === 'number' || f.type === 'slider') {
+            payload[f.id] = Number(val);
+          } else if (typeof val === 'string') {
+            payload[f.id] = val.replace(/"/g, '＂').replace(/'/g, '＇');
+          } else {
+            payload[f.id] = val;
+          }
+        }
+      }
+      return payload;
+    }
+
+    function renderTabs(){
+      tabsEl.innerHTML = '';
+      INTERFACES.forEach(def => {
+        const isActive = def.key === activeKey;
+        const tab = el('button', {
+          class: `tab ${isActive ? 'tab-active' : 'tab-idle'}`,
+          text: def.label,
+          onclick: () => { activeKey = def.key; renderTabs(); renderForm(); }
+        });
+        tabsEl.appendChild(tab);
+      });
+    }
+
+    function getDefaultValue(f){
+      if (f.type === 'checkbox') return !!f.default;
+      if (f.type === 'select') return f.options?.[0] ?? '';
+      if (f.type === 'slider') return f.attrs?.min || 0;
+      return '';
+    }
+
+    function renderForm(){
+      const def = INTERFACES.find(x => x.key === activeKey);
+      formAreaEl.innerHTML = '';
+
+      if (!state[activeKey]) {
+        state[activeKey] = {};
+        def.fields.forEach(f => state[activeKey][f.id] = getDefaultValue(f));
+      }
+
+      const descDiv = el('div', { class: 'text-sm text-neutral-600 dark:text-neutral-300 space-y-2' });
+      if (activeKey === 'chat') {
+        descDiv.innerHTML = `<p>向设备AI发送消息，可用于MCP调用、语音播发等</p><p>text: 播放邓紫棋的多远都要在一起</p><p>text: 播放清晨音乐电台</p><p>text: 播放内存卡里的歌曲</p><p>text: 把屏幕调到夜间模式</p><p>text: 音量调到 40 后念出下面这句话，注意不要与用户对话，念完立即关闭对话并退下："支付宝到账一百亿"</p><p>此功能会主动唤醒设备，并发送文字内容给 AI，效果等同于在设备旁边与之对话</p>`;
+      } else if (activeKey === 'audio') {
+        descDiv.innerHTML = `<p>调用设备解码播放能力，可用于歌曲、电台、语音留言等音频的精准推送</p><p>url: 音源链接，支持 .mp3、.flac、.wav、.m4a、.opus、.ogg、.m3u8</p><p>text: 音源简介、内容会显示在设备的信息胶囊</p>`;
+      } else if (activeKey === 'music') {
+        descDiv.innerHTML = `<p>调用设备线上音乐能力，相比于Chat接口点歌，此接口静默执行在线音乐搜索并播放，不会唤醒 AI</p><p>text: 多远都要在一起 邓紫棋 （尽量使用准确的歌曲和歌手名称并以空格分隔）</p>`;
+      } else if (activeKey === 'radio') {
+        descDiv.innerHTML = `<p>调用设备网络电台能力，相比于Chat接口播放电台，此接口静默执行电台播放，不会唤醒 AI</p><p>id: 电台编号，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p><p>text: 电台名称 ，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p>`;
+      } else if (activeKey === 'message') {
+        descDiv.innerHTML = `<p>给设备留言，内容会显示在设备的信息胶囊和对话界面</p><p>text: 消息标题，由于是在胶囊显示，建议不要太长</p><p>content: 留言内容，会记录在 AI 对话界面</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+      } else if (activeKey === 'qrcode') {
+        descDiv.innerHTML = `<p>向设备发送二维码消息</p><p>content: 二维码内容,文字或 URL 链接等，为空则关闭二维码</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+      } else if (activeKey === 'volume') {
+        descDiv.innerHTML = `<p>控制设备音量，实时调整或存储参数</p><p>value: 音量值</p><p>save: 是否存储</p>`;
+      } else if (activeKey === 'brightness') {
+        descDiv.innerHTML = `<p>控制设备背光亮度，实时调整或存储参数</p><p>value: 亮度值</p><p>save: 是否存储</p>`;
+      } else if (activeKey === 'theme') {
+        descDiv.innerHTML = `<p>控制设备主题模式，修改后会立即存储</p><p>value: 注意只能是 浅色 或 深色</p>`;
+      } else if (activeKey === 'image') {
+        descDiv.innerHTML = `<p>给设备发送图文消息 (待实现)</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+      }
+      formAreaEl.appendChild(descDiv);
+
+      if (!def.fields.length) {
+        formAreaEl.appendChild(el('div', { class:'text-sm text-blue-600 dark:text-blue-300 italic py-2', text: '该接口无附加字段，直接点击"发送指令"即可' }));
+      } else {
+        const grid = el('div', { class:'grid-auto' });
+        def.fields.forEach(f => {
+          const wrap = el('div', {});
+          wrap.appendChild(el('label', { class:'text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5 flex items-center gap-1', text: f.label }));
+          
+          let input;
+          const common = { class:'field mt-1', id:`f-${activeKey}-${f.id}` };
+          if (f.type === 'textarea') {
+            input = el('textarea', { ...common, placeholder:f.placeholder || '', rows:4 });
+          } else if (f.type === 'select') {
+            input = el('select', { ...common });
+            (f.options || []).forEach(op => input.appendChild(el('option', { value:String(op), text:String(op) })));
+          } else if (f.type === 'checkbox') {
+            const box = el('div', { class:'mt-1 flex items-center gap-3' });
+            input = el('input', { type:'checkbox', id:common.id, class:'w-5 h-5 rounded focus:ring-blue-500' });
+            input.checked = !!state[activeKey][f.id];
+            box.appendChild(input);
+            box.appendChild(el('label', { for:common.id, class:'text-sm cursor-pointer', text:'启用此选项' }));
+            wrap.appendChild(box);
+            grid.appendChild(wrap);
+            input.addEventListener('change', () => { state[activeKey][f.id] = input.checked; refreshPreview(); });
+            return;
+          } else if (f.type === 'slider') {
+            const container = el('div', { class: 'slider-container mt-1' });
+            input = el('input', { 
+              type: 'range', 
+              class: 'slider',
+              min: f.attrs?.min || 0,
+              max: f.attrs?.max || 100,
+              step: f.attrs?.step || 1
+            });
+            const manualInput = el('input', {
+              type: 'number',
+              class: 'field slider-input',
+              min: f.attrs?.min || 0,
+              max: f.attrs?.max || 100,
+              value: state[activeKey][f.id] || getDefaultValue(f)
+            });
+            container.appendChild(input);
+            container.appendChild(manualInput);
+            wrap.appendChild(container);
+            grid.appendChild(wrap);
+            
+            input.value = state[activeKey][f.id] || getDefaultValue(f);
+            input.addEventListener('input', () => {
+              state[activeKey][f.id] = input.value;
+              manualInput.value = input.value;
+              refreshPreview();
+            });
+            manualInput.addEventListener('input', () => {
+              let val = Number(manualInput.value);
+              const min = f.attrs?.min || 0;
+              const max = f.attrs?.max || 100;
+              if (isNaN(val)) val = min;
+              val = Math.max(min, Math.min(max, val));
+              state[activeKey][f.id] = val;
+              input.value = val;
+              manualInput.value = val;
+              refreshPreview();
+            });
+            return;
+          } else {
+            input = el('input', { ...common, type: f.type || 'text', placeholder: f.placeholder || '' });
+            if (f.attrs) {
+              Object.entries(f.attrs).forEach(([k,v]) => input.setAttribute(k, v));
+            }
+          }
+
+          const v = state[activeKey][f.id];
+          if (f.type === 'select') input.value = String(v ?? getDefaultValue(f));
+          else input.value = v ?? '';
+
+          input.addEventListener('input', () => {
+            state[activeKey][f.id] = input.value;
+            refreshPreview();
+          });
+
+          wrap.appendChild(input);
+          
+          if ((activeKey === 'audio' || activeKey === 'image') && f.id === 'url') {
+            const uploadBtn = el('div', {
+              class: 'upload-btn',
+              text: '点这里上传文件并获取临时链接',
+              onclick: () => window.open('https://tmpfiles.org/', '_blank')
+            });
+            wrap.appendChild(uploadBtn);
+          }
+          
+          grid.appendChild(wrap);
+        });
+        formAreaEl.appendChild(grid);
+      }
+
+      refreshPreview();
+    }
+
+    function refreshPreview(){
+      const payload = buildPayload();
+      jsonPreview.textContent = pretty(payload);
+    }
+
+    function setStatus(text, type){
+      statusBadge.textContent = text;
+      statusBadge.className = `badge ${type ? (type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900' : 'bg-red-100 text-red-800 dark:bg-red-900') : 'bg-neutral-100 dark:bg-neutral-700'}`;
+    }
+
+    async function sendNow(){
+      const payload = buildPayload();
+      resultBox.textContent = '正在向设备发送数据...';
+      setStatus('发送中', 'info');
+
+      const url = '/api/push';
+
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 20000);
+
+      try {
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        clearTimeout(timer);
+
+        let dataText = await resp.text();
+        let parsed = null;
+        try { parsed = JSON.parse(dataText); } catch {}
+        const out = {
+          http状态: resp.status + ' ' + resp.statusText,
+          请求地址: 'https://nodelua.com/home_iot/api/push.php',
+          请求数据: payload,
+          返回结果: parsed || dataText,
+        };
+        resultBox.textContent = pretty(out);
+        setStatus(resp.ok ? '发送成功' : '发送失败', resp.ok ? 'success' : 'error');
+      } catch (err) {
+        clearTimeout(timer);
+        const out = {
+          错误: String(err),
+          提示: '请检查网络连接或接口地址'
+        };
+        resultBox.textContent = pretty(out);
+        setStatus('网络错误', 'error');
+      }
+    }
+
+    function copyJSON(){
+      const text = jsonPreview.textContent || '';
+      navigator.clipboard.writeText(text).then(() => {
+        setStatus('已复制', 'success');
+      }).catch(()=>{
+        setStatus('复制失败', 'error');
+      });
+    }
+
+    function resetFields(){
+      const def = INTERFACES.find(x => x.key === activeKey);
+      state[activeKey] = {};
+      def.fields.forEach(f => state[activeKey][f.id] = getDefaultValue(f));
+      renderForm();
+      setStatus('已重置', 'info');
+    }
+
+    deviceIdEl.addEventListener('input', function() {
+      const val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      this.value = val;
+      localStorage.setItem('deviceId', val);
+    });
+
+    btnSend.addEventListener('click', sendNow);
+    btnCopy.addEventListener('click', copyJSON);
+    btnReset.addEventListener('click', resetFields);
+
+    renderTabs();
+    renderForm();
+    setStatus('等待操作');
+
+    const savedDeviceId = localStorage.getItem('deviceId');
+    if (savedDeviceId) {
+      deviceIdEl.value = savedDeviceId;
+    }
+  </script>
+</body>
+</html>
