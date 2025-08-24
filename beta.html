@@ -173,6 +173,7 @@
     }
     .password-container {
       position: relative;
+      flex-grow: 1;
     }
     .toggle-password {
       position: absolute;
@@ -185,41 +186,61 @@
     .toggle-password:hover {
       color: #3b82f6;
     }
-    .modal {
+    .device-select-control {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      width: 100%;
+    }
+    .device-manager {
       display: none;
       position: fixed;
-      z-index: 50;
-      left: 0;
       top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
       align-items: center;
       justify-content: center;
     }
-    .modal-content {
+    .device-manager-content {
       background: white;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
+      border-radius: 0.75rem;
       width: 90%;
-      max-width: 400px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
-    .dark .modal-content {
+    .dark .device-manager-content {
       background: #1e293b;
     }
-    .modal-close {
-      float: right;
-      font-size: 1.5rem;
-      font-weight: bold;
-      cursor: pointer;
-      color: #aaa;
+    .device-list {
+      margin-top: 1rem;
+      max-height: 300px;
+      overflow-y: auto;
     }
-    .modal-close:hover {
-      color: #000;
+    .device-item {
+      padding: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .dark .modal-close:hover {
-      color: #fff;
+    .dark .device-item {
+      border-color: #475569;
+    }
+    .device-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .device-item.active {
+      background-color: #dbeafe;
+    }
+    .dark .device-item.active {
+      background-color: #1e40af;
     }
   </style>
 </head>
@@ -236,14 +257,25 @@
     <section class="card p-5">
       <div class="grid-auto">
         <div>
-          <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">设备选择</label>
-          <div class="flex items-center gap-2">
-            <select id="deviceSelect" class="field mt-1 flex-grow">
-              <option value="">-- 选择设备 --</option>
-            </select>
-            <button id="btnAddDevice" class="btn btn-secondary">添加</button>
-            <button id="btnEditDevice" class="btn btn-secondary" disabled>编辑</button>
-            <button id="btnDeleteDevice" class="btn btn-secondary" disabled>删除</button>
+          <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">选择设备</label>
+          <div class="device-select-control">
+            <div class="password-container">
+              <select id="deviceSelect" class="field mt-1 pr-10">
+                <!-- 设备选项将通过JS动态生成 -->
+              </select>
+              <span id="togglePassword" class="toggle-password">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </span>
+            </div>
+            <button id="btnManageDevices" class="btn btn-secondary whitespace-nowrap">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              管理
+            </button>
           </div>
         </div>
       </div>
@@ -303,27 +335,38 @@
     </section>
   </main>
 
-  <!-- 添加/编辑设备模态 -->
-  <div id="deviceModal" class="modal">
-    <div class="modal-content">
-      <span id="modalClose" class="modal-close">&times;</span>
-      <h2 id="modalTitle" class="text-xl font-bold mb-4">添加设备</h2>
-      <div class="space-y-4">
-        <div>
-          <label class="text-sm font-semibold">设备名称</label>
-          <input id="modalDeviceName" type="text" class="field mt-1" placeholder="例如: 客厅设备" />
+  <!-- 设备管理对话框 -->
+  <div id="deviceManager" class="device-manager">
+    <div class="device-manager-content">
+      <h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 mb-4 flex justify-between">
+        <span>设备管理</span>
+        <button id="btnCloseManager" class="text-red-500 hover:text-red-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </h2>
+      
+      <div>
+        <h3 class="font-medium mb-2">添加新设备</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">设备名称</label>
+            <input id="newDeviceName" type="text" class="field" placeholder="例如：客厅小智" />
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">设备ID</label>
+            <input id="newDeviceId" type="text" class="field" placeholder="字母+数字的组合" />
+          </div>
         </div>
-        <div class="password-container">
-          <label class="text-sm font-semibold">设备ID</label>
-          <input id="modalDeviceId" type="password" class="field mt-1 pr-10" placeholder="字母+数字" />
-          <span id="modalTogglePassword" class="toggle-password">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-          </span>
+        <button id="btnAddDevice" class="btn btn-primary mt-3">添加设备</button>
+      </div>
+      
+      <div class="mt-6">
+        <h3 class="font-medium mb-2">已保存的设备</h3>
+        <div id="deviceList" class="device-list">
+          <!-- 设备列表将通过JS动态生成 -->
         </div>
-        <button id="modalSave" class="btn btn-primary w-full">保存</button>
       </div>
     </div>
   </div>
@@ -392,27 +435,30 @@ console.log(`
     const jsonPreview = document.getElementById('jsonPreview');
     const resultBox   = document.getElementById('resultBox');
     const statusBadge = document.getElementById('statusBadge');
-    const deviceSelectEl = document.getElementById('deviceSelect');
-    const btnAddDevice = document.getElementById('btnAddDevice');
-    const btnEditDevice = document.getElementById('btnEditDevice');
-    const btnDeleteDevice = document.getElementById('btnDeleteDevice');
+    const deviceSelect = document.getElementById('deviceSelect');
     const btnSend     = document.getElementById('btnSend');
     const btnCopy     = document.getElementById('btnCopy');
     const btnReset    = document.getElementById('btnReset');
-    const deviceModal = document.getElementById('deviceModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalDeviceName = document.getElementById('modalDeviceName');
-    const modalDeviceId = document.getElementById('modalDeviceId');
-    const modalTogglePassword = document.getElementById('modalTogglePassword');
-    const modalSave = document.getElementById('modalSave');
-    const modalClose = document.getElementById('modalClose');
+    const togglePassword = document.getElementById('togglePassword');
+    const deviceManager = document.getElementById('deviceManager');
+    const deviceList = document.getElementById('deviceList');
+    const btnManageDevices = document.getElementById('btnManageDevices');
+    const btnCloseManager = document.getElementById('btnCloseManager');
+    const btnAddDevice = document.getElementById('btnAddDevice');
+    const newDeviceName = document.getElementById('newDeviceName');
+    const newDeviceId = document.getElementById('newDeviceId');
 
     let activeKey = 'chat';
     let showDeviceId = false;
     let websocket = null;
-    let state = {};
+    const state = {};
+    
+    // 设备管理相关变量
     let devices = [];
-    let editingIndex = -1;
+    let currentDeviceIndex = 0;
+    
+    // 用于编辑状态的设备索引
+    let editingDeviceIndex = -1;
 
     const el = (tag, attrs={}, children=[]) => {
       const n = document.createElement(tag);
@@ -427,110 +473,220 @@ console.log(`
     };
 
     const pretty = (obj) => JSON.stringify(obj, null, 2);
-
+    
+    // 加载设备列表
     function loadDevices() {
-      const saved = localStorage.getItem('devices');
-      if (saved) {
-        devices = JSON.parse(saved);
+      const savedDevices = localStorage.getItem('devices');
+      const savedIndex = localStorage.getItem('currentDeviceIndex');
+      
+      if (savedDevices) {
+        devices = JSON.parse(savedDevices);
+      } else {
+        // 默认添加一个设备
+        devices = [{
+          name: '默认设备',
+          id: '',
+          active: true
+        }];
       }
-      renderDeviceSelect();
+      
+      if (savedIndex) {
+        currentDeviceIndex = parseInt(savedIndex);
+      }
+      
+      // 确保至少有一个设备
+      if (devices.length === 0) {
+        devices.push({
+          name: '默认设备',
+          id: '',
+          active: true
+        });
+        currentDeviceIndex = 0;
+      }
+      
+      // 确保当前索引有效
+      if (currentDeviceIndex >= devices.length) {
+        currentDeviceIndex = 0;
+      }
+      
+      updateDeviceSelect();
+      refreshDeviceList();
     }
-
+    
+    // 保存设备列表
     function saveDevices() {
       localStorage.setItem('devices', JSON.stringify(devices));
-      renderDeviceSelect();
+      localStorage.setItem('currentDeviceIndex', currentDeviceIndex);
     }
-
-    function renderDeviceSelect() {
-      deviceSelectEl.innerHTML = '<option value="">-- 选择设备 --</option>';
-      devices.forEach((dev, index) => {
-        const opt = el('option', { value: index, text: dev.name });
-        deviceSelectEl.appendChild(opt);
+    
+    // 更新设备选择下拉菜单
+    function updateDeviceSelect() {
+      deviceSelect.innerHTML = '';
+      
+      devices.forEach((device, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = device.name;
+        if (index === currentDeviceIndex) {
+          option.selected = true;
+        }
+        deviceSelect.appendChild(option);
       });
-      updateButtons();
-      refreshPreview();
     }
-
-    function updateButtons() {
-      const hasSelection = deviceSelectEl.value !== '';
-      btnEditDevice.disabled = !hasSelection;
-      btnDeleteDevice.disabled = !hasSelection;
+    
+    // 刷新设备列表（在管理对话框中）
+    function refreshDeviceList() {
+      deviceList.innerHTML = '';
+      
+      devices.forEach((device, index) => {
+        const deviceItem = document.createElement('div');
+        deviceItem.className = `device-item ${index === currentDeviceIndex ? 'active' : ''}`;
+        
+        const deviceText = document.createElement('div');
+        deviceText.innerHTML = `<span class="font-medium">${device.name}</span><br><span class="text-xs">${device.id}</span>`;
+        
+        const deviceActions = document.createElement('div');
+        deviceActions.className = 'device-actions';
+        
+        const editBtn = document.createElement('button');
+        editBtn.className = 'text-blue-500 hover:text-blue-700';
+        editBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>';
+        editBtn.onclick = () => editDevice(index);
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'text-red-500 hover:text-red-700';
+        deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>';
+        deleteBtn.onclick = () => deleteDevice(index);
+        
+        deviceActions.appendChild(editBtn);
+        deviceActions.appendChild(deleteBtn);
+        
+        deviceItem.appendChild(deviceText);
+        deviceItem.appendChild(deviceActions);
+        
+        deviceList.appendChild(deviceItem);
+      });
     }
-
-    function openModal(isEdit = false) {
-      editingIndex = isEdit ? parseInt(deviceSelectEl.value) : -1;
-      modalTitle.textContent = isEdit ? '编辑设备' : '添加设备';
-      if (isEdit && editingIndex >= 0) {
-        modalDeviceName.value = devices[editingIndex].name;
-        modalDeviceId.value = devices[editingIndex].id;
-      } else {
-        modalDeviceName.value = '';
-        modalDeviceId.value = '';
-      }
-      showDeviceId = false;
-      updateModalToggleIcon();
-      modalDeviceId.type = 'password';
-      deviceModal.style.display = 'flex';
-    }
-
-    function closeModal() {
-      deviceModal.style.display = 'none';
-    }
-
-    function saveDevice() {
-      let name = (modalDeviceName.value || '').trim();
-      let id = (modalDeviceId.value || '').trim().replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    
+    // 添加新设备
+    function addDevice() {
+      const name = newDeviceName.value.trim();
+      const id = newDeviceId.value.trim();
+      
       if (!name || !id) {
         alert('设备名称和ID不能为空');
         return;
       }
-      if (editingIndex >= 0) {
-        devices[editingIndex] = { name, id };
-      } else {
-        devices.push({ name, id });
+      
+      // 检查ID是否已存在
+      if (devices.some(device => device.id === id)) {
+        alert('设备ID已存在');
+        return;
       }
+      
+      // 添加新设备
+      devices.push({
+        name: name,
+        id: id,
+        active: false
+      });
+      
+      // 清空输入框
+      newDeviceName.value = '';
+      newDeviceId.value = '';
+      
+      // 保存并刷新
       saveDevices();
-      closeModal();
-      if (deviceSelectEl.value === '') {
-        deviceSelectEl.value = editingIndex >= 0 ? editingIndex : devices.length - 1;
-        updateButtons();
+      updateDeviceSelect();
+      refreshDeviceList();
+    }
+    
+    // 编辑设备
+    function editDevice(index) {
+      const device = devices[index];
+      
+      // 填充到添加表单
+      newDeviceName.value = device.name;
+      newDeviceId.value = device.id;
+      
+      // 设置编辑状态
+      editingDeviceIndex = index;
+      
+      // 更改按钮文本
+      btnAddDevice.textContent = '更新设备';
+    }
+    
+    // 更新设备
+    function updateDevice(index) {
+      const name = newDeviceName.value.trim();
+      const id = newDeviceId.value.trim();
+      
+      if (!name || !id) {
+        alert('设备名称和ID不能为空');
+        return;
+      }
+      
+      // 检查ID是否已存在（排除自身）
+      if (devices.some((device, idx) => idx !== index && device.id === id)) {
+        alert('设备ID已被其他设备使用');
+        return;
+      }
+      
+      // 更新设备
+      devices[index].name = name;
+      devices[index].id = id;
+      
+      // 清空输入框
+      newDeviceName.value = '';
+      newDeviceId.value = '';
+      
+      // 重置编辑状态
+      editingDeviceIndex = -1;
+      btnAddDevice.textContent = '添加设备';
+      
+      // 保存并刷新
+      saveDevices();
+      updateDeviceSelect();
+      refreshDeviceList();
+    }
+    
+    // 删除设备
+    function deleteDevice(index) {
+      if (devices.length <= 1) {
+        alert('不能删除最后一个设备');
+        return;
+      }
+      
+      if (index === currentDeviceIndex) {
+        currentDeviceIndex = 0;
+        saveDevices();
+      }
+      
+      devices.splice(index, 1);
+      
+      if (currentDeviceIndex >= devices.length) {
+        currentDeviceIndex = 0;
+      }
+      
+      // 保存并刷新
+      saveDevices();
+      updateDeviceSelect();
+      refreshDeviceList();
+    }
+    
+    // 切换当前设备
+    function changeDevice() {
+      const index = parseInt(deviceSelect.value);
+      if (index >= 0 && index < devices.length) {
+        currentDeviceIndex = index;
+        saveDevices();
+        refreshPreview();
       }
     }
-
-    function deleteDevice() {
-      if (confirm('确定删除此设备?')) {
-        const index = parseInt(deviceSelectEl.value);
-        if (index >= 0) {
-          devices.splice(index, 1);
-          saveDevices();
-          deviceSelectEl.value = '';
-          updateButtons();
-        }
-      }
-    }
-
-    function updateModalToggleIcon() {
-      modalTogglePassword.innerHTML = showDeviceId ? `
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-        </svg>
-      ` : `
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        </svg>
-      `;
-    }
-
-    function toggleModalDeviceId() {
-      showDeviceId = !showDeviceId;
-      modalDeviceId.type = showDeviceId ? 'text' : 'password';
-      updateModalToggleIcon();
-    }
-
+    
+    // 获取当前设备ID
     function getCurrentDeviceId() {
-      const index = parseInt(deviceSelectEl.value);
-      return index >= 0 ? devices[index].id : '';
+      return devices[currentDeviceIndex]?.id || '';
     }
 
     function buildPayload(){
@@ -558,6 +714,7 @@ console.log(`
     function getPreviewPayload() {
       const payload = buildPayload();
       if (!showDeviceId && payload.device_id) {
+        // 隐藏设备ID，用星号代替
         payload.device_id = '*'.repeat(payload.device_id.length);
       }
       return payload;
@@ -728,11 +885,6 @@ console.log(`
     }
 
     async function sendNow(){
-      if (!getCurrentDeviceId()) {
-        setStatus('请选择设备', 'error');
-        resultBox.textContent = '错误：请先选择或添加设备';
-        return;
-      }
       if (activeKey === 'status') {
         return sendStatusRequest();
       }
@@ -780,8 +932,8 @@ console.log(`
     function sendStatusRequest() {
       const deviceId = getCurrentDeviceId();
       if (!deviceId) {
-        setStatus('请选择设备', 'error');
-        resultBox.textContent = '错误：请先选择或添加设备';
+        setStatus('设备ID不能为空', 'error');
+        resultBox.textContent = '错误：请先填写设备ID';
         return;
       }
 
@@ -805,8 +957,6 @@ console.log(`
             push: deviceId,
             type: "status"
           };
-          websocket.send(JSON.stringify(request));
-          resultBox.textContent += '已发送: ' + JSON.stringify(request, null, 2) + '\n\n';
         };
 
         websocket.onmessage = function(event) {
@@ -864,27 +1014,67 @@ console.log(`
       setStatus('已重置', 'info');
     }
 
-    // 初始化事件监听
-    deviceSelectEl.addEventListener('change', () => {
-      updateButtons();
+    function toggleDeviceIdVisibility() {
+      showDeviceId = !showDeviceId;
       refreshPreview();
-    });
+      
+      // 更新图标
+      if (showDeviceId) {
+        togglePassword.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+          </svg>
+        `;
+      } else {
+        togglePassword.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        `;
+      }
+    }
 
-    btnAddDevice.addEventListener('click', () => openModal(false));
-    btnEditDevice.addEventListener('click', () => openModal(true));
-    btnDeleteDevice.addEventListener('click', deleteDevice);
-    modalClose.addEventListener('click', closeModal);
-    modalSave.addEventListener('click', saveDevice);
-    modalTogglePassword.addEventListener('click', toggleModalDeviceId);
-    modalDeviceId.addEventListener('input', function() {
-      this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-    });
+    // 打开设备管理器
+    function openDeviceManager() {
+      deviceManager.style.display = 'flex';
+      refreshDeviceList();
+    }
+    
+    // 关闭设备管理器
+    function closeDeviceManager() {
+      deviceManager.style.display = 'none';
+      editingDeviceIndex = -1;
+      newDeviceName.value = '';
+      newDeviceId.value = '';
+      btnAddDevice.textContent = '添加设备';
+    }
 
-    btnSend.addEventListener('click', sendNow);
-    btnCopy.addEventListener('click', copyJSON);
-    btnReset.addEventListener('click', resetFields);
+    // 初始化设备管理
+    function initDeviceManager() {
+      // 加载设备
+      loadDevices();
+      
+      // 设备下拉选择事件
+      deviceSelect.addEventListener('change', changeDevice);
+      
+      // 设备管理按钮点击事件
+      btnManageDevices.addEventListener('click', openDeviceManager);
+      
+      // 关闭设备管理器事件
+      btnCloseManager.addEventListener('click', closeDeviceManager);
+      
+      // 添加设备事件
+      btnAddDevice.addEventListener('click', () => {
+        if (editingDeviceIndex !== -1) {
+          updateDevice(editingDeviceIndex);
+        } else {
+          addDevice();
+        }
+      });
+    }
 
-    loadDevices();
+    initDeviceManager();
     renderTabs();
     renderForm();
     setStatus('等待操作');
