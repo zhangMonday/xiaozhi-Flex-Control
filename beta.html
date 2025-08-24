@@ -171,6 +171,17 @@
     .upload-btn:hover {
       background: #2563eb;
     }
+    .eye-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #64748b;
+    }
+    .device-input-wrapper {
+      position: relative;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
@@ -185,20 +196,16 @@
   <main class="max-w-6xl mx-auto px-4 pb-16 space-y-5">
     <section class="card p-5">
       <div class="grid-auto">
-        <div>
+        <div class="device-input-wrapper">
           <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">设备ID</label>
-          <div class="relative mt-1">
-          <input id="deviceId" class="field pr-10" type="password" placeholder="问小智查一下固件版本和设备编号并把编号填写在这里，字母+数字" />
-          <button id="toggleDeviceId" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">  
-          <svg class="h-5 w-5 eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-          <circle cx="12" cy="12" r="3"></circle>
-        </svg>
-  <svg class="h-5 w-5 eye-closed hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-    <line x1="1" y1="1" x2="23" y2="23"></line>
-  </svg>
-</button>
+          <div class="relative">
+            <input id="deviceId" type="password" class="field mt-1" placeholder="问小智查一下固件版本和设备编号并把编号填写在这里，字母+数字" />
+            <span id="toggleDeviceId" class="eye-toggle">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </span>
           </div>
         </div>
       </div>
@@ -236,18 +243,18 @@
 
     <section class="card p-5">
       <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+        <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           请求数据
+          <span id="togglePreviewDeviceId" class="cursor-pointer ml-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </span>
         </h2>
-        <button id="toggleJsonId" class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-        </button>
       </div>
       <pre id="jsonPreview" class="mono text-sm overflow-auto p-4 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
     </section>
@@ -321,7 +328,8 @@ console.log(`
           { id:"url",  label:"链接", placeholder:"https://example.com/xxx.jpg", type:"text" },
           { id:"text", label:"文案",    placeholder:"显示在设备的信息胶囊", type:"text" },
           { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
-        ]}
+        ]},
+      { key: "status",   label: "设备状态",   type: "status",  fields: [] }
     ];
 
     const tabsEl      = document.getElementById('tabs');
@@ -334,12 +342,14 @@ console.log(`
     const btnCopy     = document.getElementById('btnCopy');
     const btnReset    = document.getElementById('btnReset');
     const toggleDeviceId = document.getElementById('toggleDeviceId');
-    const toggleJsonId = document.getElementById('toggleJsonId');
+    const togglePreviewDeviceId = document.getElementById('togglePreviewDeviceId');
 
     let activeKey = 'chat';
     const state = {};
-    let showDeviceInput = false;
-    let showJsonDevice = false;
+    let hideDeviceId = true; // 控制请求数据中的设备ID显示
+    
+    // 存储设备ID是否显示的状态
+    let showDeviceId = false; 
 
     const el = (tag, attrs={}, children=[]) => {
       const n = document.createElement(tag);
@@ -427,6 +437,8 @@ console.log(`
         descDiv.innerHTML = `<p>控制设备主题模式，修改后会立即存储</p><p>value: 注意只能是 浅色 或 深色</p>`;
       } else if (activeKey === 'image') {
         descDiv.innerHTML = `<p>给设备发送图文消息 (待实现)</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+      } else if (activeKey === 'status') {
+        descDiv.innerHTML = `<p>向设备发送状态查询请求，设备将返回各项参数（如音量、亮度、固件版本等）</p><p>注意：此功能需要设备在线（联网）并启用了 WebSocket 或 TCP 服务</p>`;
       }
       formAreaEl.appendChild(descDiv);
 
@@ -531,11 +543,15 @@ console.log(`
 
     function refreshPreview(){
       const payload = buildPayload();
-      let displayPayload = { ...payload };
-      if (!showJsonDevice) {
-        displayPayload.device_id = '******';
+      
+      // 处理设备ID隐藏
+      let previewPayload = {...payload};
+      if (hideDeviceId && previewPayload.device_id) {
+        // 用星号替代真实设备ID
+        previewPayload.device_id = '*'.repeat(previewPayload.device_id.length);
       }
-      jsonPreview.textContent = pretty(displayPayload);
+      
+      jsonPreview.textContent = pretty(previewPayload);
     }
 
     function setStatus(text, type){
@@ -585,7 +601,7 @@ console.log(`
     }
 
     function copyJSON(){
-      const text = pretty(buildPayload());
+      const text = jsonPreview.textContent || '';
       navigator.clipboard.writeText(text).then(() => {
         setStatus('已复制', 'success');
       }).catch(()=>{
@@ -605,33 +621,34 @@ console.log(`
       const val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
       this.value = val;
       localStorage.setItem('deviceId', val);
-      refreshPreview();
     });
-
+    
+    // 设备ID显示切换功能
     toggleDeviceId.addEventListener('click', () => {
-      showDeviceInput = !showDeviceInput;
-      deviceIdEl.type = showDeviceInput ? 'text' : 'password';
-      toggleDeviceId.innerHTML = showDeviceInput ? 
-        `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0111.25 19c-2.827 0-5.377-1.164-7.2-3.037M3 12a9 9 0 0118 0M21 12a9 9 0 00-18 0m18 0c0 2.485-1.005 4.73-2.63 6.364M3 12c0-2.485 1.005-4.73 2.63-6.364m7.245 12.461A10.05 10.05 0 0112 19c2.827 0 5.377-1.164 7.2-3.037M21 12a9 9 0 00-18 0" />
-        </svg>` :
-        `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        </svg>`;
+      showDeviceId = !showDeviceId;
+      
+      if (showDeviceId) {
+        deviceIdEl.type = 'text';
+        toggleDeviceId.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+          </svg>
+        `;
+      } else {
+        deviceIdEl.type = 'password';
+        toggleDeviceId.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        `;
+      }
     });
-
-    toggleJsonId.addEventListener('click', () => {
-      showJsonDevice = !showJsonDevice;
+    
+    // 请求数据中设备ID显示切换
+    togglePreviewDeviceId.addEventListener('click', () => {
+      hideDeviceId = !hideDeviceId;
       refreshPreview();
-      toggleJsonId.innerHTML = showJsonDevice ? 
-        `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0111.25 19c-2.827 0-5.377-1.164-7.2-3.037M3 12a9 9 0 0118 0M21 12a9 9 0 00-18 0m18 0c0 2.485-1.005 4.73-2.63 6.364M3 12c0-2.485 1.005-4.73 2.63-6.364m7.245 12.461A10.05 10.05 0 0112 19c2.827 0 5.377-1.164 7.2-3.037M21 12a9 9 0 00-18 0" />
-        </svg>` :
-        `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        </svg>`;
     });
 
     btnSend.addEventListener('click', sendNow);
