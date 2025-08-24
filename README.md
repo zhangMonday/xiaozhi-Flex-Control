@@ -22,7 +22,7 @@
 
 ### 前置条件
 1. 确保你的小智设备已安装 [灵活固件](https://nodelua.com/home_iot/)，并正确配置 GPIO。
-2. 向小智询问其设备id，应该是字母和数字，并填写相应字段，如果小智返回纯数字id就换一个问法
+2. 问小智查一下固件版本和设备编号并把编号填写在这里，应该是字母和数字，并填写相应字段，如果小智返回纯数字id就换一个问法
 
 ### 体验 Demo
 立即访问在线 Demo：[https://xiaozhi.zhangmonday.top](https://xiaozhi.zhangmonday.top)
