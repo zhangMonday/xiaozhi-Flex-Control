@@ -319,7 +319,7 @@ console.log(`
       { key: "theme",    label:"改主题",    type: "theme",    fields: [
           { id:"value", label:"模式", type:"select", options:["light","dark"] }
         ]},
-      { key: "image",    label: "发图片(等群主实现)",    type: "image",   fields: [
+      { key: "image",    label: "发图片(待实现)",    type: "image",   fields: [
           { id:"url",  label:"链接", placeholder:"https://example.com/xxx.jpg", type:"text" },
           { id:"text", label:"文案",    placeholder:"显示在设备的信息胶囊", type:"text" },
           { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
@@ -618,7 +618,7 @@ console.log(`
 
         websocket.onopen = function(event) {
           setStatus('已连接', 'success');
-          resultBox.textContent = 'WebSocket连接已建立，发送状态查询请求...\n';
+          resultBox.textContent = 'WebSocket连接已成功建立，发送状态查询请求...\n';
           
           // 发送状态查询请求
           const request = {
