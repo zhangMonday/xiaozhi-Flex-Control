@@ -243,7 +243,6 @@
           <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">选择设备</label>
           <div class="flex items-center gap-2">
             <select id="deviceSelect" class="field mt-1 flex-1">
-              <!-- Options will be populated by JS -->
             </select>
             <button id="manageDevices" class="btn btn-secondary">管理设备</button>
           </div>
@@ -251,13 +250,11 @@
       </div>
     </section>
 
-    <!-- Modal for managing devices -->
     <div id="deviceModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
         <h2 class="text-lg font-semibold mb-4">管理设备</h2>
         <div id="deviceList" class="space-y-4 mb-4">
-          <!-- Device items will be populated here -->
         </div>
         <div class="space-y-2">
           <input id="newDeviceName" type="text" class="field" placeholder="设备名称" />
@@ -305,7 +302,7 @@
           </svg>
           请求数据
         </h2>
-        <span id="toggleJsonId" class="toggle-password cursor-pointer">
+        <span id="toggleJsonId" class="cursor-pointer ml-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -723,7 +720,6 @@ console.log(`
       resultBox.textContent = '正在连接WebSocket服务器...';
       setStatus('连接中', 'info');
 
-      // 关闭现有的WebSocket连接
       if (websocket) {
         websocket.close();
       }
@@ -735,7 +731,6 @@ console.log(`
           setStatus('已连接', 'success');
           resultBox.textContent = 'WebSocket连接已成功建立，发送状态查询请求...\n';
           
-          // 发送状态查询请求
           const request = {
             push: deviceId,
             type: "status"
@@ -767,7 +762,6 @@ console.log(`
           websocket = null;
         };
 
-        // 超时/结束
         setTimeout(() => {
           if (websocket && websocket.readyState === WebSocket.OPEN) {
             resultBox.textContent += '查询超时/查询结束，正在关闭连接...\n';
@@ -802,7 +796,6 @@ console.log(`
     function toggleDeviceIdVisibility() {
       showDeviceId = !showDeviceId;
       
-      // 切换图标
       if (showDeviceId) {
         toggleJsonId.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -812,23 +805,20 @@ console.log(`
       } else {
         toggleJsonId.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a 3 3 0 11-6 0 3 3 0 016 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
         `;
       }
       
-      // 刷新预览
       refreshPreview();
     }
 
-    // 初始化
     renderDeviceSelect();
     renderTabs();
     renderForm();
     setStatus('等待操作');
 
-    // 事件监听
     deviceSelect.addEventListener('change', () => {
       currentDeviceIndex = parseInt(deviceSelect.value);
       refreshPreview();
