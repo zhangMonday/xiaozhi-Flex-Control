@@ -185,6 +185,46 @@
     .toggle-password:hover {
       color: #3b82f6;
     }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 0.5rem;
+    }
+    .dark .modal-content {
+      background-color: #1e293b;
+      color: white;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .dark .close:hover,
+    .dark .close:focus {
+      color: white;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
@@ -200,19 +240,29 @@
     <section class="card p-5">
       <div class="grid-auto">
         <div>
-          <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">设备ID</label>
-          <div class="password-container">
-            <input id="deviceId" type="password" class="field mt-1 pr-10" placeholder="问小智查一下固件版本和设备编号并把编号填写在这里，字母+数字" />
-            <span id="togglePassword" class="toggle-password">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            </span>
+          <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">选择设备</label>
+          <div class="flex items-center gap-2">
+            <select id="deviceSelect" class="field mt-1 flex-1">
+            </select>
+            <button id="manageDevices" class="btn btn-secondary">管理设备</button>
           </div>
         </div>
       </div>
     </section>
+
+    <div id="deviceModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="text-lg font-semibold mb-4">管理设备</h2>
+        <div id="deviceList" class="space-y-4 mb-4">
+        </div>
+        <div class="space-y-2">
+          <input id="newDeviceName" type="text" class="field" placeholder="设备名称" />
+          <input id="newDeviceId" type="text" class="field" placeholder="小智查一下固件版本和设备编号并把编号填写在这里，字母+数字" />
+          <button id="addDevice" class="btn btn-primary w-full">添加设备</button>
+        </div>
+      </div>
+    </div>
 
     <section class="sticky-header">
       <div id="tabs" class="flex flex-wrap gap-2.5">
@@ -245,18 +295,26 @@
     </section>
 
     <section class="card p-5">
-      <h2 class="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-        请求数据
-      </h2>
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          请求数据
+        </h2>
+        <span id="toggleJsonId" class="cursor-pointer ml-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        </span>
+      </div>
       <pre id="jsonPreview" class="mono text-sm overflow-auto p-4 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
     </section>
 
     <section class="card p-5">
       <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+        <h2 class="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -332,16 +390,25 @@ console.log(`
     const jsonPreview = document.getElementById('jsonPreview');
     const resultBox   = document.getElementById('resultBox');
     const statusBadge = document.getElementById('statusBadge');
-    const deviceIdEl  = document.getElementById('deviceId');
+    const deviceSelect = document.getElementById('deviceSelect');
+    const manageDevicesBtn = document.getElementById('manageDevices');
+    const deviceModal = document.getElementById('deviceModal');
+    const deviceListEl = document.getElementById('deviceList');
+    const newDeviceName = document.getElementById('newDeviceName');
+    const newDeviceId = document.getElementById('newDeviceId');
+    const addDeviceBtn = document.getElementById('addDevice');
+    const toggleJsonId = document.getElementById('toggleJsonId');
     const btnSend     = document.getElementById('btnSend');
     const btnCopy     = document.getElementById('btnCopy');
     const btnReset    = document.getElementById('btnReset');
-    const togglePassword = document.getElementById('togglePassword');
+    const modalClose = deviceModal.querySelector('.close');
 
     let activeKey = 'chat';
     let showDeviceId = false;
     let websocket = null;
     const state = {};
+    let devices = JSON.parse(localStorage.getItem('devices')) || [];
+    let currentDeviceIndex = -1;
 
     const el = (tag, attrs={}, children=[]) => {
       const n = document.createElement(tag);
@@ -357,8 +424,54 @@ console.log(`
 
     const pretty = (obj) => JSON.stringify(obj, null, 2);
 
+    function saveDevices() {
+      localStorage.setItem('devices', JSON.stringify(devices));
+    }
+
+    function renderDeviceSelect() {
+      deviceSelect.innerHTML = '';
+      if (devices.length === 0) {
+        deviceSelect.appendChild(el('option', { value: '-1', text: '无设备' }));
+      } else {
+        devices.forEach((dev, idx) => {
+          deviceSelect.appendChild(el('option', { value: idx, text: dev.name }));
+        });
+        if (currentDeviceIndex === -1 && devices.length > 0) {
+          currentDeviceIndex = 0;
+        }
+        deviceSelect.value = currentDeviceIndex;
+      }
+      refreshPreview();
+    }
+
+    function renderDeviceList() {
+      deviceListEl.innerHTML = '';
+      devices.forEach((dev, idx) => {
+        const item = el('div', { class: 'flex items-center justify-between gap-2' });
+        const nameInput = el('input', { class: 'field flex-1', type: 'text', value: dev.name });
+        const idInput = el('input', { class: 'field flex-1', type: 'text', value: dev.id });
+        const delBtn = el('button', { class: 'btn btn-secondary', text: '删除', onclick: () => {
+          devices.splice(idx, 1);
+          saveDevices();
+          renderDeviceList();
+          renderDeviceSelect();
+          if (currentDeviceIndex >= devices.length) currentDeviceIndex = devices.length - 1;
+        }});
+        nameInput.addEventListener('input', () => { dev.name = nameInput.value; saveDevices(); renderDeviceSelect(); });
+        idInput.addEventListener('input', () => { 
+          dev.id = idInput.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); 
+          idInput.value = dev.id; 
+          saveDevices(); 
+        });
+        item.appendChild(nameInput);
+        item.appendChild(idInput);
+        item.appendChild(delBtn);
+        deviceListEl.appendChild(item);
+      });
+    }
+
     function buildPayload(){
-      const devId = (deviceIdEl.value || '').trim();
+      const devId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
       const def   = INTERFACES.find(x => x.key === activeKey);
       const payload = { device_id: devId, type: def.type };
       const values = state[activeKey] || {};
@@ -382,7 +495,6 @@ console.log(`
     function getPreviewPayload() {
       const payload = buildPayload();
       if (!showDeviceId && payload.device_id) {
-        // 隐藏设备ID，用星号代替
         payload.device_id = '*'.repeat(payload.device_id.length);
       }
       return payload;
@@ -598,17 +710,16 @@ console.log(`
     }
 
     function sendStatusRequest() {
-      const deviceId = (deviceIdEl.value || '').trim();
+      const deviceId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
       if (!deviceId) {
         setStatus('设备ID不能为空', 'error');
-        resultBox.textContent = '错误：请先填写设备ID';
+        resultBox.textContent = '错误：请先选择或添加设备';
         return;
       }
 
       resultBox.textContent = '正在连接WebSocket服务器...';
       setStatus('连接中', 'info');
 
-      // 关闭现有的WebSocket连接
       if (websocket) {
         websocket.close();
       }
@@ -620,7 +731,6 @@ console.log(`
           setStatus('已连接', 'success');
           resultBox.textContent = 'WebSocket连接已成功建立，发送状态查询请求...\n';
           
-          // 发送状态查询请求
           const request = {
             push: deviceId,
             type: "status"
@@ -652,7 +762,6 @@ console.log(`
           websocket = null;
         };
 
-        // 超时/结束
         setTimeout(() => {
           if (websocket && websocket.readyState === WebSocket.OPEN) {
             resultBox.textContent += '查询超时/查询结束，正在关闭连接...\n';
@@ -687,49 +796,67 @@ console.log(`
     function toggleDeviceIdVisibility() {
       showDeviceId = !showDeviceId;
       
-      // 切换输入框类型
       if (showDeviceId) {
-        deviceIdEl.type = 'text';
-        togglePassword.innerHTML = `
+        toggleJsonId.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
           </svg>
         `;
       } else {
-        deviceIdEl.type = 'password';
-        togglePassword.innerHTML = `
+        toggleJsonId.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a 3 3 0 11-6 0 3 3 0 016 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
         `;
       }
       
-      // 刷新预览
       refreshPreview();
     }
 
-    deviceIdEl.addEventListener('input', function() {
-      const val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-      this.value = val;
-      localStorage.setItem('deviceId', val);
-      refreshPreview();
-    });
-
-    togglePassword.addEventListener('click', toggleDeviceIdVisibility);
-
-    btnSend.addEventListener('click', sendNow);
-    btnCopy.addEventListener('click', copyJSON);
-    btnReset.addEventListener('click', resetFields);
-
+    renderDeviceSelect();
     renderTabs();
     renderForm();
     setStatus('等待操作');
 
-    const savedDeviceId = localStorage.getItem('deviceId');
-    if (savedDeviceId) {
-      deviceIdEl.value = savedDeviceId;
-    }
+    deviceSelect.addEventListener('change', () => {
+      currentDeviceIndex = parseInt(deviceSelect.value);
+      refreshPreview();
+    });
+
+    manageDevicesBtn.addEventListener('click', () => {
+      renderDeviceList();
+      deviceModal.style.display = 'block';
+    });
+
+    modalClose.addEventListener('click', () => {
+      deviceModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target === deviceModal) {
+        deviceModal.style.display = 'none';
+      }
+    });
+
+    addDeviceBtn.addEventListener('click', () => {
+      const name = newDeviceName.value.trim();
+      const id = newDeviceId.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      if (name && id) {
+        devices.push({ name, id });
+        saveDevices();
+        renderDeviceList();
+        renderDeviceSelect();
+        newDeviceName.value = '';
+        newDeviceId.value = '';
+      }
+    });
+
+    toggleJsonId.addEventListener('click', toggleDeviceIdVisibility);
+
+    btnSend.addEventListener('click', sendNow);
+    btnCopy.addEventListener('click', copyJSON);
+    btnReset.addEventListener('click', resetFields);
   </script>
 </body>
 </html>
