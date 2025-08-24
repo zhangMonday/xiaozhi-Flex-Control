@@ -93,24 +93,6 @@
     .dark .btn-secondary:hover {
       background: #475569;
     }
-    .btn-sm {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.875rem;
-    }
-    .btn-danger {
-      background: #fecaca;
-      color: #b91c1c;
-    }
-    .dark .btn-danger {
-      background: #7f1d1d;
-      color: #fecaca;
-    }
-    .btn-danger:hover {
-      background: #fee2e2;
-    }
-    .dark .btn-danger:hover {
-      background: #991b1b;
-    }
     .badge {
       padding: 0.25rem 0.75rem;
       border-radius: 9999px;
@@ -189,30 +171,100 @@
     .upload-btn:hover {
       background: #2563eb;
     }
-    .device-grid {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
+    .password-container {
+      position: relative;
     }
-    .toggle-icon {
+    .toggle-password {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
       cursor: pointer;
       color: #64748b;
-      transition: color 0.2s;
     }
-    .toggle-icon:hover {
+    .toggle-password:hover {
       color: #3b82f6;
     }
-    .preview-header {
+    .device-selector-container {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .device-selector {
+      flex: 1;
+    }
+    .toggle-device-manager {
+      cursor: pointer;
+    }
+    .device-manager-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .device-manager-container {
+      background: white;
+      border-radius: 0.75rem;
+      width: min(95vw, 600px);
+      max-height: 90vh;
+      overflow: auto;
+      padding: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    .dark .device-manager-container {
+      background: #1e293b;
+    }
+    .devices-list {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .device-item {
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 0.5rem;
+      border: 1px solid #e2e8f0;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .device-selector {
+    .dark .device-item {
+      background: #1e293b;
+      border-color: #334155;
+    }
+    .device-item-content {
+      flex: 1;
+    }
+    .device-item-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .device-item-name {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+    .device-item-id {
+      font-size: 0.875rem;
+      font-family: monospace;
+      word-break: break-all;
+    }
+    .no-devices {
+      padding: 2rem;
+      text-align: center;
+      opacity: 0.8;
+    }
+    .json-preview-header {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      justify-content: space-between;
     }
   </style>
 </head>
@@ -226,20 +278,28 @@
   </header>
 
   <main class="max-w-6xl mx-auto px-4 pb-16 space-y-5">
-    <!-- 设备选择器部分 -->
     <section class="card p-5">
-      <h2 class="text-lg font-semibold mb-3">设备选择</h2>
-      <div class="device-selector">
-        <select id="deviceSelector" class="field flex-1">
-          <option value="">请选择设备或添加新设备</option>
-        </select>
-        <button id="btnAddDevice" class="btn btn-secondary btn-sm">添加</button>
-        <button id="btnEditDevice" class="btn btn-secondary btn-sm">编辑</button>
-        <button id="btnRemoveDevice" class="btn btn-danger btn-sm">删除</button>
+      <div class="grid-auto">
+        <div>
+          <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">设备管理</label>
+          <div class="device-selector-container">
+            <div class="device-selector">
+              <select id="deviceSelector" class="field w-full">
+                <option value="">选择设备...</option>
+              </select>
+            </div>
+            <div class="toggle-device-manager">
+              <button id="btnDeviceManager" class="btn btn-secondary py-2 px-3">管理</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">设备ID</label>
+          <div class="password-container">
+            <input id="deviceId" type="text" class="field" placeholder="输入设备ID或从上面选择" />
+          </div>
+        </div>
       </div>
-      
-      <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">设备ID</label>
-      <input id="deviceId" type="text" class="field" placeholder="请选择设备或输入新的设备ID" />
     </section>
 
     <section class="sticky-header">
@@ -273,19 +333,19 @@
     </section>
 
     <section class="card p-5">
-      <div class="preview-header">
+      <div class="json-preview-header">
         <h2 class="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           请求数据
         </h2>
-        <span id="togglePreviewDeviceId" class="toggle-icon">
+        <div class="toggle-password cursor-pointer text-blue-500 hover:text-blue-700" id="jsonTogglePassword">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
-        </span>
+        </div>
       </div>
       <pre id="jsonPreview" class="mono text-sm overflow-auto p-4 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
     </section>
@@ -303,6 +363,46 @@
       <pre id="resultBox" class="mono text-sm overflow-auto p-4 mt-3 max-h-80 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
     </section>
   </main>
+
+  <!-- 设备管理模态框 -->
+  <div id="deviceManagerModal" class="device-manager-modal">
+    <div class="device-manager-container">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-neutral-800 dark:text-white">设备管理</h3>
+        <button id="closeDeviceManager" class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- 添加设备表单 -->
+      <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg mb-6">
+        <h4 class="font-medium text-gray-700 dark:text-gray-200 mb-2">添加新设备</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">设备名称</label>
+            <input type="text" id="newDeviceName" class="field w-full" placeholder="例如：客厅小智" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">设备ID</label>
+            <input type="text" id="newDeviceId" class="field w-full" placeholder="字母+数字组合" />
+          </div>
+        </div>
+        <button id="btnAddDevice" class="btn btn-primary mt-4 w-full">添加设备</button>
+      </div>
+      
+      <!-- 设备列表 -->
+      <div id="devicesContainer">
+        <h4 class="font-medium text-gray-700 dark:text-gray-200 mb-2">设备列表</h4>
+        <div id="devicesList" class="devices-list">
+          <div class="no-devices">
+            <p class="text-gray-500 dark:text-gray-400">暂无设备，请添加设备</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
 console.log(`
@@ -372,72 +472,27 @@ console.log(`
     const btnSend     = document.getElementById('btnSend');
     const btnCopy     = document.getElementById('btnCopy');
     const btnReset    = document.getElementById('btnReset');
+    const jsonTogglePassword = document.getElementById('jsonTogglePassword');
+    
+    // 新增的设备管理相关元素
+    const deviceManagerModal = document.getElementById('deviceManagerModal');
     const deviceSelector = document.getElementById('deviceSelector');
+    const btnDeviceManager = document.getElementById('btnDeviceManager');
+    const closeDeviceManager = document.getElementById('closeDeviceManager');
     const btnAddDevice = document.getElementById('btnAddDevice');
-    const btnEditDevice = document.getElementById('btnEditDevice');
-    const btnRemoveDevice = document.getElementById('btnRemoveDevice');
-    const togglePreviewDeviceId = document.getElementById('togglePreviewDeviceId');
+    const newDeviceName = document.getElementById('newDeviceName');
+    const newDeviceId = document.getElementById('newDeviceId');
+    const devicesList = document.getElementById('devicesList');
 
     let activeKey = 'chat';
-    let showDeviceIdInPreview = false; // 现在只控制预览区域
+    let showDeviceId = false;
     let websocket = null;
     const state = {};
-    let deviceList = [];
 
-    // 设备管理系统
-    function loadDevices() {
-      try {
-        const saved = localStorage.getItem('devices');
-        if (saved) deviceList = JSON.parse(saved);
-      } catch (e) {
-        console.error('加载设备数据失败', e);
-        deviceList = [];
-      }
-      
-      deviceSelector.innerHTML = '<option value="">请选择设备或添加新设备</option>';
-      deviceList.forEach((device, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = device.name ? `${device.name} (${device.id})` : device.id;
-        deviceSelector.appendChild(option);
-      });
-    }
-
-    function saveDevices() {
-      localStorage.setItem('devices', JSON.stringify(deviceList));
-    }
-
-    function addDevice(id, name = "") {
-      if (!id) return;
-      
-      // 防止重复添加
-      if (deviceList.some(d => d.id === id)) {
-        alert('设备已存在！');
-        return;
-      }
-      
-      deviceList.push({id, name});
-      saveDevices();
-      loadDevices();
-    }
-
-    function editDevice(id, newName) {
-      const device = deviceList.find(d => d.id === id);
-      if (device) {
-        device.name = newName;
-        saveDevices();
-        loadDevices();
-      }
-    }
-
-    function removeDevice(id) {
-      deviceList = deviceList.filter(d => d.id !== id);
-      saveDevices();
-      loadDevices();
-    }
-
-    // 初始加载设备列表
-    loadDevices();
+    // 设备管理相关变量
+    let devices = [];
+    const DEVICES_KEY = 'smartAssistant_devices';
+    const CURRENT_DEVICE_KEY = 'smartAssistant_current_device';
 
     const el = (tag, attrs={}, children=[]) => {
       const n = document.createElement(tag);
@@ -477,13 +532,285 @@ console.log(`
 
     function getPreviewPayload() {
       const payload = buildPayload();
-      if (!showDeviceIdInPreview && payload.device_id) {
-        // 隐藏设备ID，用星号代替
+      // 仅在预览时隐藏设备ID
+      if (!showDeviceId && payload.device_id) {
         payload.device_id = '*'.repeat(payload.device_id.length);
       }
       return payload;
     }
 
+    function refreshPreview(){
+      const payload = getPreviewPayload();
+      jsonPreview.textContent = pretty(payload);
+    }
+
+    function setStatus(text, type){
+      statusBadge.textContent = text;
+      statusBadge.className = `badge ${type ? (type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900' : (type === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900' : 'bg-blue-100 text-blue-800 dark:bg-blue-900')) : 'bg-neutral-100 dark:bg-neutral-700'}`;
+    }
+
+    // 设备管理相关功能 ----------------------------------
+    
+    // 加载设备列表
+    function loadDevices() {
+      const storedDevices = localStorage.getItem(DEVICES_KEY);
+      if (storedDevices) {
+        devices = JSON.parse(storedDevices);
+      } else {
+        devices = [];
+      }
+      return devices;
+    }
+    
+    // 保存设备列表
+    function saveDevices() {
+      localStorage.setItem(DEVICES_KEY, JSON.stringify(devices));
+    }
+    
+    // 获取当前选中的设备
+    function getCurrentDevice() {
+      return localStorage.getItem(CURRENT_DEVICE_KEY) || '';
+    }
+    
+    // 保存当前设备ID
+    function saveCurrentDevice(deviceId) {
+      localStorage.setItem(CURRENT_DEVICE_KEY, deviceId);
+    }
+    
+    // 填充设备选择器
+    function populateDeviceSelector() {
+      // 清除现有选项（保留初始选项）
+      const initialOptions = Array.from(deviceSelector.options).filter(opt => opt.value === '');
+      deviceSelector.innerHTML = '';
+      
+      // 添加初始选项
+      initialOptions.forEach(opt => deviceSelector.appendChild(opt));
+      
+      // 添加设备选项
+      devices.forEach(device => {
+        const option = document.createElement('option');
+        option.value = device.id;
+        option.textContent = device.name + ' (' + device.id.substring(0, 4) + '...' + device.id.substring(device.id.length - 4) + ')';
+        deviceSelector.appendChild(option);
+      });
+      
+      // 添加管理设备选项
+      const manageOption = document.createElement('option');
+      manageOption.value = 'manage';
+      manageOption.textContent = '管理设备...';
+      deviceSelector.appendChild(manageOption);
+      
+      // 设置当前选中的设备
+      const currentDeviceId = getCurrentDevice();
+      if (currentDeviceId) {
+        deviceSelector.value = currentDeviceId;
+        deviceIdEl.value = currentDeviceId;
+      }
+    }
+    
+    // 显示设备管理模态框
+    function showDeviceManager() {
+      deviceManagerModal.style.display = 'flex';
+      renderDevicesList();
+    }
+    
+    // 隐藏设备管理模态框
+    function hideDeviceManager() {
+      deviceManagerModal.style.display = 'none';
+    }
+    
+    // 渲染设备列表到模态框中
+    function renderDevicesList() {
+      devicesList.innerHTML = '';
+      
+      if (devices.length === 0) {
+        devicesList.innerHTML = `
+          <div class="no-devices">
+            <p class="text-gray-500 dark:text-gray-400">暂无设备，请添加设备</p>
+          </div>
+        `;
+        return;
+      }
+      
+      devices.forEach((device, index) => {
+        const item = el('div', { class: 'device-item' }, [
+          el('div', { class: 'device-item-content' }, [
+            el('div', { class: 'device-item-name' }, { text: device.name }),
+            el('div', { class: 'device-item-id' }, { text: device.id })
+          ]),
+          el('div', { class: 'device-item-actions' }, [
+            el('button', {
+              class: 'btn btn-secondary py-1 px-2 text-sm',
+              onclick: () => useDevice(device.id),
+              text: '使用'
+            }),
+            el('button', {
+              class: 'btn btn-secondary py-1 px-2 text-sm',
+              onclick: () => editDevice(index),
+              text: '编辑'
+            }),
+            el('button', {
+              class: 'btn btn-secondary py-1 px-2 text-sm',
+              onclick: () => removeDevice(index),
+              text: '删除'
+            })
+          ])
+        ]);
+        
+        devicesList.appendChild(item);
+      });
+    }
+    
+    // 使用特定设备
+    function useDevice(deviceId) {
+      deviceSelector.value = deviceId;
+      deviceIdEl.value = deviceId;
+      saveCurrentDevice(deviceId);
+      refreshPreview();
+      hideDeviceManager();
+    }
+    
+    // 编辑设备
+    function editDevice(index) {
+      const device = devices[index];
+      newDeviceName.value = device.name;
+      newDeviceId.value = device.id;
+      
+      // 临时设置添加按钮为编辑
+      btnAddDevice.textContent = '更新设备';
+      btnAddDevice.onclick = () => {
+        device.name = newDeviceName.value.trim();
+        device.id = newDeviceId.value.trim();
+        saveDevices();
+        renderDevicesList();
+        populateDeviceSelector();
+        
+        // 重置表单
+        resetDeviceForm();
+        
+        // 更新当前设备ID
+        if (device.id === getCurrentDevice()) {
+          saveCurrentDevice(device.id);
+          deviceIdEl.value = device.id;
+        }
+      };
+    }
+    
+    // 删除设备
+    function removeDevice(index) {
+      const deletedDeviceId = devices[index].id;
+      devices.splice(index, 1);
+      saveDevices();
+      renderDevicesList();
+      populateDeviceSelector();
+      
+      // 如果删除的是当前设备，重置设备选择
+      if (deletedDeviceId === getCurrentDevice()) {
+        saveCurrentDevice('');
+        deviceSelector.value = '';
+        deviceIdEl.value = '';
+        refreshPreview();
+      }
+    }
+    
+    // 添加新设备
+    function addDevice() {
+      const name = newDeviceName.value.trim();
+      const id = newDeviceId.value.trim();
+      
+      if (!name) {
+        alert('设备名称不能为空');
+        return;
+      }
+      
+      if (!id) {
+        alert('设备ID不能为空');
+        return;
+      }
+      
+      devices.push({
+        name: name,
+        id: id
+      });
+      
+      saveDevices();
+      renderDevicesList();
+      populateDeviceSelector();
+      
+      // 自动选中新设备
+      deviceSelector.value = id;
+      deviceIdEl.value = id;
+      saveCurrentDevice(id);
+      
+      // 重置表单
+      resetDeviceForm();
+      refreshPreview();
+    }
+    
+    // 重置设备表单
+    function resetDeviceForm() {
+      newDeviceName.value = '';
+      newDeviceId.value = '';
+      btnAddDevice.textContent = '添加设备';
+      btnAddDevice.onclick = addDevice;
+    }
+    
+    // 初始化设备管理功能
+    function initDeviceManager() {
+      // 从本地存储加载设备
+      loadDevices();
+      populateDeviceSelector();
+      
+      // 设备选择器变化事件
+      deviceSelector.addEventListener('change', function() {
+        if (this.value === 'manage') {
+          showDeviceManager();
+          // 重置选择器值
+          this.value = deviceIdEl.value ? deviceIdEl.value : '';
+        } else if (this.value) {
+          deviceIdEl.value = this.value;
+          saveCurrentDevice(this.value);
+          refreshPreview();
+        }
+      });
+      
+      // 打开设备管理器
+      btnDeviceManager.addEventListener('click', showDeviceManager);
+      
+      // 关闭设备管理器
+      closeDeviceManager.addEventListener('click', hideDeviceManager);
+      
+      // 点击模态框背景关闭
+      deviceManagerModal.addEventListener('click', function(e) {
+        if (e.target === this) hideDeviceManager();
+      });
+      
+      // 添加设备按钮
+      btnAddDevice.addEventListener('click', addDevice);
+      
+      // 小眼睛按钮事件（JSON预览的ID显示）
+      jsonTogglePassword.addEventListener('click', function() {
+        showDeviceId = !showDeviceId;
+        if (showDeviceId) {
+          this.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            </svg>
+          `;
+        } else {
+          this.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          `;
+        }
+        refreshPreview();
+      });
+    }
+    
+    // 原始功能 --------------------------
+    
     function renderTabs(){
       tabsEl.innerHTML = '';
       INTERFACES.forEach(def => {
@@ -638,16 +965,6 @@ console.log(`
       refreshPreview();
     }
 
-    function refreshPreview(){
-      const payload = getPreviewPayload();
-      jsonPreview.textContent = pretty(payload);
-    }
-
-    function setStatus(text, type){
-      statusBadge.textContent = text;
-      statusBadge.className = `badge ${type ? (type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900' : (type === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900' : 'bg-blue-100 text-blue-800 dark:bg-blue-900')) : 'bg-neutral-100 dark:bg-neutral-700'}`;
-    }
-
     async function sendNow(){
       if (activeKey === 'status') {
         return sendStatusRequest();
@@ -780,91 +1097,18 @@ console.log(`
       setStatus('已重置', 'info');
     }
 
-    // 设备选择事件
-    deviceSelector.addEventListener('change', function() {
-      const index = parseInt(this.value);
-      if (!isNaN(index) && deviceList[index]) {
-        const device = deviceList[index];
-        deviceIdEl.value = device.id;
-        refreshPreview();
-      }
-    });
-
-    // 添加设备
-    btnAddDevice.addEventListener('click', function() {
-      const deviceId = deviceIdEl.value.trim();
-      if (!deviceId) {
-        alert('请先输入设备ID');
-        return;
-      }
-      
-      const name = prompt('请为设备命名（例如：客厅设备）');
-      if (name !== null) {
-        addDevice(deviceId, name.trim());
-      }
-    });
-
-    // 编辑设备
-    btnEditDevice.addEventListener('click', function() {
-      const index = parseInt(deviceSelector.value);
-      if (isNaN(index) || !deviceList[index]) {
-        alert('请先选择一个设备');
-        return;
-      }
-      
-      const currentDevice = deviceList[index];
-      const newName = prompt('请输入新的设备名称', currentDevice.name || '');
-      
-      if (newName !== null) {
-        editDevice(currentDevice.id, newName.trim());
-      }
-    });
-
-    // 删除设备
-    btnRemoveDevice.addEventListener('click', function() {
-      const index = parseInt(deviceSelector.value);
-      if (isNaN(index) || !deviceList[index]) {
-        alert('请先选择一个设备');
-        return;
-      }
-      
-      const device = deviceList[index];
-      if (confirm(`确定要删除设备 "${device.name || device.id}" 吗？`)) {
-        removeDevice(device.id);
-        deviceSelector.value = '';
-        deviceIdEl.value = '';
-      }
-    });
-
-    // 切换预览区域的设备ID显示
-    function togglePreviewDeviceIdVisibility() {
-      showDeviceIdInPreview = !showDeviceIdInPreview;
-      
-      // 更新眼睛图标
-      if (showDeviceIdInPreview) {
-        togglePreviewDeviceId.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-          </svg>
-        `;
-      } else {
-        togglePreviewDeviceId.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-        `;
-      }
-      
-      refreshPreview();
-    }
-    
-    togglePreviewDeviceId.addEventListener('click', togglePreviewDeviceIdVisibility);
-
     deviceIdEl.addEventListener('input', function() {
-      const val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-      this.value = val;
+      localStorage.setItem('deviceId', this.value);
       refreshPreview();
+      
+      // 如果在选择器中有匹配的设备，选择它
+      if (this.value) {
+        const matchingOption = Array.from(deviceSelector.options).find(opt => opt.value === this.value);
+        if (matchingOption) {
+          deviceSelector.value = this.value;
+          saveCurrentDevice(this.value);
+        }
+      }
     });
 
     btnSend.addEventListener('click', sendNow);
@@ -874,6 +1118,16 @@ console.log(`
     renderTabs();
     renderForm();
     setStatus('等待操作');
+
+    // 初始化设备管理
+    initDeviceManager();
+
+    // 加载上次使用的设备ID
+    const savedDeviceId = localStorage.getItem('deviceId');
+    if (savedDeviceId) {
+      deviceIdEl.value = savedDeviceId;
+      refreshPreview();
+    }
   </script>
 </body>
 </html>
