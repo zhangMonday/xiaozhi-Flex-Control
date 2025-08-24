@@ -446,7 +446,7 @@ console.log(`
       } else if (activeKey === 'image') {
         descDiv.innerHTML = `<p>给设备发送图文消息 (待实现)</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
       } else if (activeKey === 'status') {
-        descDiv.innerHTML = `<p>通过WebSocket查询设备状态，将发送请求到 wss://nodelua.com/wss</p><p>设备响应将实时显示在下方返回结果区域</p>`;
+        descDiv.innerHTML = `<p>通过WebSocket查询设备状态</p><p>设备响应将实时显示在下方返回结果区域</p>`;
       }
       formAreaEl.appendChild(descDiv);
 
@@ -659,11 +659,11 @@ console.log(`
           websocket = null;
         };
 
-        // 设置超时
+        // 超时/结束
         setTimeout(() => {
           if (websocket && websocket.readyState === WebSocket.OPEN) {
-            resultBox.textContent += '查询超时，正在关闭连接...\n';
-            setStatus('查询超时', 'error');
+            resultBox.textContent += '查询超时/查询结束，正在关闭连接...\n';
+            setStatus('查询超时/查询结束', 'error');
             websocket.close();
           }
         }, 10000);
