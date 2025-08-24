@@ -171,17 +171,6 @@
     .upload-btn:hover {
       background: #2563eb;
     }
-    .eye-toggle {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #64748b;
-    }
-    .device-input-wrapper {
-      position: relative;
-    }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
@@ -196,16 +185,16 @@
   <main class="max-w-6xl mx-auto px-4 pb-16 space-y-5">
     <section class="card p-5">
       <div class="grid-auto">
-        <div class="device-input-wrapper">
+        <div>
           <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">设备ID</label>
           <div class="relative">
-            <input id="deviceId" type="password" class="field mt-1" placeholder="问小智查一下固件版本和设备编号并把编号填写在这里，字母+数字" />
-            <span id="toggleDeviceId" class="eye-toggle">
+            <input id="deviceId" class="field mt-1 pr-10" type="password" placeholder="问小智查一下固件版本和设备编号并把编号填写在这里，字母+数字" />
+            <button id="toggleDeviceId" class="absolute inset-y-0 right-0 flex items-center pr-3 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
-            </span>
+            </button>
           </div>
         </div>
       </div>
@@ -242,21 +231,21 @@
     </section>
 
     <section class="card p-5">
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <h2 class="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        请求数据
+      </h2>
+      <div class="relative">
+        <pre id="jsonPreview" class="mono text-sm overflow-auto p-4 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
+        <button id="toggleJsonDeviceId" class="absolute top-4 right-4 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
-          请求数据
-          <span id="togglePreviewDeviceId" class="cursor-pointer ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-          </span>
-        </h2>
+        </button>
       </div>
-      <pre id="jsonPreview" class="mono text-sm overflow-auto p-4 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
     </section>
 
     <section class="card p-5">
@@ -329,7 +318,7 @@ console.log(`
           { id:"text", label:"文案",    placeholder:"显示在设备的信息胶囊", type:"text" },
           { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
         ]},
-      { key: "status",   label: "设备状态",   type: "status",  fields: [] }
+      { key: "status",   label: "查询状态", type: "status",  fields: [] }
     ];
 
     const tabsEl      = document.getElementById('tabs');
@@ -342,14 +331,12 @@ console.log(`
     const btnCopy     = document.getElementById('btnCopy');
     const btnReset    = document.getElementById('btnReset');
     const toggleDeviceId = document.getElementById('toggleDeviceId');
-    const togglePreviewDeviceId = document.getElementById('togglePreviewDeviceId');
+    const toggleJsonDeviceId = document.getElementById('toggleJsonDeviceId');
 
     let activeKey = 'chat';
     const state = {};
-    let hideDeviceId = true; // 控制请求数据中的设备ID显示
-    
-    // 存储设备ID是否显示的状态
-    let showDeviceId = false; 
+    let showDeviceId = false;
+    let showJsonDeviceId = false;
 
     const el = (tag, attrs={}, children=[]) => {
       const n = document.createElement(tag);
@@ -438,7 +425,7 @@ console.log(`
       } else if (activeKey === 'image') {
         descDiv.innerHTML = `<p>给设备发送图文消息 (待实现)</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
       } else if (activeKey === 'status') {
-        descDiv.innerHTML = `<p>向设备发送状态查询请求，设备将返回各项参数（如音量、亮度、固件版本等）</p><p>注意：此功能需要设备在线（联网）并启用了 WebSocket 或 TCP 服务</p>`;
+        descDiv.innerHTML = `<p>用websocket查询设备的各项参数，查询完则自动断联。</p>`;
       }
       formAreaEl.appendChild(descDiv);
 
@@ -543,15 +530,11 @@ console.log(`
 
     function refreshPreview(){
       const payload = buildPayload();
-      
-      // 处理设备ID隐藏
-      let previewPayload = {...payload};
-      if (hideDeviceId && previewPayload.device_id) {
-        // 用星号替代真实设备ID
-        previewPayload.device_id = '*'.repeat(previewPayload.device_id.length);
+      const displayPayload = { ...payload };
+      if (!showJsonDeviceId) {
+        displayPayload.device_id = '*'.repeat(displayPayload.device_id.length || 6);
       }
-      
-      jsonPreview.textContent = pretty(previewPayload);
+      jsonPreview.textContent = pretty(displayPayload);
     }
 
     function setStatus(text, type){
@@ -564,44 +547,76 @@ console.log(`
       resultBox.textContent = '正在向设备发送数据...';
       setStatus('发送中', 'info');
 
-      const url = '/api/push';
-
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 20000);
-
-      try {
-        const resp = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-          signal: controller.signal,
-        });
-        clearTimeout(timer);
-
-        let dataText = await resp.text();
-        let parsed = null;
-        try { parsed = JSON.parse(dataText); } catch {}
-        const out = {
-          http状态: resp.status + ' ' + resp.statusText,
-          请求地址: 'https://nodelua.com/home_iot/api/push.php',
-          请求数据: payload,
-          返回结果: parsed || dataText,
+      if (payload.type === 'status') {
+        const ws = new WebSocket('wss://nodelua.com/wss');
+        ws.onopen = () => {
+          ws.send(JSON.stringify({ push: payload.device_id, type: 'status' }));
         };
-        resultBox.textContent = pretty(out);
-        setStatus(resp.ok ? '发送成功' : '发送失败', resp.ok ? 'success' : 'error');
-      } catch (err) {
-        clearTimeout(timer);
-        const out = {
-          错误: String(err),
-          提示: '请检查网络连接或接口地址'
+        ws.onmessage = (event) => {
+          const out = {
+            请求地址: 'wss://nodelua.com/wss',
+            请求数据: { push: payload.device_id, type: 'status' },
+            返回结果: event.data
+          };
+          try {
+            out.返回结果 = JSON.parse(event.data);
+          } catch {}
+          resultBox.textContent = pretty(out);
+          setStatus('查询成功', 'success');
+          ws.close();
         };
-        resultBox.textContent = pretty(out);
-        setStatus('网络错误', 'error');
+        ws.onerror = (err) => {
+          const out = {
+            错误: 'WebSocket 错误',
+            提示: '请检查网络连接或服务器地址'
+          };
+          resultBox.textContent = pretty(out);
+          setStatus('网络错误', 'error');
+        };
+        ws.onclose = () => {
+          // 自动断联已处理
+        };
+      } else {
+        const url = '/api/push';
+
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 20000);
+
+        try {
+          const resp = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+          clearTimeout(timer);
+
+          let dataText = await resp.text();
+          let parsed = null;
+          try { parsed = JSON.parse(dataText); } catch {}
+          const out = {
+            http状态: resp.status + ' ' + resp.statusText,
+            请求地址: 'https://nodelua.com/home_iot/api/push.php',
+            请求数据: payload,
+            返回结果: parsed || dataText,
+          };
+          resultBox.textContent = pretty(out);
+          setStatus(resp.ok ? '发送成功' : '发送失败', resp.ok ? 'success' : 'error');
+        } catch (err) {
+          clearTimeout(timer);
+          const out = {
+            错误: String(err),
+            提示: '请检查网络连接或接口地址'
+          };
+          resultBox.textContent = pretty(out);
+          setStatus('网络错误', 'error');
+        }
       }
     }
 
     function copyJSON(){
-      const text = jsonPreview.textContent || '';
+      const payload = buildPayload();
+      const text = pretty(payload);
       navigator.clipboard.writeText(text).then(() => {
         setStatus('已复制', 'success');
       }).catch(()=>{
@@ -621,33 +636,18 @@ console.log(`
       const val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
       this.value = val;
       localStorage.setItem('deviceId', val);
+      refreshPreview();
     });
-    
-    // 设备ID显示切换功能
+
     toggleDeviceId.addEventListener('click', () => {
       showDeviceId = !showDeviceId;
-      
-      if (showDeviceId) {
-        deviceIdEl.type = 'text';
-        toggleDeviceId.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-          </svg>
-        `;
-      } else {
-        deviceIdEl.type = 'password';
-        toggleDeviceId.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-        `;
-      }
+      deviceIdEl.type = showDeviceId ? 'text' : 'password';
+      toggleDeviceId.querySelector('svg').setAttribute('stroke', showDeviceId ? '#2563eb' : 'currentColor');
     });
-    
-    // 请求数据中设备ID显示切换
-    togglePreviewDeviceId.addEventListener('click', () => {
-      hideDeviceId = !hideDeviceId;
+
+    toggleJsonDeviceId.addEventListener('click', () => {
+      showJsonDeviceId = !showJsonDeviceId;
+      toggleJsonDeviceId.querySelector('svg').setAttribute('stroke', showJsonDeviceId ? '#2563eb' : 'currentColor');
       refreshPreview();
     });
 
