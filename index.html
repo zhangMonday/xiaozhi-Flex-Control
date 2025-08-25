@@ -377,7 +377,7 @@ console.log(`
       { key: "theme",    label:"改主题",    type: "theme",    fields: [
           { id:"value", label:"模式", type:"select", options:["light","dark"] }
         ]},
-      { key: "image",    label: "发图片(待实现)",    type: "image",   fields: [
+      { key: "image",    label: "发图片",    type: "image",   fields: [
           { id:"url",  label:"链接", placeholder:"https://example.com/xxx.jpg", type:"text" },
           { id:"text", label:"文案",    placeholder:"显示在设备的信息胶囊", type:"text" },
           { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
@@ -549,7 +549,7 @@ console.log(`
       } else if (activeKey === 'theme') {
         descDiv.innerHTML = `<p>控制设备主题模式，修改后会立即存储</p><p>value: 注意只能是 浅色 或 深色</p>`;
       } else if (activeKey === 'image') {
-        descDiv.innerHTML = `<p>给设备发送图文消息 (待实现)</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+        descDiv.innerHTML = `<p>给设备发送图文消息</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
       } else if (activeKey === 'status') {
         descDiv.innerHTML = `<p>通过WebSocket查询设备状态</p><p>设备响应将实时显示在下方返回结果区域，请求时请确保小智开机</p>`;
       }
