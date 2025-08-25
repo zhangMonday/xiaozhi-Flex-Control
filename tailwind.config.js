@@ -1,3 +1,3 @@
 module.exports = {
-  darkMode: false
+  darkMode: false,
 }
