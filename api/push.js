@@ -24,6 +24,7 @@ export default async function handler(req, res) {
         requiredField = 'text';
         break;
       case 'audio':
+      case 'image':  // 增加了对'image'的处理
         requiredField = 'url';
         break;
       case 'radio':
