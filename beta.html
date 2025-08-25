@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>小智灵活远控</title>
+  <link rel="icon" href="data:,">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .grid-auto {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .dark .card {
+      background: #334155;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+    }
+    .field {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      background: white;
+      transition: all 0.15s ease;
+    }
+    .dark .field {
+      background: #1e293b;
+      border-color: #475569;
+      color: white;
+    }
+    .field:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+    }
+    .dark .field:focus {
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.5);
+    }
+    .tab {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem 0.375rem 0 0;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .tab-active {
+      background: white;
+      color: #2563eb;
+      box-shadow: 0 -2px 0 #2563eb inset;
+    }
+    .dark .tab-active {
+      background: #1e293b;
+    }
+    .tab-idle {
+      background: transparent;
+      color: #64748b;
+    }
+    .tab-idle:hover {
+      background: #f1f5f9;
+    }
+    .dark .tab-idle:hover {
+      background: #2b3a50;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #d1d5db;
+    }
+    .dark .btn-secondary {
+      background: #334155;
+      color: #e5e7eb;
+      border-color: #475569;
+    }
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+    .dark .btn-secondary:hover {
+      background: #475569;
+    }
+    .badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(to bottom, white 0%, white 90%, transparent 100%);
+      z-index: 10;
+      padding: 0.75rem 0;
+    }
+    .dark .sticky-header {
+      background: linear-gradient(to bottom, #0f172a 0%, #0f172a 90%, transparent 100%);
+    }
+    @media (max-width: 640px) {
+      .grid-auto {
+        grid-template-columns: 1fr;
+      }
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .slider {
+      flex: 1;
+      height: 5px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #d1d5db;
+      border-radius: 5px;
+      outline: none;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+    }
+    .slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+      border: none;
+    }
+    .slider-value {
+      width: 75px;
+      min-width: 75px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .slider-input {
+      width: 75px;
+      text-align: center;
+    }
+    .upload-btn {
+      margin-top: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background: #3b82f6;
+      color: white;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .upload-btn:hover {
+      background: #2563eb;
+    }
+    .password-container {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #64748b;
+    }
+    .toggle-password:hover {
+      color: #3b82f6;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 0.5rem;
+    }
+    .dark .modal-content {
+      background-color: #1e293b;
+      color: white;
+      border-color: #475569;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .dark .close {
+      color: #cbd5e1;
+    }
+    .dark .close:hover,
+    .dark .close:focus {
+      color: white;
+    }
+    .json-preview {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+    .dark .json-preview {
+      background: #111827;
+      border-color: #374151;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
+  <header class="max-w-6xl mx-auto px-4 pt-6 pb-3">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">小智灵活远控(配套灵活固件)-By zhangMonday</h1>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pb-16 space-y-5">
+    <section class="card p-5">
+      <div class="grid-auto">
+        <div>
+          <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">选择设备</label>
+          <div class="flex items-center gap-2">
+            <select id="deviceSelect" class="field mt-1 flex-1">
+            </select>
+            <button id="manageDevices" class="btn btn-secondary">管理设备</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="deviceModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="text-lg font-semibold mb-4">管理设备</h2>
+        <div id="deviceList" class="space-y-4 mb-4">
+        </div>
+        <div class="space-y-2">
+          <input id="newDeviceName" type="text" class="field" placeholder="设备名称" />
+          <input id="newDeviceId" type="text" class="field" placeholder="让小智查一下固件版本和设备编号，填编号（字母+数字）" />
+          <button id="addDevice" class="btn btn-primary w-full">添加设备</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="sticky-header">
+      <div id="tabs" class="flex flex-wrap gap-2.5">
+      </div>
+    </section>
+
+    <section class="card p-5">
+      <div id="formArea" class="space-y-5">
+      </div>
+      <div class="flex flex-wrap gap-3 mt-5 border-t border-neutral-100 dark:border-neutral-700 pt-5">
+        <button id="btnSend" class="btn btn-primary flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+          发送指令
+        </button>
+        <button id="btnCopy" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+          </svg>
+          复制请求数据
+        </button>
+        <button id="btnReset" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          重置
+        </button>
+      </div>
+    </section>
+
+    <section class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          请求数据
+        </h2>
+        <span id="toggleJsonId" class="cursor-pointer ml-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        </span>
+      </div>
+      <pre id="jsonPreview" class="mono text-sm overflow-auto p-4 rounded-lg json-preview"></pre>
+    </section>
+
+    <section class="card p-5">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          返回结果
+        </h2>
+        <span id="statusBadge" class="badge bg-neutral-100 dark:bg-neutral-700 animate-pulse">等待操作</span>
+      </div>
+      <pre id="resultBox" class="mono text-sm overflow-auto p-4 mt-3 max-h-80 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
+    </section>
+  </main>
+
+  <script>
+console.log(`
+来控制台干什么，快来陪我van♂
+　               ▃▆█▇▄▖
+         　 　▟◤▖　　　◥█▎
+       　　◢◤　 ▐　　　　▐▉
+        ▗◤　　　▂　▗▖　　▕█▎
+        ◤　▗▅▖◥▄　▀◣　　█▊
+       ▐　▕▎◥▖◣◤　　　◢██
+       █◣　◥▅█▀　   ▐██◤
+       ▐█▙▂　　　      ██◤
+        ◥██◣　　　 ◢▄◤
+              ▀██▅▇▀
+`);
+
+    const INTERFACES = [
+      { key: "chat",     label: "远程对话",     type: "chat",    fields: [
+          { id:"text", label:"内容", placeholder:"例如：播放邓紫棋的多远都要在一起", type:"text" }
+        ]},
+      { key: "audio",    label: "发送音频",    type: "audio",   fields: [
+          { id:"url",  label:"链接", placeholder:"https://example.com/xxx.mp3", type:"text" },
+          { id:"text", label:"简介",    placeholder:"将显示在设备的信息胶囊", type:"text" }
+        ]},
+      { key: "music",    label: "播放音乐",    type: "music",   fields: [
+          { id:"text", label:"关键词", placeholder:"多远都要在一起 邓紫棋", type:"text" }
+        ]},
+      { key: "radio",    label: "播放电台",    type: "radio",   fields: [
+          { id:"id",   label:"ID", placeholder:"数字 ID", type:"number", attrs:{min:1} },
+          { id:"text", label:"名称", placeholder:"电台名称", type:"text" }
+        ]},
+      { key: "message",  label: "发消息",  type: "message", fields: [
+          { id:"text",    label:"标题",  placeholder:"不要太长的标题", type:"text" },
+          { id:"content", label:"内容",placeholder:"留言内容", type:"textarea" },
+          { id:"sound",   label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
+        ]},
+      { key: "qrcode",   label: "投送二维码",   type: "qrcode",  fields: [
+          { id:"content", label:"内容", placeholder:"https://example.com 或文本", type:"text" },
+          { id:"text",    label:"文案",    placeholder:"显示在信息胶囊", type:"text" },
+          { id:"sound",   label:"提示音",       placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
+        ]},
+      { key: "volume",   label: "改音量",   type: "volume",  fields: [
+          { id:"value", label:"值", placeholder:"音量值", type:"slider", attrs:{min:0,max:100} },
+          { id:"save",  label:"是否保存", type:"checkbox", default:false }
+        ]},
+      { key: "brightness", label:"改亮度", type:"brightness", fields: [
+          { id:"value", label:"值", placeholder:"亮度值", type:"slider", attrs:{min:0,max:100} },
+          { id:"save",  label:"是否保存", type:"checkbox", default:false }
+        ]},
+      { key: "theme",    label:"改主题",    type: "theme",    fields: [
+          { id:"value", label:"模式", type:"select", options:["light","dark"] }
+        ]},
+      { key: "image",    label: "发图片",    type: "image",   fields: [
+          { id:"url",  label:"链接", placeholder:"https://example.com/xxx.jpg", type:"text" },
+          { id:"text", label:"文案",    placeholder:"显示在设备的信息胶囊", type:"text" },
+          { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
+        ]},
+      { key: "status",   label: "设备状态",   type: "status",   fields: [] }
+    ];
+
+    const tabsEl      = document.getElementById('tabs');
+    const formAreaEl  = document.getElementById('formArea');
+    const jsonPreview = document.getElementById('jsonPreview');
+    const resultBox   = document.getElementById('resultBox');
+    const statusBadge = document.getElementById('statusBadge');
+    const deviceSelect = document.getElementById('deviceSelect');
+    const manageDevicesBtn = document.getElementById('manageDevices');
+    const deviceModal = document.getElementById('deviceModal');
+    const deviceListEl = document.getElementById('deviceList');
+    const newDeviceName = document.getElementById('newDeviceName');
+    const newDeviceId = document.getElementById('newDeviceId');
+    const addDeviceBtn = document.getElementById('addDevice');
+    const toggleJsonId = document.getElementById('toggleJsonId');
+    const btnSend     = document.getElementById('btnSend');
+    const btnCopy     = document.getElementById('btnCopy');
+    const btnReset    = document.getElementById('btnReset');
+    const modalClose = deviceModal.querySelector('.close');
+
+    let activeKey = 'chat';
+    let showDeviceId = false;
+    let websocket = null;
+    const state = {};
+    let devices = JSON.parse(localStorage.getItem('devices')) || [];
+    let currentDeviceIndex = -1;
+
+    const el = (tag, attrs={}, children=[]) => {
+      const n = document.createElement(tag);
+      for (const [k,v] of Object.entries(attrs)) {
+        if (k === 'class') n.className = v;
+        else if (k === 'text') n.textContent = v;
+        else if (k.startsWith('on') && typeof v === 'function') n[k] = v;
+        else n.setAttribute(k, v);
+      }
+      (Array.isArray(children) ? children : [children]).filter(Boolean).forEach(c => n.appendChild(c));
+      return n;
+    };
+
+    const pretty = (obj) => JSON.stringify(obj, null, 2);
+
+    function saveDevices() {
+      localStorage.setItem('devices', JSON.stringify(devices));
+    }
+
+    function renderDeviceSelect() {
+      deviceSelect.innerHTML = '';
+      if (devices.length === 0) {
+        deviceSelect.appendChild(el('option', { value: '-1', text: '无设备' }));
+      } else {
+        devices.forEach((dev, idx) => {
+          deviceSelect.appendChild(el('option', { value: idx, text: dev.name }));
+        });
+        if (currentDeviceIndex === -1 && devices.length > 0) {
+          currentDeviceIndex = 0;
+        }
+        deviceSelect.value = currentDeviceIndex;
+      }
+      refreshPreview();
+    }
+
+    function renderDeviceList() {
+      deviceListEl.innerHTML = '';
+      devices.forEach((dev, idx) => {
+        const item = el('div', { class: 'flex items-center justify-between gap-2' });
+        const nameInput = el('input', { class: 'field flex-1', type: 'text', value: dev.name });
+        const idInput = el('input', { class: 'field flex-1', type: 'text', value: dev.id });
+        const delBtn = el('button', { class: 'btn btn-secondary', text: '删除', onclick: () => {
+          devices.splice(idx, 1);
+          saveDevices();
+          renderDeviceList();
+          renderDeviceSelect();
+          if (currentDeviceIndex >= devices.length) currentDeviceIndex = devices.length - 1;
+        }});
+        nameInput.addEventListener('input', () => { dev.name = nameInput.value; saveDevices(); renderDeviceSelect(); });
+        idInput.addEventListener('input', () => { 
+          dev.id = idInput.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); 
+          idInput.value = dev.id; 
+          saveDevices(); 
+        });
+        item.appendChild(nameInput);
+        item.appendChild(idInput);
+        item.appendChild(delBtn);
+        deviceListEl.appendChild(item);
+      });
+    }
+
+    function buildPayload(){
+      const devId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
+      const def   = INTERFACES.find(x => x.key === activeKey);
+      const payload = { device_id: devId, type: def.type };
+      const values = state[activeKey] || {};
+      for (const f of def.fields) {
+        const val = values[f.id];
+        if (f.type === 'checkbox') {
+          if (typeof val === 'boolean') payload[f.id] = val;
+        } else if (val !== undefined && val !== null && val !== '') {
+          if (f.type === 'number' || f.type === 'slider') {
+            payload[f.id] = Number(val);
+          } else if (typeof val === 'string') {
+            payload[f.id] = val.replace(/"/g, '＂').replace(/'/g, '＇');
+          } else {
+            payload[f.id] = val;
+          }
+        }
+      }
+      return payload;
+    }
+
+    function getPreviewPayload() {
+      const payload = buildPayload();
+      if (!showDeviceId && payload.device_id) {
+        payload.device_id = '*'.repeat(payload.device_id.length);
+      }
+      return payload;
+    }
+
+    function renderTabs(){
+      tabsEl.innerHTML = '';
+      INTERFACES.forEach(def => {
+        const isActive = def.key === activeKey;
+        const tab = el('button', {
+          class: `tab ${isActive ? 'tab-active' : 'tab-idle'}`,
+          text: def.label,
+          onclick: () => { activeKey = def.key; renderTabs(); renderForm(); }
+        });
+        tabsEl.appendChild(tab);
+      });
+    }
+
+    function getDefaultValue(f){
+      if (f.type === 'checkbox') return !!f.default;
+      if (f.type === 'select') return f.options?.[0] ?? '';
+      if (f.type === 'slider') return f.attrs?.min || 0;
+      return '';
+    }
+
+    function renderForm(){
+      const def = INTERFACES.find(x => x.key === activeKey);
+      formAreaEl.innerHTML = '';
+
+      if (!state[activeKey]) {
+        state[activeKey] = {};
+        def.fields.forEach(f => state[activeKey][f.id] = getDefaultValue(f));
+      }
+
+      const descDiv = el('div', { class: 'text-sm text-neutral-600 dark:text-neutral-300 space-y-2' });
+      if (activeKey === 'chat') {
+        descDiv.innerHTML = `<p>向设备AI发送消息，可用于MCP调用、语音播发等</p><p>text: 播放邓紫棋的多远都要在一起</p><p>text: 播放清晨音乐电台</p><p>text: 播放内存卡里的歌曲</p><p>text: 把屏幕调到夜间模式</p><p>text: 音量调到 40 后念出下面这句话，注意不要与用户对话，念完立即关闭对话并退下："支付宝到账一百亿"</p><p>此功能会主动唤醒设备，并发送文字内容给 AI，效果等同于在设备旁边与之对话</p>`;
+      } else if (activeKey === 'audio') {
+        descDiv.innerHTML = `<p>调用设备解码播放能力，可用于歌曲、电台、语音留言等音频的精准推送</p><p>url: 音源链接，支持 .mp3、.flac、.wav、.m4a、.opus、.ogg、.m3u8</p><p>text: 音源简介、内容会显示在设备的信息胶囊</p>`;
+      } else if (activeKey === 'music') {
+        descDiv.innerHTML = `<p>调用设备线上音乐能力，相比于Chat接口点歌，此接口静默执行在线音乐搜索并播放，不会唤醒 AI</p><p>text: 多远都要在一起 邓紫棋 （尽量使用准确的歌曲和歌手名称并以空格分隔）</p>`;
+      } else if (activeKey === 'radio') {
+        descDiv.innerHTML = `<p>调用设备网络电台能力，相比于Chat接口播放电台，此接口静默执行电台播放，不会唤醒 AI</p><p>id: 电台编号，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p><p>text: 电台名称 ，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p>`;
+      } else if (activeKey === 'message') {
+        descDiv.innerHTML = `<p>给设备留言，内容会显示在设备的信息胶囊和对话界面</p><p>text: 消息标题，由于是在胶囊显示，建议不要太长</p><p>content: 留言内容，会记录在 AI 对话界面</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+      } else if (activeKey === 'qrcode') {
+        descDiv.innerHTML = `<p>向设备发送二维码消息</p><p>content: 二维码内容,文字或 URL 链接等，为空则关闭二维码</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+      } else if (activeKey === 'volume') {
+        descDiv.innerHTML = `<p>控制设备音量，实时调整或存储参数</p><p>value: 音量值</p><p>save: 是否存储</p>`;
+      } else if (activeKey === 'brightness') {
+        descDiv.innerHTML = `<p>控制设备背光亮度，实时调整或存储参数</p><p>value: 亮度值</p><p>save: 是否存储</p>`;
+      } else if (activeKey === 'theme') {
+        descDiv.innerHTML = `<p>控制设备主题模式，修改后会立即存储</p><p>value: 注意只能是 浅色 或 深色</p>`;
+      } else if (activeKey === 'image') {
+        descDiv.innerHTML = `<p>给设备发送图文消息</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+      } else if (activeKey === 'status') {
+        descDiv.innerHTML = `<p>通过WebSocket查询设备状态</p><p>设备响应将实时显示在下方返回结果区域，请求时请确保小智开机</p>`;
+      }
+      formAreaEl.appendChild(descDiv);
+
+      if (!def.fields.length) {
+        formAreaEl.appendChild(el('div', { class:'text-sm text-blue-600 dark:text-blue-300 italic py-2', text: '该接口无附加字段，直接点击"发送指令"即可' }));
+      } else {
+        const grid = el('div', { class:'grid-auto' });
+        def.fields.forEach(f => {
+          const wrap = el('div', {});
+          wrap.appendChild(el('label', { class:'text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5 flex items-center gap-1', text: f.label }));
+          
+          let input;
+          const common = { class:'field mt-1', id:`f-${activeKey}-${f.id}` };
+          if (f.type === 'textarea') {
+            input = el('textarea', { ...common, placeholder:f.placeholder || '', rows:4 });
+          } else if (f.type === 'select') {
+            input = el('select', { ...common });
+            (f.options || []).forEach(op => input.appendChild(el('option', { value:String(op), text:String(op) })));
+          } else if (f.type === 'checkbox') {
+            const box = el('div', { class:'mt-1 flex items-center gap-3' });
+            input = el('input', { type:'checkbox', id:common.id, class:'w-5 h-5 rounded focus:ring-blue-500' });
+            input.checked = !!state[activeKey][f.id];
+            box.appendChild(input);
+            box.appendChild(el('label', { for:common.id, class:'text-sm cursor-pointer', text:'启用此选项' }));
+            wrap.appendChild(box);
+            grid.appendChild(wrap);
+            input.addEventListener('change', () => { state[activeKey][f.id] = input.checked; refreshPreview(); });
+            return;
+          } else if (f.type === 'slider') {
+            const container = el('div', { class: 'slider-container mt-1' });
+            input = el('input', { 
+              type: 'range', 
+              class: 'slider',
+              min: f.attrs?.min || 0,
+              max: f.attrs?.max || 100,
+              step: f.attrs?.step || 1
+            });
+            const manualInput = el('input', {
+              type: 'number',
+              class: 'field slider-input',
+              min: f.attrs?.min || 0,
+              max: f.attrs?.max || 100,
+              value: state[activeKey][f.id] || getDefaultValue(f)
+            });
+            container.appendChild(input);
+            container.appendChild(manualInput);
+            wrap.appendChild(container);
+            grid.appendChild(wrap);
+            
+            input.value = state[activeKey][f.id] || getDefaultValue(f);
+            input.addEventListener('input', () => {
+              state[activeKey][f.id] = input.value;
+              manualInput.value = input.value;
+              refreshPreview();
+            });
+            manualInput.addEventListener('input', () => {
+              let val = Number(manualInput.value);
+              const min = f.attrs?.min || 0;
+              const max = f.attrs?.max || 100;
+              if (isNaN(val)) val = min;
+              val = Math.max(min, Math.min(max, val));
+              state[activeKey][f.id] = val;
+              input.value = val;
+              manualInput.value = val;
+              refreshPreview();
+            });
+            return;
+          } else {
+            input = el('input', { ...common, type: f.type || 'text', placeholder: f.placeholder || '' });
+            if (f.attrs) {
+              Object.entries(f.attrs).forEach(([k,v]) => input.setAttribute(k, v));
+            }
+          }
+
+          const v = state[activeKey][f.id];
+          if (f.type === 'select') input.value = String(v ?? getDefaultValue(f));
+          else input.value = v ?? '';
+
+          input.addEventListener('input', () => {
+            state[activeKey][f.id] = input.value;
+            refreshPreview();
+          });
+
+          wrap.appendChild(input);
+          
+          if ((activeKey === 'audio' || activeKey === 'image') && f.id === 'url') {
+            const uploadBtn = el('div', {
+              class: 'upload-btn',
+              text: '点这里上传文件并获取临时链接',
+              onclick: () => window.open('https://tmpfiles.org/', '_blank')
+            });
+            wrap.appendChild(uploadBtn);
+          }
+          
+          grid.appendChild(wrap);
+        });
+        formAreaEl.appendChild(grid);
+      }
+
+      refreshPreview();
+    }
+
+    function refreshPreview(){
+      const payload = getPreviewPayload();
+      jsonPreview.textContent = pretty(payload);
+    }
+
+    function setStatus(text, type){
+      statusBadge.textContent = text;
+      statusBadge.className = `badge ${type ? (type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900' : (type === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900' : 'bg-blue-100 text-blue-800 dark:bg-blue-900')) : 'bg-neutral-100 dark:bg-neutral-700'}`;
+    }
+
+    async function sendNow(){
+      if (activeKey === 'status') {
+        return sendStatusRequest();
+      }
+      
+      const payload = buildPayload();
+      resultBox.textContent = '正在向设备发送数据...';
+      setStatus('发送中', 'info');
+
+      const url = '/api/push';
+
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 20000);
+
+      try {
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        clearTimeout(timer);
+
+        let dataText = await resp.text();
+        let parsed = null;
+        try { parsed = JSON.parse(dataText); } catch {}
+        const out = {
+          http状态: resp.status + ' ' + resp.statusText,
+          请求地址: 'https://nodelua.com/home_iot/api/push.php',
+          请求数据: payload,
+          返回结果: parsed || dataText,
+        };
+        resultBox.textContent = pretty(out);
+        setStatus(resp.ok ? '发送成功' : '发送失败', resp.ok ? 'success' : 'error');
+      } catch (err) {
+        clearTimeout(timer);
+        const out = {
+          错误: String(err),
+          提示: '请检查网络连接或接口地址'
+        };
+        resultBox.textContent = pretty(out);
+        setStatus('网络错误', 'error');
+      }
+    }
+
+    function sendStatusRequest() {
+      const deviceId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
+      if (!deviceId) {
+        setStatus('设备ID不能为空', 'error');
+        resultBox.textContent = '错误：请先选择或添加设备';
+        return;
+      }
+
+      resultBox.textContent = '正在连接WebSocket服务器...';
+      setStatus('连接中', 'info');
+
+      if (websocket) {
+        websocket.close();
+      }
+
+      try {
+        websocket = new WebSocket('wss://nodelua.com/wss');
+
+        websocket.onopen = function(event) {
+          setStatus('已连接', 'success');
+          resultBox.textContent = 'WebSocket连接已成功建立，发送状态查询请求...\n';
+          
+          const request = {
+            push: deviceId,
+            type: "status"
+          };
+          websocket.send(JSON.stringify(request));
+          resultBox.textContent += '已发送: ' + JSON.stringify(request, null, 2) + '\n\n';
+        };
+
+        websocket.onmessage = function(event) {
+          resultBox.textContent += '收到响应: ' + event.data + '\n';
+          setStatus('收到响应', 'success');
+          
+          try {
+            const data = JSON.parse(event.data);
+            resultBox.textContent += '解析后的JSON:\n' + JSON.stringify(data, null, 2) + '\n';
+          } catch (e) {
+            resultBox.textContent += '响应不是有效的JSON格式\n';
+          }
+        };
+
+        websocket.onerror = function(error) {
+          resultBox.textContent += 'WebSocket错误: ' + JSON.stringify(error) + '\n';
+          setStatus('连接错误', 'error');
+        };
+
+        websocket.onclose = function(event) {
+          resultBox.textContent += `WebSocket连接已关闭，代码: ${event.code}, 原因: ${event.reason || '无'}\n`;
+          setStatus('连接关闭', 'info');
+          websocket = null;
+        };
+
+        setTimeout(() => {
+          if (websocket && websocket.readyState === WebSocket.OPEN) {
+            resultBox.textContent += '查询超时/查询结束，正在关闭连接...\n';
+            setStatus('查询超时/查询结束', 'error');
+            websocket.close();
+          }
+        }, 10000);
+
+      } catch (error) {
+        resultBox.textContent = '创建WebSocket连接时发生错误: ' + error.message;
+        setStatus('连接失败', 'error');
+      }
+    }
+
+    function copyJSON(){
+      const text = pretty(buildPayload());
+      navigator.clipboard.writeText(text).then(() => {
+        setStatus('已复制', 'success');
+      }).catch(()=>{
+        setStatus('复制失败', 'error');
+      });
+    }
+
+    function resetFields(){
+      const def = INTERFACES.find(x => x.key === activeKey);
+      state[activeKey] = {};
+      def.fields.forEach(f => state[activeKey][f.id] = getDefaultValue(f));
+      renderForm();
+      setStatus('已重置', 'info');
+    }
+
+    function toggleDeviceIdVisibility() {
+      showDeviceId = !showDeviceId;
+      
+      if (showDeviceId) {
+        toggleJsonId.innerHTML = `
+          <svg xmlns="http://www.wwww.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+          </svg>
+        `;
+      } else {
+        toggleJsonId.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        `;
+      }
+      
+      refreshPreview();
+    }
+
+    renderDeviceSelect();
+    renderTabs();
+    renderForm();
+    setStatus('等待操作');
+
+    deviceSelect.addEventListener('change', () => {
+      currentDeviceIndex = parseInt(deviceSelect.value);
+      refreshPreview();
+    });
+
+    manageDevicesBtn.addEventListener('click', () => {
+      renderDeviceList();
+      deviceModal.style.display = 'block';
+    });
+
+    modalClose.addEventListener('click', () => {
+      deviceModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target === deviceModal) {
+        deviceModal.style.display = 'none';
+      }
+    });
+
+    addDeviceBtn.addEventListener('click', () => {
+      const name = newDeviceName.value.trim();
+      const id = newDeviceId.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      if (name && id) {
+        devices.push({ name, id });
+        saveDevices();
+        renderDeviceList();
+        renderDeviceSelect();
+        newDeviceName.value = '';
+        newDeviceId.value = '';
+      }
+    });
+
+    toggleJsonId.addEventListener('click', toggleDeviceIdVisibility);
+
+    btnSend.addEventListener('click', sendNow);
+    btnCopy.addEventListener('click', copyJSON);
+    btnReset.addEventListener('click', resetFields);
+  </script>
+</body>
+</html>
