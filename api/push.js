@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      const resp = await fetch("http://nodelua.com/home_iot/api/push.php", {
+      const resp = await fetch("https://nodelua.com/home_iot/api/push.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
