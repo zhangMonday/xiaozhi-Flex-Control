@@ -241,6 +241,7 @@
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
       <div>
         <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">小智灵活远控(配套灵活固件)-By zhangMonday</h1>
+        <p class="text-sm text-neutral-600 dark:text-neutral-300 mt-2">本网站仅用于调用<a href="https://nodelua.com/home_iot/docs/#/guide/socket" class="text-blue-500 hover:underline" target="_blank">灵活接口</a>，实现远程控制小智AI。所有功能均由<a href="https://nodelua.com/home_iot/docs/#/guide/flex" class="text-blue-500 hover:underline" target="_blank">灵活固件</a>提供，本网站站主与灵活固件作者没有从属关系。</p>
       </div>
     </div>
   </header>
@@ -333,23 +334,21 @@
       </div>
       <pre id="resultBox" class="mono text-sm overflow-auto p-4 mt-3 max-h-80 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
     </section>
+
+    <section class="card p-5">
+      <h2 class="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-100">支持与开源</h2>
+      <p class="text-sm text-neutral-600 dark:text-neutral-300 mb-3">
+        <a href="https://donate.zhangmonday.top" class="btn btn-primary inline-block" target="_blank">捐赠支持</a>
+        <br>
+        请注意：本网站捐赠资金的对象是本站的站长，而非灵活固件的作者。如果你想支持灵活固件，请在其<a href="https://nodelua.com/home_iot/docs/#/" class="text-blue-500 hover:underline" target="_blank">官网</a>找到作者的联系方式。
+      </p>
+      <p class="text-sm text-neutral-600 dark:text-neutral-300">
+        本项目开源地址：<a href="https://github.com/zhangMonday/xiaozhi-Flex-Control/" class="text-blue-500 hover:underline" target="_blank">https://github.com/zhangMonday/xiaozhi-Flex-Control/</a>
+      </p>
+    </section>
   </main>
 
   <script>
-console.log(`
-来控制台干什么，快来陪我van♂
-　               ▃▆█▇▄▖
-         　 　▟◤▖　　　◥█▎
-       　　◢◤　 ▐　　　　▐▉
-        ▗◤　　　▂　▗▖　　▕█▎
-        ◤　▗▅▖◥▄　▀◣　　█▊
-       ▐　▕▎◥▖◣◤　　　◢██
-       █◣　◥▅█▀　   ▐██◤
-       ▐█▙▂　　　      ██◤
-        ◥██◣　　　 ◢▄◤
-              ▀██▅▇▀
-`);
-
     const INTERFACES = [
       { key: "chat",     label: "远程对话",     type: "chat",    fields: [
           { id:"text", label:"内容", placeholder:"例如：播放邓紫棋的多远都要在一起", type:"text" }
@@ -807,7 +806,7 @@ console.log(`
       
       if (showDeviceId) {
         toggleJsonId.innerHTML = `
-          <svg xmlns="http://www.wwww.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
           </svg>
         `;
