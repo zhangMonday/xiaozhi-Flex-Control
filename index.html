@@ -19,7 +19,7 @@
       overflow: hidden;
     }
     .dark .card {
-      background: #334155;
+      background: #1e293b;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
     }
     .field {
@@ -31,7 +31,7 @@
       transition: all 0.15s ease;
     }
     .dark .field {
-      background: #1e293b;
+      background: #334155;
       border-color: #475569;
       color: white;
     }
@@ -55,7 +55,8 @@
       box-shadow: 0 -2px 0 #2563eb inset;
     }
     .dark .tab-active {
-      background: #1e293b;
+      background: #334155;
+      color: #60a5fa;
     }
     .tab-idle {
       background: transparent;
@@ -65,7 +66,7 @@
       background: #f1f5f9;
     }
     .dark .tab-idle:hover {
-      background: #2b3a50;
+      background: #475569;
     }
     .btn {
       padding: 0.5rem 1rem;
@@ -86,15 +87,15 @@
       border: 1px solid #d1d5db;
     }
     .dark .btn-secondary {
-      background: #334155;
+      background: #475569;
       color: #e5e7eb;
-      border-color: #475569;
+      border-color: #64748b;
     }
     .btn-secondary:hover {
       background: #e5e7eb;
     }
     .dark .btn-secondary:hover {
-      background: #475569;
+      background: #64748b;
     }
     .badge {
       padding: 0.25rem 0.75rem;
@@ -209,7 +210,7 @@
       border-radius: 0.5rem;
     }
     .dark .modal-content {
-      background-color: #1e293b;
+      background-color: #334155;
       color: white;
       border-color: #475569;
     }
@@ -233,6 +234,7 @@
     .dark .json-preview {
       background: #111827;
       border-color: #374151;
+      color: #e5e7eb;
     }
   </style>
 </head>
@@ -349,6 +351,19 @@
   </main>
 
   <script>
+  console.log(`
+来控制台干什么，快来陪我van♂
+　               ▃▆█▇▄▖
+         　 　▟◤▖　　　◥█▎
+       　　◢◤　 ▐　　　　▐▉
+        ▗◤　　　▂　▗▖　　▕█▎
+        ◤　▗▅▖◥▄　▀◣　　█▊
+       ▐　▕▎◥▖◣◤　　　◢██
+       █◣　◥▅█▀　   ▐██◤
+       ▐█▙▂　　　      ██◤
+        ◥██◣　　　 ◢▄◤
+              ▀██▅▇▀
+`);
     const INTERFACES = [
       { key: "chat",     label: "远程对话",     type: "chat",    fields: [
           { id:"text", label:"内容", placeholder:"例如：播放邓紫棋的多远都要在一起", type:"text" }
@@ -669,7 +684,7 @@
 
     function setStatus(text, type){
       statusBadge.textContent = text;
-      statusBadge.className = `badge ${type ? (type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900' : (type === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900' : 'bg-blue-100 text-blue-800 dark:bg-blue-900')) : 'bg-neutral-100 dark:bg-neutral-700'}`;
+      statusBadge.className = `badge ${type ? (type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : (type === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200')) : 'bg-neutral-100 dark:bg-neutral-700 dark:text-neutral-300'}`;
     }
 
     async function sendNow(){
