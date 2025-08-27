@@ -789,7 +789,7 @@
           { id:"text", label:"文案",    placeholder:"显示在设备的信息胶囊", type:"text" },
           { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
         ]},
-      { key: "mijia",    label: "Mijia（米家控制）",    type: "mijia",   fields: [
+      { key: "mijia",    label: "米家控制",    type: "mijia",   fields: [
           { id:"siid", label:"SIID", placeholder:"设备子编号", type:"text" },
           { id:"state", label:"状态", type:"select", options:[0,1] }
         ]},
@@ -933,8 +933,10 @@
     function buildPayload(){
       const devId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
       const def   = INTERFACES.find(x => x.key === activeKey);
-      const payload = {};
-      payload.type = def.type;
+      const payload = {
+        device_id: devId,
+        type: def.type
+      };
       const values = state[activeKey] || {};
       if (activeKey === 'mijia') {
         if (selectedMijiaIndex >= 0 && mijiaDevices[selectedMijiaIndex]) {
@@ -962,18 +964,16 @@
           }
         }
       }
-      payload.device_id = devId;
       return payload;
     }
 
-    function getPreviewPayload() {
+   function getPreviewPayload() {
       const payload = buildPayload();
       if (!showDeviceId && payload.device_id) {
         payload.device_id = '*'.repeat(payload.device_id.length);
       }
       return payload;
     }
-
     function renderTabs(){
       tabsEl.innerHTML = '';
       INTERFACES.forEach(def => {
@@ -1391,4 +1391,4 @@
     });
   </script>
 </body>
-</html
+</html>
