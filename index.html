@@ -6,189 +6,327 @@
   <title>小智灵活远控</title>
   <link rel="icon" href="data:,">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark: #1e293b;
+      --light: #f8fafc;
+    }
+    
     .grid-auto {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
     }
+    
     .card {
       background: white;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.03);
     }
+    
+    .card:hover {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
     .dark .card {
       background: #1e293b;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
+    
+    .dark .card:hover {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+    
     .field {
       width: 100%;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
       background: white;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
     }
+    
     .dark .field {
       background: #334155;
       border-color: #475569;
       color: white;
     }
+    
     .field:focus {
       outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     }
+    
     .dark .field:focus {
-      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.5);
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
     }
+    
     .tab {
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem 0.375rem 0 0;
-      font-weight: 500;
-      transition: all 0.2s;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem 0.5rem 0 0;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
+    
     .tab-active {
       background: white;
-      color: #2563eb;
-      box-shadow: 0 -2px 0 #2563eb inset;
+      color: var(--primary);
+      box-shadow: 0 -3px 0 var(--primary) inset;
     }
+    
     .dark .tab-active {
       background: #334155;
       color: #60a5fa;
     }
+    
     .tab-idle {
       background: transparent;
       color: #64748b;
     }
+    
     .tab-idle:hover {
       background: #f1f5f9;
+      color: #475569;
     }
+    
     .dark .tab-idle:hover {
       background: #475569;
+      color: #cbd5e1;
     }
+    
     .btn {
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      font-weight: 500;
-      transition: all 0.2s;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+      cursor: pointer;
     }
+    
     .btn-primary {
-      background: #3b82f6;
+      background: var(--primary);
       color: white;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
     }
+    
     .btn-primary:hover {
-      background: #2563eb;
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.3);
     }
+    
     .btn-secondary {
       background: #f1f5f9;
       color: #334155;
       border: 1px solid #d1d5db;
     }
+    
     .dark .btn-secondary {
       background: #475569;
       color: #e5e7eb;
       border-color: #64748b;
     }
+    
     .btn-secondary:hover {
-      background: #e5e7eb;
+      background: #e2e8f0;
+      transform: translateY(-2px);
     }
+    
     .dark .btn-secondary:hover {
       background: #64748b;
     }
-    .badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      font-weight: 500;
+    
+    .btn-success {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
     }
+    
+    .btn-success:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
+    }
+    
+    .badge {
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    .badge-pulse {
+      position: relative;
+    }
+    
+    .badge-pulse::before {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.8;
+      top: 50%;
+      left: 0.5rem;
+      transform: translateY(-50%);
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 0.3; }
+      100% { opacity: 0.8; }
+    }
+    
     .mono {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
+    
     .sticky-header {
       position: sticky;
       top: 0;
-      background: linear-gradient(to bottom, white 0%, white 90%, transparent 100%);
+      background: linear-gradient(to bottom, rgba(248, 250, 252, 0.95) 0%, rgba(248, 250, 252, 0.95) 90%, transparent 100%);
       z-index: 10;
-      padding: 0.75rem 0;
+      padding: 1rem 0;
+      backdrop-filter: blur(5px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
+    
     .dark .sticky-header {
-      background: linear-gradient(to bottom, #0f172a 0%, #0f172a 90%, transparent 100%);
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.95) 90%, transparent 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
+    
     @media (max-width: 640px) {
       .grid-auto {
         grid-template-columns: 1fr;
       }
     }
+    
     .slider-container {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 1rem;
     }
+    
     .slider {
       flex: 1;
-      height: 5px;
+      height: 6px;
       -webkit-appearance: none;
       appearance: none;
       background: #d1d5db;
       border-radius: 5px;
       outline: none;
     }
+    
+    .dark .slider {
+      background: #475569;
+    }
+    
     .slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
-      background: #3b82f6;
+      background: var(--primary);
       cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: 2px solid white;
     }
+    
     .slider::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
-      background: #3b82f6;
+      background: var(--primary);
       cursor: pointer;
-      border: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: 2px solid white;
     }
+    
     .slider-value {
-      width: 75px;
-      min-width: 75px;
+      width: 80px;
+      min-width: 80px;
       text-align: center;
-      font-weight: 500;
-    }
-    .slider-input {
-      width: 75px;
-      text-align: center;
-    }
-    .upload-btn {
-      margin-top: 0.5rem;
-      padding: 0.25rem 0.75rem;
-      background: #3b82f6;
-      color: white;
+      font-weight: 600;
+      padding: 0.5rem;
+      background: #f1f5f9;
       border-radius: 0.375rem;
-      font-size: 0.875rem;
+    }
+    
+    .dark .slider-value {
+      background: #475569;
+      color: white;
+    }
+    
+    .slider-input {
+      width: 80px;
+      text-align: center;
+      padding: 0.5rem;
+    }
+    
+    .upload-btn {
+      margin-top: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
       cursor: pointer;
       display: inline-block;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
     }
+    
     .upload-btn:hover {
-      background: #2563eb;
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
     }
+    
     .password-container {
       position: relative;
     }
+    
     .toggle-password {
       position: absolute;
-      right: 0.75rem;
+      right: 1rem;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
       color: #64748b;
     }
+    
     .toggle-password:hover {
-      color: #3b82f6;
+      color: var(--primary);
     }
+    
     .modal {
       display: none;
       position: fixed;
@@ -198,65 +336,290 @@
       width: 100%;
       height: 100%;
       overflow: auto;
-      background-color: rgba(0,0,0,0.4);
+      background-color: rgba(0,0,0,0.5);
+      backdrop-filter: blur(3px);
+      animation: fadeIn 0.2s ease;
     }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
     .modal-content {
       background-color: #fefefe;
-      margin: 15% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      max-width: 500px;
-      border-radius: 0.5rem;
+      margin: 10% auto;
+      padding: 25px;
+      border: none;
+      width: 90%;
+      max-width: 550px;
+      border-radius: 1rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      animation: slideIn 0.3s ease;
     }
+    
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
     .dark .modal-content {
       background-color: #334155;
       color: white;
-      border-color: #475569;
     }
+    
     .close {
-      color: #aaa;
+      color: #94a3b8;
       float: right;
       font-size: 28px;
       font-weight: bold;
+      line-height: 1;
+      transition: all 0.2s ease;
     }
+    
+    .close:hover,
+    .close:focus {
+      color: #64748b;
+      cursor: pointer;
+    }
+    
     .dark .close {
-      color: #cbd5e1;
+      color: #94a3b8;
     }
+    
     .dark .close:hover,
     .dark .close:focus {
-      color: white;
+      color: #cbd5e1;
     }
+    
     .json-preview {
       background: #f9fafb;
       border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
     }
+    
     .dark .json-preview {
       background: #111827;
       border-color: #374151;
       color: #e5e7eb;
     }
+    
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #1e293b;
+    }
+    
+    .dark .section-title {
+      color: #f1f5f9;
+    }
+    
+    .section-title-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+    }
+    
+    .dark .section-title-icon {
+      background: rgba(96, 165, 250, 0.1);
+    }
+    
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .dark .action-buttons {
+      border-top: 1px solid #334155;
+    }
+    
+    .footer-card {
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .footer-card p {
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+    
+    .device-select-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .device-select-label {
+      font-weight: 600;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .dark .device-select-label {
+      color: #e2e8f0;
+    }
+    
+    .device-select-wrapper {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    .device-select-wrapper select {
+      flex: 1;
+    }
+    
+    .result-box {
+      min-height: 150px;
+      max-height: 300px;
+      overflow-y: auto;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .dark .result-box {
+      background: #0f172a;
+      border-color: #334155;
+    }
+    
+    .form-description {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+    
+    .dark .form-description {
+      background: #1e3a8a;
+      border-left-color: #60a5fa;
+    }
+    
+    .form-field-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-field-label.required::after {
+      content: "*";
+      color: var(--danger);
+      margin-left: 0.25rem;
+    }
+    
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    
+    .checkbox-input {
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 0.25rem;
+      border: 2px solid #cbd5e1;
+      accent-color: var(--primary);
+    }
+    
+    .dark .checkbox-input {
+      border-color: #64748b;
+    }
+    
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+    }
+    
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .tooltip .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--dark) transparent transparent transparent;
+    }
   </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
-  <header class="max-w-6xl mx-auto px-4 pt-6 pb-3">
-    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
+  <header class="max-w-6xl mx-auto px-4 pt-8 pb-6">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">小智灵活远控(配套灵活固件)-By zhangMonday</h1>
-        <p class="text-sm text-neutral-600 dark:text-neutral-300 mt-2">本网站仅用于调用<a href="https://nodelua.com/home_iot/docs/#/guide/socket" class="text-blue-500 hover:underline" target="_blank">灵活接口</a>，实现远程控制小智AI。所有功能均由<a href="https://nodelua.com/home_iot/docs/#/guide/flex" class="text-blue-500 hover:underline" target="_blank">灵活固件</a>提供，本网站站主与灵活固件作者没有从属关系。</p>
+        <h1 class="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-3">
+          <i class="fas fa-robot text-blue-500"></i>
+          小智灵活远控
+        </h1>
+        <p class="text-sm text-neutral-600 dark:text-neutral-300 mt-3 max-w-3xl">
+          本网站仅用于调用<a href="https://nodelua.com/home_iot/docs/#/guide/socket" class="text-blue-500 hover:underline font-medium" target="_blank">灵活接口</a>，实现远程控制小智AI。
+          所有功能均由<a href="https://nodelua.com/home_iot/docs/#/guide/flex" class="text-blue-500 hover:underline font-medium" target="_blank">灵活固件</a>提供，本网站站主与灵活固件作者没有从属关系。
+        </p>
+      </div>
+      <div class="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium">
+        <i class="fas fa-microchip mr-2"></i>By zhangMonday
       </div>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 pb-16 space-y-5">
-    <section class="card p-5">
+  <main class="max-w-6xl mx-auto px-4 pb-16 space-y-6">
+    <section class="card p-6">
       <div class="grid-auto">
-        <div>
-          <label class="text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">选择设备</label>
-          <div class="flex items-center gap-2">
-            <select id="deviceSelect" class="field mt-1 flex-1">
+        <div class="device-select-container">
+          <label class="device-select-label">
+            <i class="fas fa-microchip"></i>
+            选择设备
+          </label>
+          <div class="device-select-wrapper">
+            <select id="deviceSelect" class="field">
             </select>
-            <button id="manageDevices" class="btn btn-secondary">管理设备</button>
+            <button id="manageDevices" class="btn btn-secondary">
+              <i class="fas fa-cog"></i>
+              管理设备
+            </button>
           </div>
         </div>
       </div>
@@ -265,87 +628,88 @@
     <div id="deviceModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
-        <h2 class="text-lg font-semibold mb-4">管理设备</h2>
-        <div id="deviceList" class="space-y-4 mb-4">
+        <h2 class="text-xl font-bold mb-5 flex items-center gap-2">
+          <i class="fas fa-cogs text-blue-500"></i>
+          管理设备
+        </h2>
+        <div id="deviceList" class="space-y-4 mb-5">
         </div>
-        <div class="space-y-2">
+        <div class="space-y-3">
           <input id="newDeviceName" type="text" class="field" placeholder="设备名称" />
           <input id="newDeviceId" type="text" class="field" placeholder="让小智查一下固件版本和设备编号，填编号（字母+数字）" />
-          <button id="addDevice" class="btn btn-primary w-full">添加设备</button>
+          <button id="addDevice" class="btn btn-primary w-full">
+            <i class="fas fa-plus"></i>
+            添加设备
+          </button>
         </div>
       </div>
     </div>
 
     <section class="sticky-header">
-      <div id="tabs" class="flex flex-wrap gap-2.5">
+      <div id="tabs" class="flex flex-wrap gap-3">
       </div>
     </section>
 
-    <section class="card p-5">
+    <section class="card p-6">
       <div id="formArea" class="space-y-5">
       </div>
-      <div class="flex flex-wrap gap-3 mt-5 border-t border-neutral-100 dark:border-neutral-700 pt-5">
-        <button id="btnSend" class="btn btn-primary flex items-center gap-1.5">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-          </svg>
+      <div class="action-buttons">
+        <button id="btnSend" class="btn btn-primary">
+          <i class="fas fa-paper-plane"></i>
           发送指令
         </button>
         <button id="btnCopy" class="btn btn-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-          </svg>
+          <i class="fas fa-copy"></i>
           复制请求数据
         </button>
         <button id="btnReset" class="btn btn-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
+          <i class="fas fa-redo"></i>
           重置
         </button>
       </div>
     </section>
 
-    <section class="card p-5">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
+    <section class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="section-title">
+          <div class="section-title-icon">
+            <i class="fas fa-code"></i>
+          </div>
           请求数据
         </h2>
-        <span id="toggleJsonId" class="cursor-pointer ml-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
+        <span id="toggleJsonId" class="cursor-pointer p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="切换设备ID显示">
+          <i class="fas fa-eye text-blue-500"></i>
         </span>
       </div>
-      <pre id="jsonPreview" class="mono text-sm overflow-auto p-4 rounded-lg json-preview"></pre>
+      <pre id="jsonPreview" class="mono text-sm overflow-auto p-5 rounded-lg json-preview"></pre>
     </section>
 
-    <section class="card p-5">
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+    <section class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="section-title">
+          <div class="section-title-icon">
+            <i class="fas fa-terminal"></i>
+          </div>
           返回结果
         </h2>
-        <span id="statusBadge" class="badge bg-neutral-100 dark:bg-neutral-700 animate-pulse">等待操作</span>
+        <span id="statusBadge" class="badge bg-neutral-100 dark:bg-neutral-700 badge-pulse">等待操作</span>
       </div>
-      <pre id="resultBox" class="mono text-sm overflow-auto p-4 mt-3 max-h-80 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700"></pre>
+      <pre id="resultBox" class="mono text-sm overflow-auto p-5 rounded-lg result-box"></pre>
     </section>
 
-    <section class="card p-5">
-      <h2 class="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-100">支持与开源</h2>
-      <p class="text-sm text-neutral-600 dark:text-neutral-300 mb-3">
-        <a href="https://donate.zhangmonday.top" class="btn btn-primary inline-block" target="_blank">点我捐赠</a>
+    <section class="card footer-card">
+      <h2 class="section-title justify-center">
+        <div class="section-title-icon">
+          <i class="fas fa-heart text-red-500"></i>
+        </div>
+        支持与感谢
+      </h2>
+      <p class="text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
+        <button class="btn btn-primary inline-block mb-4">
+          <i class="fas fa-donate"></i> 点我捐赠
+        </button>
         <br>
-        请注意：本网站捐赠资金的对象是本站的站长，而非灵活固件的作者。如果你想支持灵活固件，请在其<a href="https://nodelua.com/home_iot/docs/#/" class="text-blue-500 hover:underline" target="_blank">官网</a>找到作者的联系方式。
-      </p>
-      <p class="text-sm text-neutral-600 dark:text-neutral-300">
-        本项目开源地址：<a href="https://github.com/zhangMonday/xiaozhi-Flex-Control/" class="text-blue-500 hover:underline" target="_blank">https://github.com/zhangMonday/xiaozhi-Flex-Control/</a>
+        请注意：本网站捐赠资金的对象是本站的站长，而非灵活固件的作者。如果你想支持灵活固件，请在其<a href="https://nodelua.com/home_iot/docs/#/" class="text-blue-500 hover:underline font-medium" target="_blank">官网</a>找到作者的联系方式。
       </p>
     </section>
   </main>
@@ -554,7 +918,7 @@
 
       const descDiv = el('div', { class: 'text-sm text-neutral-600 dark:text-neutral-300 space-y-2' });
       if (activeKey === 'chat') {
-        descDiv.innerHTML = `<p>向设备AI发送消息，可用于MCP调用、语音播发等</p><p>text: 播放邓紫棋的多远都要在一起</p><p>text: 播放清晨音乐电台</p><p>text: 播放内存卡里的歌曲</p><p>text: 把屏幕调到夜间模式</p><p>text: 音量调到 40 后念出下面这句话，注意不要与用户对话，念完立即关闭对话并退下："支付宝到账一百亿"</p><p>此功能会主动唤醒设备，并发送文字内容给 AI，效果等同于在设备旁边与之对话</p>`;
+        descDiv.innerHTML = `<p>向设备AI发送消息，可用于MCP调用、语音播发等</p><p>text: 播放邓紫棋的多远都要在一起</p><p>text: 播放清晨音乐电台</p><p>text: 播放内存卡里的歌曲</p><p>text: 把屏幕调到夜间模式</p><p>text: 音量调到 40 后念出下面这句话，注意不要与用户对话，念完立即关闭对话并退下：\"支付宝到账一百亿\"</p><p>此功能会主动唤醒设备，并发送文字内容给 AI，效果等同于在设备旁边与之对话</p>`;
       } else if (activeKey === 'audio') {
         descDiv.innerHTML = `<p>调用设备解码播放能力，可用于歌曲、电台、语音留言等音频的精准推送</p><p>url: 音源链接，支持 .mp3、.flac、.wav、.m4a、.opus、.ogg、.m3u8</p><p>text: 音源简介、内容会显示在设备的信息胶囊</p>`;
       } else if (activeKey === 'music') {
