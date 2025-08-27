@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -900,17 +901,9 @@
       container.innerHTML = '';
       mijiaDevices.forEach((dev, idx) => {
         const item = el('div', { class: 'flex items-center gap-2 border-b pb-2' });
-        const checkbox = el('input', { type: 'checkbox', class: 'checkbox-input', checked: selectedMijiaIndex === idx });
-        checkbox.addEventListener('change', () => {
-          if (checkbox.checked) {
-            selectedMijiaIndex = idx;
-            // Uncheck others
-            document.querySelectorAll('#mijiaList input[type="checkbox"]').forEach(cb => {
-              if (cb !== checkbox) cb.checked = false;
-            });
-          } else {
-            selectedMijiaIndex = -1;
-          }
+        const radio = el('input', { type: 'radio', name: 'mijiaSelect', class: 'checkbox-input', checked: selectedMijiaIndex === idx });
+        radio.addEventListener('change', () => {
+          selectedMijiaIndex = idx;
           refreshPreview();
         });
         const info = el('div', { class: 'flex-1', text: `${dev.name} (IP: ${dev.ip}, DID: ${dev.did})` });
@@ -930,7 +923,7 @@
           renderMijiaList(document.getElementById('mijiaList'));
           refreshPreview();
         }});
-        item.appendChild(checkbox);
+        item.appendChild(radio);
         item.appendChild(info);
         item.appendChild(editBtn);
         item.appendChild(delBtn);
@@ -941,22 +934,9 @@
     function buildPayload(){
       const devId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
       const def   = INTERFACES.find(x => x.key === activeKey);
-      const payload = { device_id: devId, type: def.type };
+      const payload = {};
+      payload.type = def.type;
       const values = state[activeKey] || {};
-      for (const f of def.fields) {
-        const val = values[f.id];
-        if (f.type === 'checkbox') {
-          if (typeof val === 'boolean') payload[f.id] = val;
-        } else if (val !== undefined && val !== null && val !== '') {
-          if (f.type === 'number' || f.type === 'slider') {
-            payload[f.id] = Number(val);
-          } else if (typeof val === 'string') {
-            payload[f.id] = val.replace(/"/g, '＂').replace(/'/g, '＇');
-          } else {
-            payload[f.id] = val;
-          }
-        }
-      }
       if (activeKey === 'mijia') {
         if (selectedMijiaIndex >= 0 && mijiaDevices[selectedMijiaIndex]) {
           const mijiaDev = mijiaDevices[selectedMijiaIndex];
@@ -967,7 +947,23 @@
           payload.siid = values.siid;
           payload.state = Number(values.state);
         }
+      } else {
+        for (const f of def.fields) {
+          const val = values[f.id];
+          if (f.type === 'checkbox') {
+            if (typeof val === 'boolean') payload[f.id] = val;
+          } else if (val !== undefined && val !== null && val !== '') {
+            if (f.type === 'number' || f.type === 'slider') {
+              payload[f.id] = Number(val);
+            } else if (typeof val === 'string') {
+              payload[f.id] = val.replace(/"/g, '＂').replace(/'/g, '＇');
+            } else {
+              payload[f.id] = val;
+            }
+          }
+        }
       }
+      payload.device_id = devId;
       return payload;
     }
 
@@ -1397,3 +1393,4 @@
   </script>
 </body>
 </html>
+```
