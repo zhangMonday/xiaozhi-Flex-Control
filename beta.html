@@ -645,24 +645,21 @@
       </div>
     </div>
 
-    <div id="mijiaModal" class="modal">
+    <div id="editMijiaModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
-        <h2 class="text-xl font-bold mb-5 flex items-center gap-2">
+        <h2 class="text-xl font-bold mb-5 flex items-center gap-2" id="editMijiaTitle">
           <i class="fas fa-cogs text-blue-500"></i>
-          管理米家设备
+          编辑米家设备
         </h2>
-        <div id="mijiaList" class="space-y-4 mb-5">
-        </div>
         <div class="space-y-3">
-          <input id="newMijiaName" type="text" class="field" placeholder="设备名称，例如：次卧吸顶灯" />
-          <input id="newMijiaIp" type="text" class="field" placeholder="设备 IP" />
-          <input id="newMijiaToken" type="text" class="field" placeholder="设备 Token" />
-          <input id="newMijiaDid" type="text" class="field" placeholder="设备编号 (DID)" />
-          <input id="newMijiaSiid" type="text" class="field" placeholder="设备子编号 (SIID)" />
-          <button id="addMijia" class="btn btn-primary w-full">
-            <i class="fas fa-plus"></i>
-            添加米家设备
+          <input id="editMijiaName" type="text" class="field" placeholder="设备名称，例如：次卧吸顶灯" />
+          <input id="editMijiaIp" type="text" class="field" placeholder="设备 IP" />
+          <input id="editMijiaToken" type="text" class="field" placeholder="设备 Token" />
+          <input id="editMijiaDid" type="text" class="field" placeholder="设备编号 (DID)" />
+          <button id="saveMijia" class="btn btn-primary w-full">
+            <i class="fas fa-save"></i>
+            保存
           </button>
         </div>
       </div>
@@ -793,7 +790,7 @@
           { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
         ]},
       { key: "mijia",    label: "Mijia（米家控制）",    type: "mijia",   fields: [
-          { id:"selectedMijia", label:"选择米家设备", type:"select_mijia" },
+          { id:"siid", label:"SIID", placeholder:"设备子编号", type:"text" },
           { id:"state", label:"状态", type:"select", options:[0,1] }
         ]},
       { key: "status",   label: "设备状态",   type: "status",   fields: [] }
@@ -816,15 +813,14 @@
     const btnCopy     = document.getElementById('btnCopy');
     const btnReset    = document.getElementById('btnReset');
     const modalClose = deviceModal.querySelector('.close');
-    const mijiaModal = document.getElementById('mijiaModal');
-    const mijiaListEl = document.getElementById('mijiaList');
-    const newMijiaName = document.getElementById('newMijiaName');
-    const newMijiaIp = document.getElementById('newMijiaIp');
-    const newMijiaToken = document.getElementById('newMijiaToken');
-    const newMijiaDid = document.getElementById('newMijiaDid');
-    const newMijiaSiid = document.getElementById('newMijiaSiid');
-    const addMijiaBtn = document.getElementById('addMijia');
-    const mijiaModalClose = mijiaModal.querySelector('.close');
+    const editMijiaModal = document.getElementById('editMijiaModal');
+    const editMijiaTitle = document.getElementById('editMijiaTitle');
+    const editMijiaName = document.getElementById('editMijiaName');
+    const editMijiaIp = document.getElementById('editMijiaIp');
+    const editMijiaToken = document.getElementById('editMijiaToken');
+    const editMijiaDid = document.getElementById('editMijiaDid');
+    const saveMijiaBtn = document.getElementById('saveMijia');
+    const editMijiaModalClose = editMijiaModal.querySelector('.close');
 
     let activeKey = 'chat';
     let showDeviceId = false;
@@ -833,7 +829,8 @@
     let devices = JSON.parse(localStorage.getItem('devices')) || [];
     let mijiaDevices = JSON.parse(localStorage.getItem('mijiaDevices')) || [];
     let currentDeviceIndex = -1;
-    let currentMijiaIndex = -1;
+    let selectedMijiaIndex = -1;
+    let currentEditingMijiaIndex = -1;
 
     const el = (tag, attrs={}, children=[]) => {
       const n = document.createElement(tag);
@@ -899,53 +896,45 @@
       });
     }
 
-    function renderMijiaSelect() {
-      const select = document.getElementById('f-mijia-selectedMijia');
-      if (select) {
-        select.innerHTML = '';
-        if (mijiaDevices.length === 0) {
-          select.appendChild(el('option', { value: '-1', text: '无米家设备' }));
-        } else {
-          mijiaDevices.forEach((dev, idx) => {
-            select.appendChild(el('option', { value: idx, text: dev.name }));
-          });
-          if (currentMijiaIndex === -1 && mijiaDevices.length > 0) {
-            currentMijiaIndex = 0;
-          }
-          select.value = currentMijiaIndex;
-        }
-      }
-      refreshPreview();
-    }
-
-    function renderMijiaList() {
-      mijiaListEl.innerHTML = '';
+    function renderMijiaList(container) {
+      container.innerHTML = '';
       mijiaDevices.forEach((dev, idx) => {
-        const item = el('div', { class: 'flex flex-col gap-2' });
-        const nameInput = el('input', { class: 'field', type: 'text', value: dev.name, placeholder: '名称' });
-        const ipInput = el('input', { class: 'field', type: 'text', value: dev.ip, placeholder: 'IP' });
-        const tokenInput = el('input', { class: 'field', type: 'text', value: dev.token, placeholder: 'Token' });
-        const didInput = el('input', { class: 'field', type: 'text', value: dev.did, placeholder: 'DID' });
-        const siidInput = el('input', { class: 'field', type: 'text', value: dev.siid, placeholder: 'SIID' });
+        const item = el('div', { class: 'flex items-center gap-2 border-b pb-2' });
+        const checkbox = el('input', { type: 'checkbox', class: 'checkbox-input', checked: selectedMijiaIndex === idx });
+        checkbox.addEventListener('change', () => {
+          if (checkbox.checked) {
+            selectedMijiaIndex = idx;
+            // Uncheck others
+            document.querySelectorAll('#mijiaList input[type="checkbox"]').forEach(cb => {
+              if (cb !== checkbox) cb.checked = false;
+            });
+          } else {
+            selectedMijiaIndex = -1;
+          }
+          refreshPreview();
+        });
+        const info = el('div', { class: 'flex-1', text: `${dev.name} (IP: ${dev.ip}, DID: ${dev.did})` });
+        const editBtn = el('button', { class: 'btn btn-secondary', text: '编辑', onclick: () => {
+          currentEditingMijiaIndex = idx;
+          editMijiaTitle.textContent = '编辑米家设备';
+          editMijiaName.value = dev.name;
+          editMijiaIp.value = dev.ip;
+          editMijiaToken.value = dev.token;
+          editMijiaDid.value = dev.did;
+          editMijiaModal.style.display = 'block';
+        }});
         const delBtn = el('button', { class: 'btn btn-secondary', text: '删除', onclick: () => {
           mijiaDevices.splice(idx, 1);
           saveMijiaDevices();
-          renderMijiaList();
-          renderMijiaSelect();
-          if (currentMijiaIndex >= mijiaDevices.length) currentMijiaIndex = mijiaDevices.length - 1;
+          if (selectedMijiaIndex === idx) selectedMijiaIndex = -1;
+          renderMijiaList(document.getElementById('mijiaList'));
+          refreshPreview();
         }});
-        nameInput.addEventListener('input', () => { dev.name = nameInput.value; saveMijiaDevices(); renderMijiaSelect(); });
-        ipInput.addEventListener('input', () => { dev.ip = ipInput.value; saveMijiaDevices(); });
-        tokenInput.addEventListener('input', () => { dev.token = tokenInput.value; saveMijiaDevices(); });
-        didInput.addEventListener('input', () => { dev.did = didInput.value; saveMijiaDevices(); });
-        siidInput.addEventListener('input', () => { dev.siid = siidInput.value; saveMijiaDevices(); });
-        item.appendChild(nameInput);
-        item.appendChild(ipInput);
-        item.appendChild(tokenInput);
-        item.appendChild(didInput);
-        item.appendChild(siidInput);
+        item.appendChild(checkbox);
+        item.appendChild(info);
+        item.appendChild(editBtn);
         item.appendChild(delBtn);
-        mijiaListEl.appendChild(item);
+        container.appendChild(item);
       });
     }
 
@@ -969,14 +958,14 @@
         }
       }
       if (activeKey === 'mijia') {
-        const mijiaIndex = values['selectedMijia'];
-        if (mijiaIndex >= 0 && mijiaDevices[mijiaIndex]) {
-          const mijiaDev = mijiaDevices[mijiaIndex];
+        if (selectedMijiaIndex >= 0 && mijiaDevices[selectedMijiaIndex]) {
+          const mijiaDev = mijiaDevices[selectedMijiaIndex];
           payload.name = mijiaDev.name;
           payload.ip = mijiaDev.ip;
           payload.token = mijiaDev.token;
           payload.did = mijiaDev.did;
-          payload.siid = mijiaDev.siid;
+          payload.siid = values.siid;
+          payload.state = Number(values.state);
         }
       }
       return payload;
@@ -1005,7 +994,7 @@
 
     function getDefaultValue(f){
       if (f.type === 'checkbox') return !!f.default;
-      if (f.type === 'select' || f.type === 'select_mijia') return f.options?.[0] ?? '';
+      if (f.type === 'select') return f.options?.[0] ?? '';
       if (f.type === 'slider') return f.attrs?.min || 0;
       return '';
     }
@@ -1051,6 +1040,23 @@
         formAreaEl.appendChild(el('div', { class:'text-sm text-blue-600 dark:text-blue-300 italic py-2', text: '该接口无附加字段，直接点击"发送指令"即可' }));
       } else {
         const grid = el('div', { class:'grid-auto' });
+        if (activeKey === 'mijia') {
+          const mijiaSection = el('div', { class: 'space-y-4' });
+          const addBtn = el('button', { class: 'btn btn-primary', text: '添加米家设备', onclick: () => {
+            currentEditingMijiaIndex = -1;
+            editMijiaTitle.textContent = '添加米家设备';
+            editMijiaName.value = '';
+            editMijiaIp.value = '';
+            editMijiaToken.value = '';
+            editMijiaDid.value = '';
+            editMijiaModal.style.display = 'block';
+          }});
+          mijiaSection.appendChild(addBtn);
+          const listContainer = el('div', { id: 'mijiaList', class: 'space-y-2' });
+          renderMijiaList(listContainer);
+          mijiaSection.appendChild(listContainer);
+          formAreaEl.appendChild(mijiaSection);
+        }
         def.fields.forEach(f => {
           const wrap = el('div', {});
           wrap.appendChild(el('label', { class:'text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5 flex items-center gap-1', text: f.label }));
@@ -1059,18 +1065,9 @@
           const common = { class:'field mt-1', id:`f-${activeKey}-${f.id}` };
           if (f.type === 'textarea') {
             input = el('textarea', { ...common, placeholder:f.placeholder || '', rows:4 });
-          } else if (f.type === 'select' || f.type === 'select_mijia') {
+          } else if (f.type === 'select') {
             input = el('select', { ...common });
-            if (f.type === 'select_mijia') {
-              mijiaDevices.forEach((dev, idx) => {
-                input.appendChild(el('option', { value: idx, text: dev.name }));
-              });
-              if (mijiaDevices.length === 0) {
-                input.appendChild(el('option', { value: '-1', text: '无米家设备' }));
-              }
-            } else {
-              (f.options || []).forEach(op => input.appendChild(el('option', { value:String(op), text:String(op) })));
-            }
+            (f.options || []).forEach(op => input.appendChild(el('option', { value:String(op), text:String(op) })));
           } else if (f.type === 'checkbox') {
             const box = el('div', { class:'mt-1 flex items-center gap-3' });
             input = el('input', { type:'checkbox', id:common.id, class:'w-5 h-5 rounded focus:ring-blue-500' });
@@ -1128,7 +1125,7 @@
           }
 
           const v = state[activeKey][f.id];
-          if (f.type === 'select' || f.type === 'select_mijia') input.value = String(v ?? getDefaultValue(f));
+          if (f.type === 'select') input.value = String(v ?? getDefaultValue(f));
           else input.value = v ?? '';
 
           input.addEventListener('input', () => {
@@ -1145,14 +1142,6 @@
               onclick: () => window.open('https://tmpfiles.org/', '_blank')
             });
             wrap.appendChild(uploadBtn);
-          }
-
-          if (activeKey === 'mijia' && f.id === 'selectedMijia') {
-            const manageBtn = el('button', { class: 'btn btn-secondary mt-2', text: '管理米家设备', onclick: () => {
-              renderMijiaList();
-              mijiaModal.style.display = 'block';
-            }});
-            wrap.appendChild(manageBtn);
           }
           
           grid.appendChild(wrap);
@@ -1298,6 +1287,9 @@
       const def = INTERFACES.find(x => x.key === activeKey);
       state[activeKey] = {};
       def.fields.forEach(f => state[activeKey][f.id] = getDefaultValue(f));
+      if (activeKey === 'mijia') {
+        selectedMijiaIndex = -1;
+      }
       renderForm();
       setStatus('已重置', 'info');
     }
@@ -1345,8 +1337,8 @@
     window.addEventListener('click', (event) => {
       if (event.target === deviceModal) {
         deviceModal.style.display = 'none';
-      } else if (event.target === mijiaModal) {
-        mijiaModal.style.display = 'none';
+      } else if (event.target === editMijiaModal) {
+        editMijiaModal.style.display = 'none';
       }
     });
 
@@ -1363,38 +1355,27 @@
       }
     });
 
-    addMijiaBtn.addEventListener('click', () => {
-      const name = newMijiaName.value.trim();
-      const ip = newMijiaIp.value.trim();
-      const token = newMijiaToken.value.trim();
-      const did = newMijiaDid.value.trim();
-      const siid = newMijiaSiid.value.trim();
-      if (name && ip && token && did && siid) {
-        mijiaDevices.push({ name, ip, token, did, siid });
+    saveMijiaBtn.addEventListener('click', () => {
+      const name = editMijiaName.value.trim();
+      const ip = editMijiaIp.value.trim();
+      const token = editMijiaToken.value.trim();
+      const did = editMijiaDid.value.trim();
+      if (name && ip && token && did) {
+        if (currentEditingMijiaIndex === -1) {
+          mijiaDevices.push({ name, ip, token, did });
+        } else {
+          mijiaDevices[currentEditingMijiaIndex] = { name, ip, token, did };
+        }
         saveMijiaDevices();
-        renderMijiaList();
-        renderMijiaSelect();
-        renderForm();
-        newMijiaName.value = '';
-        newMijiaIp.value = '';
-        newMijiaToken.value = '';
-        newMijiaDid.value = '';
-        newMijiaSiid.value = '';
+        renderMijiaList(document.getElementById('mijiaList'));
+        refreshPreview();
+        editMijiaModal.style.display = 'none';
       }
     });
 
-    mijiaModalClose.addEventListener('click', () => {
-      mijiaModal.style.display = 'none';
+    editMijiaModalClose.addEventListener('click', () => {
+      editMijiaModal.style.display = 'none';
     });
-
-    const mijiaSelect = document.getElementById('f-mijia-selectedMijia');
-    if (mijiaSelect) {
-      mijiaSelect.addEventListener('change', () => {
-        currentMijiaIndex = parseInt(mijiaSelect.value);
-        state['mijia']['selectedMijia'] = currentMijiaIndex;
-        refreshPreview();
-      });
-    }
 
     toggleJsonId.addEventListener('click', toggleDeviceIdVisibility);
 
