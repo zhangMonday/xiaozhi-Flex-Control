@@ -1060,7 +1060,7 @@
           mijiaSection.appendChild(listContainer);
           formAreaEl.appendChild(mijiaSection);
           if (selectedMijiaIndex === -1 && mijiaDevices.length > 0) {
-            selectedMijiaIndex = 0;
+            selectedMijiaIndex = mijiaDevices.length - 1;
             refreshPreview();
           }
         }
