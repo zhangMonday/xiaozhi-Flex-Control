@@ -1321,13 +1321,13 @@
         clearTimeout(timer);
 
         if (resp.ok) {
-          showAlert('成功了！你的设备会有反应的', true);
+          showAlert('指令已发送成功，请检查设备响应', true);
         } else {
-          showAlert('失败了，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
+          showAlert('指令发送失败，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
         }
       } catch (err) {
         clearTimeout(timer);
-        showAlert('失败了，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
+        showAlert('指令发送失败，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
       }
     }
 
@@ -1372,18 +1372,18 @@
               message += `固件版本: ${data.firmware_ver}\n`;
               message += `编译时间: ${data.compile_time}\n`;
               message += `本地音乐: ${data.local_music} 首\n\n`;
-              message += "成功了！你的设备会有反应的";
+              message += "指令已发送成功";
               showAlert(message, true);
             } else {
-              showAlert('失败了，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
+              showAlert('指令发送失败，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
             }
           } catch (e) {
-            showAlert('失败了，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
+            showAlert('指令发送失败，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
           }
         };
 
         websocket.onerror = function(error) {
-          showAlert('连接错误，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
+          showAlert('连接错误，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
         };
 
         websocket.onclose = function(event) {
@@ -1397,7 +1397,7 @@
         }, 10000);
 
       } catch (error) {
-        showAlert('连接失败，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
+        showAlert('连接失败，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
       }
     }
 
