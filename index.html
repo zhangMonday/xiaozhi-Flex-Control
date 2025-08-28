@@ -657,6 +657,7 @@
           <input id="editMijiaIp" type="text" class="field" placeholder="设备 IP" />
           <input id="editMijiaToken" type="text" class="field" placeholder="设备 Token" />
           <input id="editMijiaDid" type="text" class="field" placeholder="设备编号 (DID)" />
+          <input id="editMijiaSiid" type="text" class="field" placeholder="设备子编号 (SIID)" />
           <button id="saveMijia" class="btn btn-primary w-full">
             <i class="fas fa-save"></i>
             保存
@@ -790,8 +791,7 @@
           { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
         ]},
       { key: "mijia",    label: "米家控制",    type: "mijia",   fields: [
-          { id:"siid", label:"SIID", placeholder:"设备子编号", type:"text" },
-          { id:"state", label:"状态", type:"select", options:[0,1] }
+          { id:"state", label:"状态", type:"checkbox", default:false }
         ]},
       { key: "status",   label: "设备状态",   type: "status",   fields: [] }
     ];
@@ -819,6 +819,7 @@
     const editMijiaIp = document.getElementById('editMijiaIp');
     const editMijiaToken = document.getElementById('editMijiaToken');
     const editMijiaDid = document.getElementById('editMijiaDid');
+    const editMijiaSiid = document.getElementById('editMijiaSiid');
     const saveMijiaBtn = document.getElementById('saveMijia');
     const editMijiaModalClose = editMijiaModal.querySelector('.close');
 
@@ -905,7 +906,7 @@
           selectedMijiaIndex = idx;
           refreshPreview();
         });
-        const info = el('div', { class: 'flex-1', text: `${dev.name} (IP: ${dev.ip}, DID: ${dev.did})` });
+        const info = el('div', { class: 'flex-1', text: `${dev.name} (IP: ${dev.ip}, DID: ${dev.did}, SIID: ${dev.siid})` });
         const editBtn = el('button', { class: 'btn btn-secondary', text: '编辑', onclick: () => {
           currentEditingMijiaIndex = idx;
           editMijiaTitle.textContent = '编辑米家设备';
@@ -913,6 +914,7 @@
           editMijiaIp.value = dev.ip;
           editMijiaToken.value = dev.token;
           editMijiaDid.value = dev.did;
+          editMijiaSiid.value = dev.siid;
           editMijiaModal.style.display = 'block';
         }});
         const delBtn = el('button', { class: 'btn btn-secondary', text: '删除', onclick: () => {
@@ -945,8 +947,8 @@
           payload.ip = mijiaDev.ip;
           payload.token = mijiaDev.token;
           payload.did = mijiaDev.did;
-          payload.siid = values.siid;
-          payload.state = Number(values.state);
+          payload.siid = mijiaDev.siid;
+          payload.state = values.state ? 1 : 0;
         }
       } else {
         for (const f of def.fields) {
@@ -1044,6 +1046,7 @@
             editMijiaIp.value = '';
             editMijiaToken.value = '';
             editMijiaDid.value = '';
+            editMijiaSiid.value = '';
             editMijiaModal.style.display = 'block';
           }});
           mijiaSection.appendChild(addBtn);
@@ -1068,7 +1071,7 @@
             input = el('input', { type:'checkbox', id:common.id, class:'w-5 h-5 rounded focus:ring-blue-500' });
             input.checked = !!state[activeKey][f.id];
             box.appendChild(input);
-            box.appendChild(el('label', { for:common.id, class:'text-sm cursor-pointer', text:'启用此选项' }));
+            box.appendChild(el('label', { for:common.id, class:'text-sm cursor-pointer', text:'关闭 (0) / 开启 (1)' }));
             wrap.appendChild(box);
             grid.appendChild(wrap);
             input.addEventListener('change', () => { state[activeKey][f.id] = input.checked; refreshPreview(); });
@@ -1355,11 +1358,12 @@
       const ip = editMijiaIp.value.trim();
       const token = editMijiaToken.value.trim();
       const did = editMijiaDid.value.trim();
-      if (name && ip && token && did) {
+      const siid = editMijiaSiid.value.trim();
+      if (name && ip && token && did && siid) {
         if (currentEditingMijiaIndex === -1) {
-          mijiaDevices.push({ name, ip, token, did });
+          mijiaDevices.push({ name, ip, token, did, siid });
         } else {
-          mijiaDevices[currentEditingMijiaIndex] = { name, ip, token, did };
+          mijiaDevices[currentEditingMijiaIndex] = { name, ip, token, did, siid };
         }
         saveMijiaDevices();
         renderMijiaList(document.getElementById('mijiaList'));
