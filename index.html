@@ -18,11 +18,13 @@
       --dark: #1e293b;
       --light: #f8fafc;
     }
+    
     .grid-auto {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
     }
+    
     .card {
       background: white;
       border-radius: 1rem;
@@ -31,18 +33,22 @@
       transition: all 0.3s ease;
       border: 1px solid rgba(0, 0, 0, 0.03);
     }
+    
     .card:hover {
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
       transform: translateY(-2px);
     }
+    
     .dark .card {
       background: #1e293b;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
+    
     .dark .card:hover {
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
     }
+    
     .field {
       width: 100%;
       padding: 0.75rem 1rem;
@@ -52,19 +58,23 @@
       transition: all 0.2s ease;
       font-size: 0.95rem;
     }
+    
     .dark .field {
       background: #334155;
       border-color: #475569;
       color: white;
     }
+    
     .field:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     }
+    
     .dark .field:focus {
       box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
     }
+    
     .tab {
       padding: 0.75rem 1.25rem;
       border-radius: 0.5rem 0.5rem 0 0;
@@ -73,27 +83,33 @@
       position: relative;
       overflow: hidden;
     }
+    
     .tab-active {
       background: white;
       color: var(--primary);
       box-shadow: 0 -3px 0 var(--primary) inset;
     }
+    
     .dark .tab-active {
       background: #334155;
       color: #60a5fa;
     }
+    
     .tab-idle {
       background: transparent;
       color: #64748b;
     }
+    
     .tab-idle:hover {
       background: #f1f5f9;
       color: #475569;
     }
+    
     .dark .tab-idle:hover {
       background: #475569;
       color: #cbd5e1;
     }
+    
     .btn {
       padding: 0.75rem 1.25rem;
       border-radius: 0.5rem;
@@ -106,43 +122,52 @@
       border: none;
       cursor: pointer;
     }
+    
     .btn-primary {
       background: var(--primary);
       color: white;
       box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
     }
+    
     .btn-primary:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
       box-shadow: 0 6px 8px rgba(59, 130, 246, 0.3);
     }
+    
     .btn-secondary {
       background: #f1f5f9;
       color: #334155;
       border: 1px solid #d1d5db;
     }
+    
     .dark .btn-secondary {
       background: #475569;
       color: #e5e7eb;
       border-color: #64748b;
     }
+    
     .btn-secondary:hover {
       background: #e2e8f0;
       transform: translateY(-2px);
     }
+    
     .dark .btn-secondary:hover {
       background: #64748b;
     }
+    
     .btn-success {
       background: var(--success);
       color: white;
       box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
     }
+    
     .btn-success:hover {
       background: #059669;
       transform: translateY(-2px);
       box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
     }
+    
     .badge {
       padding: 0.35rem 0.85rem;
       border-radius: 9999px;
@@ -152,9 +177,11 @@
       align-items: center;
       gap: 0.25rem;
     }
+    
     .badge-pulse {
       position: relative;
     }
+    
     .badge-pulse::before {
       content: '';
       position: absolute;
@@ -168,14 +195,17 @@
       transform: translateY(-50%);
       animation: pulse 1.5s infinite;
     }
+    
     @keyframes pulse {
       0% { opacity: 0.8; }
       50% { opacity: 0.3; }
       100% { opacity: 0.8; }
     }
+    
     .mono {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
+    
     .sticky-header {
       position: sticky;
       top: 0;
@@ -185,20 +215,24 @@
       backdrop-filter: blur(5px);
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
+    
     .dark .sticky-header {
       background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.95) 90%, transparent 100%);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
+    
     @media (max-width: 640px) {
       .grid-auto {
         grid-template-columns: 1fr;
       }
     }
+    
     .slider-container {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
+    
     .slider {
       flex: 1;
       height: 6px;
@@ -208,9 +242,11 @@
       border-radius: 5px;
       outline: none;
     }
+    
     .dark .slider {
       background: #475569;
     }
+    
     .slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
@@ -222,6 +258,7 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       border: 2px solid white;
     }
+    
     .slider::-moz-range-thumb {
       width: 20px;
       height: 20px;
@@ -231,6 +268,7 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       border: 2px solid white;
     }
+    
     .slider-value {
       width: 80px;
       min-width: 80px;
@@ -240,15 +278,18 @@
       background: #f1f5f9;
       border-radius: 0.375rem;
     }
+    
     .dark .slider-value {
       background: #475569;
       color: white;
     }
+    
     .slider-input {
       width: 80px;
       text-align: center;
       padding: 0.5rem;
     }
+    
     .upload-btn {
       margin-top: 0.75rem;
       padding: 0.5rem 1rem;
@@ -262,14 +303,17 @@
       transition: all 0.2s ease;
       box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
     }
+    
     .upload-btn:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
       box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
     }
+    
     .password-container {
       position: relative;
     }
+    
     .toggle-password {
       position: absolute;
       right: 1rem;
@@ -278,9 +322,11 @@
       cursor: pointer;
       color: #64748b;
     }
+    
     .toggle-password:hover {
       color: var(--primary);
     }
+    
     .modal {
       display: none;
       position: fixed;
@@ -294,10 +340,12 @@
       backdrop-filter: blur(3px);
       animation: fadeIn 0.2s ease;
     }
+    
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
+    
     .modal-content {
       background-color: #fefefe;
       margin: 10% auto;
@@ -309,14 +357,17 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
       animation: slideIn 0.3s ease;
     }
+    
     @keyframes slideIn {
       from { transform: translateY(-20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+    
     .dark .modal-content {
       background-color: #334155;
       color: white;
     }
+    
     .close {
       color: #94a3b8;
       float: right;
@@ -325,28 +376,34 @@
       line-height: 1;
       transition: all 0.2s ease;
     }
+    
     .close:hover,
     .close:focus {
       color: #64748b;
       cursor: pointer;
     }
+    
     .dark .close {
       color: #94a3b8;
     }
+    
     .dark .close:hover,
     .dark .close:focus {
       color: #cbd5e1;
     }
+    
     .json-preview {
       background: #f9fafb;
       border: 1px solid #e5e7eb;
       border-radius: 0.75rem;
     }
+    
     .dark .json-preview {
       background: #111827;
       border-color: #374151;
       color: #e5e7eb;
     }
+    
     .section-title {
       font-size: 1.25rem;
       font-weight: 700;
@@ -356,9 +413,11 @@
       gap: 0.75rem;
       color: #1e293b;
     }
+    
     .dark .section-title {
       color: #f1f5f9;
     }
+    
     .section-title-icon {
       width: 36px;
       height: 36px;
@@ -369,9 +428,11 @@
       background: rgba(59, 130, 246, 0.1);
       color: var(--primary);
     }
+    
     .dark .section-title-icon {
       background: rgba(96, 165, 250, 0.1);
     }
+    
     .action-buttons {
       display: flex;
       flex-wrap: wrap;
@@ -380,22 +441,27 @@
       padding-top: 1.5rem;
       border-top: 1px solid #e2e8f0;
     }
+    
     .dark .action-buttons {
       border-top: 1px solid #334155;
     }
+    
     .footer-card {
       text-align: center;
       padding: 2rem;
     }
+    
     .footer-card p {
       margin-bottom: 1.5rem;
       line-height: 1.7;
     }
+    
     .device-select-container {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }
+    
     .device-select-label {
       font-weight: 600;
       color: #334155;
@@ -403,16 +469,20 @@
       align-items: center;
       gap: 0.5rem;
     }
+    
     .dark .device-select-label {
       color: #e2e8f0;
     }
+    
     .device-select-wrapper {
       display: flex;
       gap: 0.75rem;
     }
+    
     .device-select-wrapper select {
       flex: 1;
     }
+    
     .result-box {
       min-height: 150px;
       max-height: 300px;
@@ -422,10 +492,12 @@
       background: #f8fafc;
       border: 1px solid #e2e8f0;
     }
+    
     .dark .result-box {
       background: #0f172a;
       border-color: #334155;
     }
+    
     .form-description {
       background: #eff6ff;
       border-left: 4px solid var(--primary);
@@ -434,27 +506,32 @@
       margin-bottom: 1.5rem;
       font-size: 0.95rem;
     }
+    
     .dark .form-description {
       background: #1e3a8a;
       border-left-color: #60a5fa;
     }
+    
     .form-field-label {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       margin-bottom: 0.5rem;
     }
+    
     .form-field-label.required::after {
       content: "*";
       color: var(--danger);
       margin-left: 0.25rem;
     }
+    
     .checkbox-field {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       margin-top: 0.5rem;
     }
+    
     .checkbox-input {
       width: 1.25rem;
       height: 1.25rem;
@@ -462,14 +539,17 @@
       border: 2px solid #cbd5e1;
       accent-color: var(--primary);
     }
+    
     .dark .checkbox-input {
       border-color: #64748b;
     }
+    
     .tooltip {
       position: relative;
       display: inline-block;
       cursor: help;
     }
+    
     .tooltip .tooltip-text {
       visibility: hidden;
       width: 200px;
@@ -488,10 +568,12 @@
       font-size: 0.85rem;
       line-height: 1.4;
     }
+    
     .tooltip:hover .tooltip-text {
       visibility: visible;
       opacity: 1;
     }
+    
     .tooltip .tooltip-text::after {
       content: "";
       position: absolute;
@@ -517,9 +599,9 @@
           所有功能均由<a href="https://nodelua.com/home_iot/docs/#/guide/flex" class="text-blue-500 hover:underline font-medium" target="_blank">灵活固件</a>提供，本网站站主与灵活固件作者没有从属关系。
         </p>
       </div>
-      <div class="flex flex-wrap items-center justify-start sm:justify-end gap-3">
-        <a href="green-hand.html" class="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
-          <i class="fas fa-graduation-cap"></i>新手模式
+      <div class="flex gap-4">
+        <a href="green-hand.html" class="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium">
+          <i class="fas fa-graduation-cap mr-2"></i>新手模式
         </a>
         <div class="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium">
           <i class="fas fa-microchip mr-2"></i>By zhangMonday & 六哥(CrisXie)
@@ -659,7 +741,7 @@
   </main>
 
   <script>
-  console.log(`
+    console.log(`
 来控制台干什么，快来陪我van♂
 　               ▃▆█▇▄▖
          　 　▟◤▖　　　◥█▎
@@ -820,21 +902,15 @@
       });
     }
 
-function renderMijiaList(container) {
-  container.innerHTML = '';
-  
-  if (selectedMijiaIndex === -1 && mijiaDevices.length > 0) {
-    selectedMijiaIndex = 0;
-  }
-  
-  mijiaDevices.forEach((dev, idx) => {
-    const item = el('div', { class: 'flex items-center gap-2 border-b pb-2' });
-    const radio = el('input', { type: 'radio', name: 'mijiaSelect', class: 'checkbox-input', checked: idx === 0 });
-    
-    radio.addEventListener('change', () => {
-      selectedMijiaIndex = idx;
-      refreshPreview();
-    });
+    function renderMijiaList(container) {
+      container.innerHTML = '';
+      mijiaDevices.forEach((dev, idx) => {
+        const item = el('div', { class: 'flex items-center gap-2 border-b pb-2' });
+        const radio = el('input', { type: 'radio', name: 'mijiaSelect', class: 'checkbox-input', checked: selectedMijiaIndex === idx });
+        radio.addEventListener('change', () => {
+          selectedMijiaIndex = idx;
+          refreshPreview();
+        });
         const info = el('div', { class: 'flex-1', text: `${dev.name} (IP: ${dev.ip}, DID: ${dev.did}, SIID: ${dev.siid})` });
         const editBtn = el('button', { class: 'btn btn-secondary', text: '编辑', onclick: () => {
           currentEditingMijiaIndex = idx;
@@ -967,9 +1043,6 @@ function renderMijiaList(container) {
       } else {
         const grid = el('div', { class:'grid-auto' });
         if (activeKey === 'mijia') {
-          if (mijiaDevices.length > 0 && selectedMijiaIndex === -1) {
-            selectedMijiaIndex = 0;
-          }
           const mijiaSection = el('div', { class: 'space-y-4' });
           const addBtn = el('button', { class: 'btn btn-primary', text: '添加米家设备', onclick: () => {
             currentEditingMijiaIndex = -1;
@@ -986,6 +1059,10 @@ function renderMijiaList(container) {
           renderMijiaList(listContainer);
           mijiaSection.appendChild(listContainer);
           formAreaEl.appendChild(mijiaSection);
+          if (selectedMijiaIndex === -1 && mijiaDevices.length > 0) {
+            selectedMijiaIndex = 0;
+            refreshPreview();
+          }
         }
         def.fields.forEach(f => {
           const wrap = el('div', {});
@@ -1294,6 +1371,7 @@ function renderMijiaList(container) {
       if (name && ip && token && did && siid) {
         if (currentEditingMijiaIndex === -1) {
           mijiaDevices.push({ name, ip, token, did, siid });
+          selectedMijiaIndex = mijiaDevices.length - 1;
         } else {
           mijiaDevices[currentEditingMijiaIndex] = { name, ip, token, did, siid };
         }
