@@ -791,7 +791,7 @@
           { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
         ]},
       { key: "mijia",    label: "米家控制",    type: "mijia",   fields: [
-          { id:"state", label:"状态", type:"checkbox", default:false }
+          { id:"state", label:"开关状态", type:"checkbox", default:false }
         ]},
       { key: "status",   label: "设备状态",   type: "status",   fields: [] }
     ];
@@ -1071,7 +1071,7 @@
             input = el('input', { type:'checkbox', id:common.id, class:'w-5 h-5 rounded focus:ring-blue-500' });
             input.checked = !!state[activeKey][f.id];
             box.appendChild(input);
-            box.appendChild(el('label', { for:common.id, class:'text-sm cursor-pointer', text:'关闭 (0) / 开启 (1)' }));
+            box.appendChild(el('label', { for:common.id, class:'text-sm cursor-pointer', text:'控制关闭 / 开启' }));
             wrap.appendChild(box);
             grid.appendChild(wrap);
             input.addEventListener('change', () => { state[activeKey][f.id] = input.checked; refreshPreview(); });
