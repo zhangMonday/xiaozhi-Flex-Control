@@ -599,18 +599,13 @@
           所有功能均由<a href="https://nodelua.com/home_iot/docs/#/guide/flex" class="text-blue-500 hover:underline font-medium" target="_blank">灵活固件</a>提供，本网站站主与灵活固件作者没有从属关系。
         </p>
       </div>
-      <div class="flex items-center gap-3">
-        <!-- 小白模式提示 -->
-        <a href="green-hand.html" class="relative group">
-          <div class="bg-blue-100 dark:bg-blue-900/30 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer">
-            <i class="fas fa-graduation-cap text-blue-800 dark:text-blue-200 text-sm"></i>
-          </div>
-          <div class="absolute right-0 mt-2 w-24 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg text-center text-sm font-medium text-gray-800 dark:text-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-            小白模式
-          </div>
-        </a>
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+        <button class="btn btn-secondary" onclick="window.location.href='green-hand.html'">
+          <i class="fas fa-graduation-cap"></i>
+          新手模式
+        </button>
         <div class="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium">
-          <i class="fas fa-microchip mr-2"></i>By zhangMonday & 六哥(CrisXie)
+          <i class="fas fa-microchip mr-2"></i>By zhangMonday & UI 六哥
         </div>
       </div>
     </div>
@@ -677,23 +672,6 @@
       </div>
     </div>
 
-    <!-- 弹窗提醒 -->
-    <div id="alertModal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="alertClose">&times;</span>
-        <h2 class="text-xl font-bold mb-5 flex items-center gap-2">
-          <i class="fas fa-info-circle text-blue-500"></i>
-          提示信息
-        </h2>
-        <div id="alertMessage" class="text-center py-4"></div>
-        <div class="text-center">
-          <button id="closeAlert" class="btn btn-primary">
-            确定
-          </button>
-        </div>
-      </div>
-    </div>
-
     <section class="sticky-header">
       <div id="tabs" class="flex flex-wrap gap-3">
       </div>
@@ -714,10 +692,6 @@
         <button id="btnReset" class="btn btn-secondary">
           <i class="fas fa-redo"></i>
           重置
-        </button>
-        <button id="btnRefresh" class="btn btn-secondary">
-          <i class="fas fa-sync"></i>
-          刷新
         </button>
       </div>
     </section>
@@ -755,20 +729,20 @@
         <div class="section-title-icon">
           <i class="fas fa-heart text-red-500"></i>
         </div>
-        项目开源地址
+        Github开源
       </h2>
       <p class="text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
-        <button class="btn btn-primary inline-block mb-4" onclick="window.open('https://github.com/zhangMonday/xiaozhi-Flex-Control', '_blank')">
-          <i class="fab fa-github"></i> 访问GitHub仓库
+        <button class="btn btn-primary inline-block mb-4" onclick="window.open('https://github.com/zhangMonday/xiaozhi-Flex-Control', '_blank')" title="访问GitHub仓库">
+         <i class="fab fa-github">点我进入开源仓库</i>
         </button>
-        <br>
-        <span>欢迎提交issue & Pull requests～灵活固件QQ交流群：1041054478</span>
+      <br>
+        欢迎提交issue & Pull requests～灵活固件QQ交流群：1041054478
       </p>
     </section>
   </main>
 
   <script>
-  console.log(`
+    console.log(`
 来控制台干什么，快来陪我van♂
 　               ▃▆█▇▄▖
          　 　▟◤▖　　　◥█▎
@@ -844,7 +818,6 @@
     const btnSend     = document.getElementById('btnSend');
     const btnCopy     = document.getElementById('btnCopy');
     const btnReset    = document.getElementById('btnReset');
-    const btnRefresh  = document.getElementById('btnRefresh');
     const modalClose = deviceModal.querySelector('.close');
     const editMijiaModal = document.getElementById('editMijiaModal');
     const editMijiaTitle = document.getElementById('editMijiaTitle');
@@ -855,17 +828,10 @@
     const editMijiaSiid = document.getElementById('editMijiaSiid');
     const saveMijiaBtn = document.getElementById('saveMijia');
     const editMijiaModalClose = editMijiaModal.querySelector('.close');
-    
-    // 弹窗元素
-    const alertModal = document.getElementById('alertModal');
-    const alertMessage = document.getElementById('alertMessage');
-    const closeAlert = document.getElementById('closeAlert');
-    const alertClose = document.getElementById('alertClose');
 
     let activeKey = 'chat';
     let showDeviceId = false;
     let websocket = null;
-    let refreshInterval = null; // 用于米家设备控制界面的自动刷新
     const state = {};
     let devices = JSON.parse(localStorage.getItem('devices')) || [];
     let mijiaDevices = JSON.parse(localStorage.getItem('mijiaDevices')) || [];
@@ -939,10 +905,6 @@
 
     function renderMijiaList(container) {
       container.innerHTML = '';
-      if (mijiaDevices.length === 0) {
-        container.innerHTML = '<div class="text-center py-4 text-gray-500">暂无米家设备，请先添加设备</div>';
-        return;
-      }
       mijiaDevices.forEach((dev, idx) => {
         const item = el('div', { class: 'flex items-center gap-2 border-b pb-2' });
         const radio = el('input', { type: 'radio', name: 'mijiaSelect', class: 'checkbox-input', checked: selectedMijiaIndex === idx });
@@ -965,7 +927,7 @@
           mijiaDevices.splice(idx, 1);
           saveMijiaDevices();
           if (selectedMijiaIndex === idx) selectedMijiaIndex = -1;
-          renderMijiaList(container);
+          renderMijiaList(document.getElementById('mijiaList'));
           refreshPreview();
         }});
         item.appendChild(radio);
@@ -979,7 +941,10 @@
     function buildPayload(){
       const devId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
       const def   = INTERFACES.find(x => x.key === activeKey);
-      const payload = { device_id: devId, type: def.type };
+      const payload = {
+        device_id: devId,
+        type: def.type
+      };
       const values = state[activeKey] || {};
       if (activeKey === 'mijia') {
         if (selectedMijiaIndex >= 0 && mijiaDevices[selectedMijiaIndex]) {
@@ -1010,14 +975,13 @@
       return payload;
     }
 
-    function getPreviewPayload() {
+   function getPreviewPayload() {
       const payload = buildPayload();
       if (!showDeviceId && payload.device_id) {
         payload.device_id = '*'.repeat(payload.device_id.length);
       }
       return payload;
     }
-
     function renderTabs(){
       tabsEl.innerHTML = '';
       INTERFACES.forEach(def => {
@@ -1042,12 +1006,6 @@
       const def = INTERFACES.find(x => x.key === activeKey);
       formAreaEl.innerHTML = '';
 
-      // 清除之前的自动刷新定时器
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
-        refreshInterval = null;
-      }
-
       if (!state[activeKey]) {
         state[activeKey] = {};
         def.fields.forEach(f => state[activeKey][f.id] = getDefaultValue(f));
@@ -1055,7 +1013,7 @@
 
       const descDiv = el('div', { class: 'text-sm text-neutral-600 dark:text-neutral-300 space-y-2' });
       if (activeKey === 'chat') {
-        descDiv.innerHTML = `<p>向设备AI发送消息，可用于MCP调用、语音播发等</p><p>text: 播放邓紫棋的多远都要在一起</p><p>text: 播放清晨音乐电台</p><p>text: 播放内存卡里的歌曲</p><p>text: 把屏幕调到夜间模式</p><p>text: 音量调到 40 后念出下面这句话，注意不要与用户对话，念完立即关闭对话并退下："支付宝到账一百亿"</p><p>此功能会主动唤醒设备，并发送文字内容给 AI，效果等同于在设备旁边与之对话</p>`;
+        descDiv.innerHTML = `<p>向设备AI发送消息，可用于MCP调用、语音播发等</p><p>text: 播放邓紫棋的多远都要在一起</p><p>text: 播放清晨音乐电台</p><p>text: 播放内存卡里的歌曲</p><p>text: 把屏幕调到夜间模式</p><p>text: 音量调到 40 后念出下面这句话，注意不要与用户对话，念完立即关闭对话并退下：\"支付宝到账一百亿\"</p><p>此功能会主动唤醒设备，并发送文字内容给 AI，效果等同于在设备旁边与之对话</p>`;
       } else if (activeKey === 'audio') {
         descDiv.innerHTML = `<p>调用设备解码播放能力，可用于歌曲、电台、语音留言等音频的精准推送</p><p>url: 音源链接，支持 .mp3、.flac、.wav、.m4a、.opus、.ogg、.m3u8</p><p>text: 音源简介、内容会显示在设备的信息胶囊</p>`;
       } else if (activeKey === 'music') {
@@ -1076,11 +1034,6 @@
         descDiv.innerHTML = `<p>给设备发送图文消息</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
       } else if (activeKey === 'mijia') {
         descDiv.innerHTML = `<p>通过小智(ESP32)控制米家设备</p><p>name: 设备名称，例如：次卧吸顶灯</p><p>ip: 设备 ip ( 如果是 mesh 设备，需填 mesh 网关的 ip )</p><p>token: 设备 token ( 如果是 mesh 设备，需填 mesh 网关的 token )</p><p>did: 设备编号</p><p>siid: 设备子编号，例如一个开关面板上有 3 个开关按钮，siid 就表示第几个按钮</p><p>state: 控制设备状态，目前仅支持 0(关闭)、1(打开)</p><p>本接口数据可以从任意终端任意地理位置发送，但小智(ESP32)需要与米家设备处于同一 WIFI 网络下才能实现控制</p><p>支持控制小米蓝牙 mesh 设备，填写参数时注意填写 mesh 网关设备的 ip 和 token,比如蓝牙 mesh 开关面板连的小爱音响 mesh 网关，则填小爱的 ip,token</p><p>为了防止路由器重启后重新给设备分配 IP，建议在路由器管理页面将需要控制的设备设置静态 IP，尤其是 mseh 网关设备，一劳永逸</p>`;
-        
-        // 启动米家设备控制界面的自动刷新（每5秒）
-        refreshInterval = setInterval(() => {
-          refreshPreview();
-        }, 5000);
       } else if (activeKey === 'status') {
         descDiv.innerHTML = `<p>通过WebSocket查询设备状态</p><p>设备响应将实时显示在下方返回结果区域，请求时请确保小智开机</p>`;
       }
@@ -1124,7 +1077,7 @@
             input = el('input', { type:'checkbox', id:common.id, class:'w-5 h-5 rounded focus:ring-blue-500' });
             input.checked = !!state[activeKey][f.id];
             box.appendChild(input);
-            box.appendChild(el('label', { for:common.id, class:'text-sm cursor-pointer', text:'启用此选项' }));
+            box.appendChild(el('label', { for:common.id, class:'text-sm cursor-pointer', text:'控制关闭 / 开启' }));
             wrap.appendChild(box);
             grid.appendChild(wrap);
             input.addEventListener('change', () => { state[activeKey][f.id] = input.checked; refreshPreview(); });
@@ -1204,39 +1157,8 @@
     }
 
     function refreshPreview(){
-      // 修复米家设备控制界面的刷新问题
-      if (activeKey === 'mijia') {
-        // 即使没有选中设备也刷新预览，显示基本的请求结构
-        const payload = getPreviewPayload();
-        jsonPreview.textContent = pretty(payload);
-      } else {
-        // 其他界面正常刷新
-        const payload = getPreviewPayload();
-        jsonPreview.textContent = pretty(payload);
-      }
-      // 显示刷新成功的状态更新
-      setStatus('已刷新', 'success');
-    }
-
-    // 用户主动点击刷新按钮时调用的函数
-    function manualRefresh(){
-      refreshPreview();
-      // 显示弹窗提醒
-      showAlert('界面已刷新', true);
-    }
-
-    // 显示弹窗提醒
-    function showAlert(message, isSuccess) {
-      alertMessage.textContent = message;
-      alertMessage.className = isSuccess ? 
-        'text-center py-4 text-gray-800 dark:text-gray-200' : 
-        'text-center py-4 text-red-600 dark:text-red-300 font-medium';
-      alertModal.style.display = 'block';
-    }
-
-    // 关闭弹窗
-    function closeAlertModal() {
-      alertModal.style.display = 'none';
+      const payload = getPreviewPayload();
+      jsonPreview.textContent = pretty(payload);
     }
 
     function setStatus(text, type){
@@ -1309,42 +1231,42 @@
 
         websocket.onopen = function(event) {
           setStatus('已连接', 'success');
-          resultBox.textContent = 'WebSocket连接已成功建立，发送状态查询请求...\\n';
+          resultBox.textContent = 'WebSocket连接已成功建立，发送状态查询请求...\n';
           
           const request = {
             push: deviceId,
             type: "status"
           };
           websocket.send(JSON.stringify(request));
-          resultBox.textContent += '已发送: ' + JSON.stringify(request, null, 2) + '\\n\\n';
+          resultBox.textContent += '已发送: ' + JSON.stringify(request, null, 2) + '\n\n';
         };
 
         websocket.onmessage = function(event) {
-          resultBox.textContent += '收到响应: ' + event.data + '\\n';
+          resultBox.textContent += '收到响应: ' + event.data + '\n';
           setStatus('收到响应', 'success');
           
           try {
             const data = JSON.parse(event.data);
-            resultBox.textContent += '解析后的JSON:\\n' + JSON.stringify(data, null, 2) + '\\n';
+            resultBox.textContent += '解析后的JSON:\n' + JSON.stringify(data, null, 2) + '\n';
           } catch (e) {
-            resultBox.textContent += '响应不是有效的JSON格式\\n';
+            resultBox.textContent += '响应不是有效的JSON格式\n';
           }
         };
 
         websocket.onerror = function(error) {
-          resultBox.textContent += 'WebSocket错误: ' + JSON.stringify(error) + '\\n';
+          resultBox.textContent += 'WebSocket错误: ' + JSON.stringify(error) + '\n';
           setStatus('连接错误', 'error');
         };
 
         websocket.onclose = function(event) {
-          resultBox.textContent += `WebSocket连接已关闭，代码: ${event.code}, 原因: ${event.reason || '无'}\\n`;
+          resultBox.textContent += `WebSocket连接已关闭，代码: ${event.code}, 原因: ${event.reason || '无'}\n`;
           setStatus('连接关闭', 'info');
           websocket = null;
         };
 
         setTimeout(() => {
           if (websocket && websocket.readyState === WebSocket.OPEN) {
-            resultBox.textContent += '查询超时/查询结束，正在关闭连接...\\n';
+            resultBox.textContent += '查询超时/查询结束，正在关闭连接...\n';
             setStatus('查询超时/查询结束', 'error');
             websocket.close();
           }
@@ -1450,9 +1372,7 @@
           mijiaDevices[currentEditingMijiaIndex] = { name, ip, token, did, siid };
         }
         saveMijiaDevices();
-        if (activeKey === 'mijia' && document.getElementById('mijiaList')) {
-          renderMijiaList(document.getElementById('mijiaList'));
-        }
+        renderMijiaList(document.getElementById('mijiaList'));
         refreshPreview();
         editMijiaModal.style.display = 'none';
       }
@@ -1467,31 +1387,6 @@
     btnSend.addEventListener('click', sendNow);
     btnCopy.addEventListener('click', copyJSON);
     btnReset.addEventListener('click', resetFields);
-    btnRefresh.addEventListener('click', manualRefresh);
-
-    // 弹窗事件监听器
-    closeAlert.addEventListener('click', closeAlertModal);
-    alertClose.addEventListener('click', closeAlertModal);
-
-    window.addEventListener('click', (event) => {
-      if (event.target === deviceModal) {
-        deviceModal.style.display = 'none';
-      } else if (event.target === editMijiaModal) {
-        editMijiaModal.style.display = 'none';
-      } else if (event.target === alertModal) {
-        closeAlertModal();
-      }
-    });
-
-    // 页面卸载时清理定时器
-    window.addEventListener('beforeunload', () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
-      }
-      if (websocket) {
-        websocket.close();
-      }
-    });
 
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.body.classList.add('dark');
