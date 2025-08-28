@@ -18,160 +18,269 @@
       --dark: #1e293b;
       --light: #f8fafc;
     }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    .grid-auto {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
     }
-
     .card {
       background: white;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.03);
     }
-
+    .card:hover {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
     .dark .card {
       background: #1e293b;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
-
+    .dark .card:hover {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+    .field {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+    .dark .field {
+      background: #334155;
+      border-color: #475569;
+      color: white;
+    }
+    .field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    .dark .field:focus {
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+    }
+    .tab {
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem 0.5rem 0 0;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .tab-active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 -3px 0 var(--primary) inset;
+    }
+    .dark .tab-active {
+      background: #334155;
+      color: #60a5fa;
+    }
+    .tab-idle {
+      background: transparent;
+      color: #64748b;
+    }
+    .tab-idle:hover {
+      background: #f1f5f9;
+      color: #475569;
+    }
+    .dark .tab-idle:hover {
+      background: #475569;
+      color: #cbd5e1;
+    }
     .btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      font-weight: 500;
-      font-size: 0.875rem;
-      line-height: 1.25rem;
-      transition: all 0.2s;
       gap: 0.5rem;
+      border: none;
       cursor: pointer;
     }
-
-    .btn:focus {
-      outline: 2px solid transparent;
-      outline-offset: 2px;
-      box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
-    }
-
     .btn-primary {
-      background-color: var(--primary);
+      background: var(--primary);
       color: white;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
     }
-
     .btn-primary:hover {
-      background-color: var(--primary-dark);
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.3);
     }
-
     .btn-secondary {
-      background-color: var(--secondary);
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background-color: #475569;
-    }
-
-    .field {
-      display: block;
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border-radius: 0.375rem;
+      background: #f1f5f9;
+      color: #334155;
       border: 1px solid #d1d5db;
-      background-color: white;
-      color: #374151;
-      font-size: 0.875rem;
-      line-height: 1.25rem;
     }
-
-    .dark .field {
-      background-color: #374151;
-      border-color: #4b5563;
+    .dark .btn-secondary {
+      background: #475569;
       color: #e5e7eb;
+      border-color: #64748b;
     }
-
-    .field:focus {
-      outline: none;
-      ring: 2px;
-      ring-color: var(--primary);
-      border-color: var(--primary);
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
     }
-
-    .grid-auto {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
+    .dark .btn-secondary:hover {
+      background: #64748b;
     }
-
-    .tab {
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .tab-active {
-      background-color: var(--primary);
+    .btn-success {
+      background: var(--success);
       color: white;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
     }
-
-    .tab-idle {
-      background-color: #e5e7eb;
-      color: #4b5563;
+    .btn-success:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
     }
-
-    .dark .tab-idle {
-      background-color: #374151;
-      color: #d1d5db;
-    }
-
-    .tab-idle:hover {
-      background-color: #d1d5db;
-    }
-
-    .dark .tab-idle:hover {
-      background-color: #4b5563;
-    }
-
     .badge {
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
-      padding: 0.25rem 0.5rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      line-height: 1;
+      gap: 0.25rem;
     }
-
-    .device-select-container {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+    .badge-pulse {
+      position: relative;
     }
-
-    .device-select-label {
-      font-weight: 600;
-      color: #374151;
+    .badge-pulse::before {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.8;
+      top: 50%;
+      left: 0.5rem;
+      transform: translateY(-50%);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 0.3; }
+      100% { opacity: 0.8; }
+    }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(to bottom, rgba(248, 250, 252, 0.95) 0%, rgba(248, 250, 252, 0.95) 90%, transparent 100%);
+      z-index: 10;
+      padding: 1rem 0;
+      backdrop-filter: blur(5px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .dark .sticky-header {
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.95) 90%, transparent 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    @media (max-width: 640px) {
+      .grid-auto {
+        grid-template-columns: 1fr;
+      }
+    }
+    .slider-container {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 1rem;
     }
-
-    .dark .device-select-label {
-      color: #e5e7eb;
-    }
-
-    .device-select-wrapper {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .device-select-wrapper select {
+    .slider {
       flex: 1;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #d1d5db;
+      border-radius: 5px;
+      outline: none;
     }
-
+    .dark .slider {
+      background: #475569;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: 2px solid white;
+    }
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: 2px solid white;
+    }
+    .slider-value {
+      width: 80px;
+      min-width: 80px;
+      text-align: center;
+      font-weight: 600;
+      padding: 0.5rem;
+      background: #f1f5f9;
+      border-radius: 0.375rem;
+    }
+    .dark .slider-value {
+      background: #475569;
+      color: white;
+    }
+    .slider-input {
+      width: 80px;
+      text-align: center;
+      padding: 0.5rem;
+    }
+    .upload-btn {
+      margin-top: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-block;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+    .upload-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+    }
+    .password-container {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #64748b;
+    }
+    .toggle-password:hover {
+      color: var(--primary);
+    }
     .modal {
       display: none;
       position: fixed;
@@ -180,125 +289,218 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+      backdrop-filter: blur(3px);
+      animation: fadeIn 0.2s ease;
     }
-
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
     .modal-content {
-      background-color: white;
+      background-color: #fefefe;
       margin: 10% auto;
-      padding: 1.5rem;
-      border-radius: 0.5rem;
+      padding: 25px;
+      border: none;
       width: 90%;
-      max-width: 500px;
-      position: relative;
+      max-width: 550px;
+      border-radius: 1rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      animation: slideIn 0.3s ease;
     }
-
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
     .dark .modal-content {
-      background-color: #1e293b;
-    }
-
-    .close {
-      color: #aaa;
-      position: absolute;
-      top: 0.5rem;
-      right: 1rem;
-      font-size: 1.5rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .close:hover {
-      color: black;
-    }
-
-    .dark .close:hover {
+      background-color: #334155;
       color: white;
     }
-
-    .slider-container {
+    .close {
+      color: #94a3b8;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      line-height: 1;
+      transition: all 0.2s ease;
+    }
+    .close:hover,
+    .close:focus {
+      color: #64748b;
+      cursor: pointer;
+    }
+    .dark .close {
+      color: #94a3b8;
+    }
+    .dark .close:hover,
+    .dark .close:focus {
+      color: #cbd5e1;
+    }
+    .json-preview {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+    }
+    .dark .json-preview {
+      background: #111827;
+      border-color: #374151;
+      color: #e5e7eb;
+    }
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
       display: flex;
       align-items: center;
+      gap: 0.75rem;
+      color: #1e293b;
+    }
+    .dark .section-title {
+      color: #f1f5f9;
+    }
+    .section-title-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+    }
+    .dark .section-title-icon {
+      background: rgba(96, 165, 250, 0.1);
+    }
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
       gap: 1rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e2e8f0;
     }
-
-    .slider {
-      flex: 1;
-      height: 0.375rem;
-      appearance: none;
-      background: #d1d5db;
-      border-radius: 0.375rem;
-      outline: none;
+    .dark .action-buttons {
+      border-top: 1px solid #334155;
     }
-
-    .slider::-webkit-slider-thumb {
-      appearance: none;
-      width: 1.25rem;
-      height: 1.25rem;
-      border-radius: 50%;
-      background: var(--primary);
-      cursor: pointer;
-    }
-
-    .slider::-moz-range-thumb {
-      width: 1.25rem;
-      height: 1.25rem;
-      border-radius: 50%;
-      background: var(--primary);
-      cursor: pointer;
-    }
-
-    .slider-input {
-      width: 5rem;
-    }
-
-    .upload-btn {
-      margin-top: 0.5rem;
-      padding: 0.5rem;
-      background-color: #f3f4f6;
-      border-radius: 0.375rem;
+    .footer-card {
       text-align: center;
-      font-size: 0.875rem;
-      color: #4b5563;
-      cursor: pointer;
+      padding: 2rem;
     }
-
-    .dark .upload-btn {
-      background-color: #374151;
-      color: #d1d5db;
+    .footer-card p {
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
     }
-
-    .upload-btn:hover {
-      background-color: #e5e7eb;
+    .device-select-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
-
-    .dark .upload-btn:hover {
-      background-color: #4b5563;
+    .device-select-label {
+      font-weight: 600;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-
+    .dark .device-select-label {
+      color: #e2e8f0;
+    }
+    .device-select-wrapper {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .device-select-wrapper select {
+      flex: 1;
+    }
+    .result-box {
+      min-height: 150px;
+      max-height: 300px;
+      overflow-y: auto;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    .dark .result-box {
+      background: #0f172a;
+      border-color: #334155;
+    }
+    .form-description {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+    .dark .form-description {
+      background: #1e3a8a;
+      border-left-color: #60a5fa;
+    }
+    .form-field-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .form-field-label.required::after {
+      content: "*";
+      color: var(--danger);
+      margin-left: 0.25rem;
+    }
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
     .checkbox-input {
       width: 1.25rem;
       height: 1.25rem;
       border-radius: 0.25rem;
-      border: 1px solid #d1d5db;
-      background-color: white;
+      border: 2px solid #cbd5e1;
+      accent-color: var(--primary);
     }
-
     .dark .checkbox-input {
-      background-color: #374151;
-      border-color: #4b5563;
+      border-color: #64748b;
     }
-
-    pre {
-      background-color: #f8fafc;
-      border-radius: 0.375rem;
-      padding: 1rem;
-      overflow: auto;
-      font-size: 0.875rem;
-      line-height: 1.25rem;
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
     }
-
-    .dark pre {
-      background-color: #1e293b;
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    .tooltip .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--dark) transparent transparent transparent;
     }
   </style>
 </head>
@@ -315,15 +517,12 @@
           所有功能均由<a href="https://nodelua.com/home_iot/docs/#/guide/flex" class="text-blue-500 hover:underline font-medium" target="_blank">灵活固件</a>提供，本网站站主与灵活固件作者没有从属关系。
         </p>
       </div>
-      <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-        <div class="flex items-center gap-4">
-          <button class="bg-blue-100 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium" onclick="window.location.href='green-hand.html'">
-            <i class="fas fa-graduation-cap mr-1"></i>
-            新手模式
-          </button>
-          <div class="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium">
-            <i class="fas fa-microchip mr-2"></i>By zhangMonday & 六哥(CrisXie)
-          </div>
+      <div class="flex flex-wrap items-center justify-start sm:justify-end gap-3">
+        <a href="green-hand.html" class="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
+          <i class="fas fa-graduation-cap"></i>新手模式
+        </a>
+        <div class="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium">
+          <i class="fas fa-microchip mr-2"></i>By zhangMonday & 六哥(CrisXie)
         </div>
       </div>
     </div>
@@ -349,94 +548,119 @@
       </div>
     </section>
 
-    <section class="card p-6">
-      <div id="tabs" class="flex flex-wrap gap-2"></div>
-      <div id="formArea" class="mt-6"></div>
-    </section>
-
-    <section class="card p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold">请求数据预览</h2>
-        <div class="flex items-center gap-3">
-          <span id="statusBadge" class="badge"></span>
-          <button id="toggleJsonId" class="text-neutral-600 dark:text-neutral-300 hover:text-blue-500 dark:hover:text-blue-400">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
+    <div id="deviceModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="text-xl font-bold mb-5 flex items-center gap-2">
+          <i class="fas fa-cogs text-blue-500"></i>
+          管理设备
+        </h2>
+        <div id="deviceList" class="space-y-4 mb-5">
+        </div>
+        <div class="space-y-3">
+          <input id="newDeviceName" type="text" class="field" placeholder="设备名称" />
+          <input id="newDeviceId" type="text" class="field" placeholder="让小智查一下固件版本和设备编号，填编号（字母+数字）" />
+          <button id="addDevice" class="btn btn-primary w-full">
+            <i class="fas fa-plus"></i>
+            添加设备
           </button>
         </div>
       </div>
-      <pre id="jsonPreview" class="max-h-60 overflow-auto"></pre>
-      <div class="flex flex-wrap gap-3 mt-6">
+    </div>
+
+    <div id="editMijiaModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="text-xl font-bold mb-5 flex items-center gap-2" id="editMijiaTitle">
+          <i class="fas fa-cogs text-blue-500"></i>
+          编辑米家设备
+        </h2>
+        <div class="space-y-3">
+          <input id="editMijiaName" type="text" class="field" placeholder="设备名称，例如：次卧吸顶灯" />
+          <input id="editMijiaIp" type="text" class="field" placeholder="设备 IP" />
+          <input id="editMijiaToken" type="text" class="field" placeholder="设备 Token" />
+          <input id="editMijiaDid" type="text" class="field" placeholder="设备编号 (DID)" />
+          <input id="editMijiaSiid" type="text" class="field" placeholder="设备子编号 (SIID)" />
+          <button id="saveMijia" class="btn btn-primary w-full">
+            <i class="fas fa-save"></i>
+            保存
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section class="sticky-header">
+      <div id="tabs" class="flex flex-wrap gap-3">
+      </div>
+    </section>
+
+    <section class="card p-6">
+      <div id="formArea" class="space-y-5">
+      </div>
+      <div class="action-buttons">
         <button id="btnSend" class="btn btn-primary">
           <i class="fas fa-paper-plane"></i>
           发送指令
         </button>
         <button id="btnCopy" class="btn btn-secondary">
           <i class="fas fa-copy"></i>
-          复制JSON
+          复制请求数据
         </button>
         <button id="btnReset" class="btn btn-secondary">
           <i class="fas fa-redo"></i>
-          重置表单
+          重置
         </button>
       </div>
     </section>
 
     <section class="card p-6">
-      <h2 class="text-lg font-semibold mb-4">返回结果</h2>
-      <pre id="resultBox" class="max-h-96 overflow-auto"></pre>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="section-title">
+          <div class="section-title-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          请求数据
+        </h2>
+        <span id="toggleJsonId" class="cursor-pointer p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="切换设备ID显示">
+          <i class="fas fa-eye text-blue-500"></i>
+        </span>
+      </div>
+      <pre id="jsonPreview" class="mono text-sm overflow-auto p-5 rounded-lg json-preview"></pre>
+    </section>
+
+    <section class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="section-title">
+          <div class="section-title-icon">
+            <i class="fas fa-terminal"></i>
+          </div>
+          返回结果
+        </h2>
+        <span id="statusBadge" class="badge bg-neutral-100 dark:bg-neutral-700 badge-pulse">等待操作</span>
+      </div>
+      <pre id="resultBox" class="mono text-sm overflow-auto p-5 rounded-lg result-box"></pre>
+    </section>
+
+    <section class="card footer-card">
+      <h2 class="section-title justify-center">
+        <div class="section-title-icon">
+          <i class="fas fa-heart text-red-500"></i>
+        </div>
+        Github开源
+      </h2>
+      <p class="text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
+        <button class="btn btn-primary inline-block mb-4" onclick="window.open('https://github.com/zhangMonday/xiaozhi-Flex-Control', '_blank')" title="访问GitHub仓库">
+         <i class="fab fa-github">点我进入开源仓库</i>
+        </button>
+      <br>
+        欢迎提交issue & Pull requests～灵活固件QQ交流群：1041054478
+      </p>
     </section>
   </main>
 
-  <div id="deviceModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2 class="text-xl font-bold mb-4">设备管理</h2>
-      <div class="space-y-4">
-        <div class="grid-auto">
-          <input id="newDeviceName" type="text" class="field" placeholder="设备名称">
-          <input id="newDeviceId" type="text" class="field" placeholder="设备ID">
-          <button id="addDevice" class="btn btn-primary">添加设备</button>
-        </div>
-        <div id="deviceList" class="space-y-3"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="editMijiaModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2 id="editMijiaTitle" class="text-xl font-bold mb-4">添加米家设备</h2>
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-semibold mb-1">设备名称</label>
-          <input id="editMijiaName" type="text" class="field" placeholder="例如：次卧吸顶灯">
-        </div>
-        <div>
-          <label class="block text-sm font-semibold mb-1">设备IP</label>
-          <input id="editMijiaIp" type="text" class="field" placeholder="192.168.1.100">
-        </div>
-        <div>
-          <label class="block text-sm font-semibold mb-1">设备Token</label>
-          <input id="editMijiaToken" type="text" class="field" placeholder="设备token">
-        </div>
-        <div>
-          <label class="block text-sm font-semibold mb-1">设备DID</label>
-          <input id="editMijiaDid" type="text" class="field" placeholder="设备did">
-        </div>
-        <div>
-          <label class="block text-sm font-semibold mb-1">设备SIID</label>
-          <input id="editMijiaSiid" type="text" class="field" placeholder="设备siid">
-        </div>
-        <button id="saveMijia" class="btn btn-primary w-full">保存</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    console.log(`来控制台干什么，快来陪我van♂
+  console.log(`
+来控制台干什么，快来陪我van♂
 　               ▃▆█▇▄▖
          　 　▟◤▖　　　◥█▎
        　　◢◤　 ▐　　　　▐▉
@@ -598,10 +822,6 @@
 
     function renderMijiaList(container) {
       container.innerHTML = '';
-      if (mijiaDevices.length === 1 && selectedMijiaIndex === -1) {
-        selectedMijiaIndex = 0;
-      }
-      
       mijiaDevices.forEach((dev, idx) => {
         const item = el('div', { class: 'flex items-center gap-2 border-b pb-2' });
         const radio = el('input', { type: 'radio', name: 'mijiaSelect', class: 'checkbox-input', checked: selectedMijiaIndex === idx });
@@ -644,19 +864,14 @@
       };
       const values = state[activeKey] || {};
       if (activeKey === 'mijia') {
-        if (mijiaDevices.length > 0) {
-          if (selectedMijiaIndex === -1) {
-            selectedMijiaIndex = 0;
-          }
-          if (selectedMijiaIndex >= 0 && mijiaDevices[selectedMijiaIndex]) {
-            const mijiaDev = mijiaDevices[selectedMijiaIndex];
-            payload.name = mijiaDev.name;
-            payload.ip = mijiaDev.ip;
-            payload.token = mijiaDev.token;
-            payload.did = mijiaDev.did;
-            payload.siid = mijiaDev.siid;
-            payload.state = values.state ? 1 : 0;
-          }
+        if (selectedMijiaIndex >= 0 && mijiaDevices[selectedMijiaIndex]) {
+          const mijiaDev = mijiaDevices[selectedMijiaIndex];
+          payload.name = mijiaDev.name;
+          payload.ip = mijiaDev.ip;
+          payload.token = mijiaDev.token;
+          payload.did = mijiaDev.did;
+          payload.siid = mijiaDev.siid;
+          payload.state = values.state ? 1 : 0;
         }
       } else {
         for (const f of def.fields) {
@@ -746,6 +961,9 @@
       } else {
         const grid = el('div', { class:'grid-auto' });
         if (activeKey === 'mijia') {
+          if (mijiaDevices.length > 0 && selectedMijiaIndex === -1) {
+            selectedMijiaIndex = 0;
+          }
           const mijiaSection = el('div', { class: 'space-y-4' });
           const addBtn = el('button', { class: 'btn btn-primary', text: '添加米家设备', onclick: () => {
             currentEditingMijiaIndex = -1;
