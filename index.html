@@ -820,15 +820,21 @@
       });
     }
 
-    function renderMijiaList(container) {
-      container.innerHTML = '';
-      mijiaDevices.forEach((dev, idx) => {
-        const item = el('div', { class: 'flex items-center gap-2 border-b pb-2' });
-        const radio = el('input', { type: 'radio', name: 'mijiaSelect', class: 'checkbox-input', checked: selectedMijiaIndex === idx });
-        radio.addEventListener('change', () => {
-          selectedMijiaIndex = idx;
-          refreshPreview();
-        });
+function renderMijiaList(container) {
+  container.innerHTML = '';
+  
+  if (selectedMijiaIndex === -1 && mijiaDevices.length > 0) {
+    selectedMijiaIndex = 0;
+  }
+  
+  mijiaDevices.forEach((dev, idx) => {
+    const item = el('div', { class: 'flex items-center gap-2 border-b pb-2' });
+    const radio = el('input', { type: 'radio', name: 'mijiaSelect', class: 'checkbox-input', checked: idx === 0 });
+    
+    radio.addEventListener('change', () => {
+      selectedMijiaIndex = idx;
+      refreshPreview();
+    });
         const info = el('div', { class: 'flex-1', text: `${dev.name} (IP: ${dev.ip}, DID: ${dev.did}, SIID: ${dev.siid})` });
         const editBtn = el('button', { class: 'btn btn-secondary', text: '编辑', onclick: () => {
           currentEditingMijiaIndex = idx;
