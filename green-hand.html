@@ -719,7 +719,7 @@
         </p>
         <div class="beginner-note mt-4">
           <p class="font-medium">新手模式说明：</p>
-          <p>此模式为简化版本，隐藏了部分高级功能，专注于基础操作。适合初次使用的用户。</p>
+          <p>此模式为简化版本，去除请求数据和返回结果等小白用户看不懂的数据，并且对返回的数据做一个处理，变得好理解，适合初次使用的用户。</p>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -830,10 +830,6 @@
           <i class="fas fa-paper-plane"></i>
           发送指令
         </button>
-        <button id="btnCopy" class="btn btn-secondary">
-          <i class="fas fa-copy"></i>
-          复制请求数据
-        </button>
         <button id="btnReset" class="btn btn-secondary">
           <i class="fas fa-redo"></i>
           重置
@@ -933,7 +929,6 @@
     const newDeviceId = document.getElementById('newDeviceId');
     const addDeviceBtn = document.getElementById('addDevice');
     const btnSend     = document.getElementById('btnSend');
-    const btnCopy     = document.getElementById('btnCopy');
     const btnReset    = document.getElementById('btnReset');
     const btnRefresh  = document.getElementById('btnRefresh');
     const modalClose = deviceModal.querySelector('.close');
@@ -1321,13 +1316,13 @@
         clearTimeout(timer);
 
         if (resp.ok) {
-          showAlert('指令已发送成功，请检查设备响应', true);
+          showAlert('成功了！你的设备会有反应的', true);
         } else {
-          showAlert('指令发送失败，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
+          showAlert('失败了，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
         }
       } catch (err) {
         clearTimeout(timer);
-        showAlert('指令发送失败，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
+        showAlert('失败了，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
       }
     }
 
@@ -1372,18 +1367,18 @@
               message += `固件版本: ${data.firmware_ver}\n`;
               message += `编译时间: ${data.compile_time}\n`;
               message += `本地音乐: ${data.local_music} 首\n\n`;
-              message += "指令已发送成功";
+              message += "成功了！你的设备会有反应的";
               showAlert(message, true);
             } else {
-              showAlert('指令发送失败，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
+              showAlert('失败了，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
             }
           } catch (e) {
-            showAlert('指令发送失败，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
+            showAlert('失败了，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
           }
         };
 
         websocket.onerror = function(error) {
-          showAlert('连接错误，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
+          showAlert('连接错误，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
         };
 
         websocket.onclose = function(event) {
@@ -1397,7 +1392,7 @@
         }, 10000);
 
       } catch (error) {
-        showAlert('连接失败，请检查设备是否开机，或者进入普通模式查看报错信息。', false);
+        showAlert('连接失败，请检查设备是否开机，或者进入专家模式查看问题原因。', false);
       }
     }
 
@@ -1466,7 +1461,6 @@
     });
 
     btnSend.addEventListener('click', sendNow);
-    btnCopy.addEventListener('click', copyJSON);
     btnReset.addEventListener('click', resetFields);
     btnRefresh.addEventListener('click', () => {
       // 在新手模式中，刷新功能主要用于重绘界面
