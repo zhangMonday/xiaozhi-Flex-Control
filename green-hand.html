@@ -1463,7 +1463,8 @@
     btnSend.addEventListener('click', sendNow);
     btnReset.addEventListener('click', resetFields);
     btnRefresh.addEventListener('click', () => {
-      // 在新手模式中，刷新功能主要用于重绘界面
+      // 在新手模式中，刷新功能主要用于重绘界面和重新加载设备列表
+      renderDeviceSelect();
       renderForm();
       showAlert('界面已刷新', true);
     });

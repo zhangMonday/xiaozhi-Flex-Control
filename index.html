@@ -692,6 +692,10 @@
           <i class="fas fa-redo"></i>
           重置
         </button>
+        <button id="btnRefresh" class="btn btn-secondary">
+          <i class="fas fa-sync"></i>
+          刷新
+        </button>
       </div>
     </section>
 
@@ -817,6 +821,7 @@
     const btnSend     = document.getElementById('btnSend');
     const btnCopy     = document.getElementById('btnCopy');
     const btnReset    = document.getElementById('btnReset');
+    const btnRefresh  = document.getElementById('btnRefresh');
     const modalClose = deviceModal.querySelector('.close');
     const editMijiaModal = document.getElementById('editMijiaModal');
     const editMijiaTitle = document.getElementById('editMijiaTitle');
@@ -1388,9 +1393,46 @@
 
     toggleJsonId.addEventListener('click', toggleDeviceIdVisibility);
 
-    btnSend.addEventListener('click', sendNow);
-    btnCopy.addEventListener('click', copyJSON);
-    btnReset.addEventListener('click', resetFields);
+    // 添加一个函数来显示自定义弹窗提示
+    function showAlert(message) {
+      // 创建弹窗元素
+      const alertModal = document.createElement('div');
+      alertModal.className = 'modal';
+      alertModal.innerHTML = `
+        <div class="modal-content" style="width: 90%; max-width: 400px; padding: 20px; text-align: center;">
+          <span class="close" style="position: absolute; top: 10px; right: 15px; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+          <h3 style="margin-top: 0;">提示</h3>
+          <p>${message}</p>
+          <button id="closeAlert" class="btn btn-primary" style="margin-top: 20px;">确定</button>
+        </div>
+      `;
+      document.body.appendChild(alertModal);
+
+      // 显示弹窗
+      alertModal.style.display = 'block';
+
+      // 关闭弹窗功能
+      const closeModal = function() {
+        alertModal.style.display = 'none';
+        document.body.removeChild(alertModal);
+      };
+
+      alertModal.querySelector('.close').onclick = closeModal;
+      alertModal.querySelector('#closeAlert').onclick = closeModal;
+
+      window.onclick = function(event) {
+        if (event.target == alertModal) {
+          closeModal();
+        }
+      }
+    }
+    btnRefresh.addEventListener('click', () => {
+      // 在标准模式中，刷新功能主要用于重新加载设备列表和更新预览
+      renderDeviceSelect();
+      refreshPreview();
+      // 使用自定义弹窗提示刷新成功
+      showAlert('界面已刷新');
+    });
 
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.body.classList.add('dark');
