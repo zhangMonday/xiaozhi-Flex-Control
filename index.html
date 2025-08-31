@@ -22,41 +22,41 @@
     .grid-auto {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+      gap: 1rem;
     }
     
     .card {
       background: white;
-      border-radius: 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
       overflow: hidden;
       transition: all 0.3s ease;
       border: 1px solid rgba(0, 0, 0, 0.03);
     }
     
     .card:hover {
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
       transform: translateY(-2px);
     }
     
     .dark .card {
       background: #1e293b;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
     
     .dark .card:hover {
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
     
     .field {
       width: 100%;
-      padding: 0.75rem 1rem;
+      padding: 0.6rem 0.8rem;
       border: 2px solid #e2e8f0;
       border-radius: 0.5rem;
       background: white;
       transition: all 0.2s ease;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
     }
     
     .dark .field {
@@ -76,12 +76,13 @@
     }
     
     .tab {
-      padding: 0.75rem 1.25rem;
+      padding: 0.6rem 1rem;
       border-radius: 0.5rem 0.5rem 0 0;
       font-weight: 600;
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      font-size: 0.85rem;
     }
     
     .tab-active {
@@ -111,7 +112,7 @@
     }
     
     .btn {
-      padding: 0.75rem 1.25rem;
+      padding: 0.6rem 1rem;
       border-radius: 0.5rem;
       font-weight: 600;
       transition: all 0.2s ease;
@@ -121,7 +122,7 @@
       gap: 0.5rem;
       border: none;
       cursor: pointer;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
     }
     
     .btn-primary {
@@ -170,9 +171,9 @@
     }
     
     .badge {
-      padding: 0.35rem 0.85rem;
+      padding: 0.3rem 0.7rem;
       border-radius: 9999px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
@@ -186,8 +187,8 @@
     .badge-pulse::before {
       content: '';
       position: absolute;
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: currentColor;
       opacity: 0.8;
@@ -212,7 +213,7 @@
       top: 0;
       background: linear-gradient(to bottom, rgba(248, 250, 252, 0.95) 0%, rgba(248, 250, 252, 0.95) 90%, transparent 100%);
       z-index: 10;
-      padding: 1rem 0;
+      padding: 0.8rem 0;
       backdrop-filter: blur(5px);
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
@@ -223,62 +224,77 @@
     }
     
     @media (max-width: 640px) {
-      .grid-auto {
-        grid-template-columns: 1fr;
-      }
-      
       body {
-        font-size: 14px;
+        font-size: 13px;
       }
       
       h1 {
-        font-size: 1.5rem !important;
+        font-size: 1.3rem !important;
       }
       
       .btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.8rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.75rem;
       }
       
       .field {
-        padding: 0.6rem 0.8rem;
-        font-size: 0.85rem;
+        padding: 0.5rem 0.7rem;
+        font-size: 0.8rem;
       }
       
       .tab {
-        padding: 0.6rem 1rem;
-        font-size: 0.85rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
       }
       
       .section-title {
-        font-size: 1.1rem !important;
+        font-size: 1rem !important;
+        margin-bottom: 1rem !important;
       }
       
       .section-title-icon {
-        width: 30px !important;
-        height: 30px !important;
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.9rem !important;
       }
       
       .json-preview, .result-box {
-        font-size: 0.8rem !important;
-        padding: 0.8rem !important;
+        font-size: 0.75rem !important;
+        padding: 0.7rem !important;
+        min-height: 120px !important;
+        max-height: 250px !important;
       }
       
       .modal-content {
         width: 95% !important;
-        padding: 15px !important;
+        padding: 12px !important;
+        margin: 5% auto !important;
+      }
+      
+      .grid-auto {
+        gap: 0.8rem !important;
+      }
+      
+      .card {
+        padding: 0.8rem !important;
+      }
+      
+      .action-buttons {
+        gap: 0.8rem !important;
+        margin-top: 1rem !important;
+        padding-top: 1rem !important;
       }
     }
     
     .slider-container {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.8rem;
     }
     
     .slider {
       flex: 1;
-      height: 6px;
+      height: 5px;
       -webkit-appearance: none;
       appearance: none;
       background: #d1d5db;
@@ -293,8 +309,8 @@
     .slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       background: var(--primary);
       cursor: pointer;
@@ -303,8 +319,8 @@
     }
     
     .slider::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       background: var(--primary);
       cursor: pointer;
@@ -313,11 +329,11 @@
     }
     
     .slider-value {
-      width: 80px;
-      min-width: 80px;
+      width: 70px;
+      min-width: 70px;
       text-align: center;
       font-weight: 600;
-      padding: 0.5rem;
+      padding: 0.4rem;
       background: #f1f5f9;
       border-radius: 0.375rem;
     }
@@ -328,18 +344,18 @@
     }
     
     .slider-input {
-      width: 80px;
+      width: 70px;
       text-align: center;
-      padding: 0.5rem;
+      padding: 0.4rem;
     }
     
     .upload-btn {
-      margin-top: 0.75rem;
-      padding: 0.5rem 1rem;
+      margin-top: 0.6rem;
+      padding: 0.4rem 0.8rem;
       background: var(--primary);
       color: white;
       border-radius: 0.5rem;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       cursor: pointer;
       display: inline-block;
       font-weight: 500;
@@ -359,7 +375,7 @@
     
     .toggle-password {
       position: absolute;
-      right: 1rem;
+      right: 0.8rem;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
@@ -391,18 +407,18 @@
     
     .modal-content {
       background-color: #fefefe;
-      margin: 10% auto;
-      padding: 25px;
+      margin: 5% auto;
+      padding: 15px;
       border: none;
-      width: 90%;
-      max-width: 550px;
-      border-radius: 1rem;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      width: 95%;
+      max-width: 500px;
+      border-radius: 0.75rem;
+      box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.1), 0 8px 8px -5px rgba(0, 0, 0, 0.04);
       animation: slideIn 0.3s ease;
     }
     
     @keyframes slideIn {
-      from { transform: translateY(-20px); opacity: 0; }
+      from { transform: translateY(-15px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
     
@@ -414,7 +430,7 @@
     .close {
       color: #94a3b8;
       float: right;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: bold;
       line-height: 1;
       transition: all 0.2s ease;
@@ -448,12 +464,12 @@
     }
     
     .section-title {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.6rem;
       color: #1e293b;
     }
     
@@ -462,14 +478,15 @@
     }
     
     .section-title-icon {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       border-radius: 0.75rem;
       display: flex;
       align-items: center;
       justify-content: center;
       background: rgba(59, 130, 246, 0.1);
       color: var(--primary);
+      font-size: 0.9rem;
     }
     
     .dark .section-title-icon {
@@ -479,9 +496,9 @@
     .action-buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+      padding-top: 1.2rem;
       border-top: 1px solid #e2e8f0;
     }
     
@@ -491,18 +508,18 @@
     
     .footer-card {
       text-align: center;
-      padding: 2rem;
+      padding: 1.5rem;
     }
     
     .footer-card p {
-      margin-bottom: 1.5rem;
-      line-height: 1.7;
+      margin-bottom: 1.2rem;
+      line-height: 1.6;
     }
     
     .device-select-container {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
     
     .device-select-label {
@@ -510,7 +527,8 @@
       color: #334155;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
+      font-size: 0.85rem;
     }
     
     .dark .device-select-label {
@@ -519,7 +537,7 @@
     
     .device-select-wrapper {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.6rem;
     }
     
     .device-select-wrapper select {
@@ -527,11 +545,11 @@
     }
     
     .result-box {
-      min-height: 150px;
-      max-height: 300px;
+      min-height: 120px;
+      max-height: 250px;
       overflow-y: auto;
       border-radius: 0.75rem;
-      padding: 1.25rem;
+      padding: 1rem;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
     }
@@ -544,10 +562,10 @@
     .form-description {
       background: #eff6ff;
       border-left: 4px solid var(--primary);
-      padding: 1rem;
+      padding: 0.8rem;
       border-radius: 0 0.5rem 0.5rem 0;
-      margin-bottom: 1.5rem;
-      font-size: 0.95rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.85rem;
     }
     
     .dark .form-description {
@@ -558,26 +576,27 @@
     .form-field-label {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
+      gap: 0.4rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
     }
     
     .form-field-label.required::after {
       content: "*";
       color: var(--danger);
-      margin-left: 0.25rem;
+      margin-left: 0.2rem;
     }
     
     .checkbox-field {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin-top: 0.5rem;
+      gap: 0.6rem;
+      margin-top: 0.4rem;
     }
     
     .checkbox-input {
-      width: 1.25rem;
-      height: 1.25rem;
+      width: 1.1rem;
+      height: 1.1rem;
       border-radius: 0.25rem;
       border: 2px solid #cbd5e1;
       accent-color: var(--primary);
@@ -595,12 +614,12 @@
     
     .tooltip .tooltip-text {
       visibility: hidden;
-      width: 200px;
+      width: 180px;
       background-color: var(--dark);
       color: white;
       text-align: center;
       border-radius: 0.5rem;
-      padding: 0.75rem;
+      padding: 0.6rem;
       position: absolute;
       z-index: 1;
       bottom: 125%;
@@ -608,7 +627,7 @@
       transform: translateX(-50%);
       opacity: 0;
       transition: opacity 0.3s;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       line-height: 1.4;
     }
     
@@ -630,31 +649,31 @@
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
-  <header class="max-w-6xl mx-auto px-4 pt-8 pb-6">
-    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+  <header class="max-w-6xl mx-auto px-4 pt-6 pb-4">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
       <div>
-        <h1 class="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-3">
+        <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
           <i class="fas fa-robot text-blue-500"></i>
           小智灵活远控
         </h1>
-        <p class="text-sm text-neutral-600 dark:text-neutral-300 mt-3 max-w-3xl">
+        <p class="text-xs text-neutral-600 dark:text-neutral-300 mt-2 max-w-3xl">
           本网站仅用于调用<a href="https://nodelua.com/home_iot/docs/#/guide/socket" class="text-blue-500 hover:underline font-medium" target="_blank">灵活接口</a>，实现远程控制小智AI。
           所有功能均由<a href="https://nodelua.com/home_iot/docs/#/guide/flex" class="text-blue-500 hover:underline font-medium" target="_blank">灵活固件</a>提供，本网站站主与灵活固件作者没有从属关系。
         </p>
       </div>
-      <div class="flex gap-4">
-        <a href="green-hand.html" class="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium">
-          <i class="fas fa-graduation-cap mr-2"></i>新手模式
+      <div class="flex gap-3">
+        <a href="green-hand.html" class="bg-blue-100 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg text-blue-800 dark:text-blue-200 text-xs font-medium">
+          <i class="fas fa-graduation-cap mr-1"></i>新手模式
         </a>
-        <div class="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-200 text-sm font-medium">
-          <i class="fas fa-microchip mr-2"></i>By zhangMonday & 六哥(CrisXie)
+        <div class="bg-blue-100 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg text-blue-800 dark:text-blue-200 text-xs font-medium">
+          <i class="fas fa-microchip mr-1"></i>By zhangMonday & 六哥(CrisXie)
         </div>
       </div>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 pb-16 space-y-6">
-    <section class="card p-6">
+  <main class="max-w-6xl mx-auto px-4 pb-12 space-y-4">
+    <section class="card p-4">
       <div class="grid-auto">
         <div class="device-select-container">
           <label class="device-select-label">
@@ -676,13 +695,13 @@
     <div id="deviceModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
-        <h2 class="text-xl font-bold mb-5 flex items-center gap-2">
+        <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
           <i class="fas fa-cogs text-blue-500"></i>
           管理设备
         </h2>
-        <div id="deviceList" class="space-y-4 mb-5">
+        <div id="deviceList" class="space-y-3 mb-4">
         </div>
-        <div class="space-y-3">
+        <div class="space-y-2">
           <input id="newDeviceName" type="text" class="field" placeholder="设备名称" />
           <input id="newDeviceId" type="text" class="field" placeholder="让小智查一下固件版本和设备编号，填编号（字母+数字）" />
           <button id="addDevice" class="btn btn-primary w-full">
@@ -696,11 +715,11 @@
     <div id="editMijiaModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
-        <h2 class="text-xl font-bold mb-5 flex items-center gap-2" id="editMijiaTitle">
+        <h2 class="text-lg font-bold mb-4 flex items-center gap-2" id="editMijiaTitle">
           <i class="fas fa-cogs text-blue-500"></i>
           编辑米家设备
         </h2>
-        <div class="space-y-3">
+        <div class="space-y-2">
           <input id="editMijiaName" type="text" class="field" placeholder="设备名称，例如：次卧吸顶灯" />
           <input id="editMijiaIp" type="text" class="field" placeholder="设备 IP" />
           <input id="editMijiaToken" type="text" class="field" placeholder="设备 Token" />
@@ -715,12 +734,12 @@
     </div>
 
     <section class="sticky-header">
-      <div id="tabs" class="flex flex-wrap gap-3">
+      <div id="tabs" class="flex flex-wrap gap-2">
       </div>
     </section>
 
-    <section class="card p-6">
-      <div id="formArea" class="space-y-5">
+    <section class="card p-4">
+      <div id="formArea" class="space-y-4">
       </div>
       <div class="action-buttons">
         <button id="btnSend" class="btn btn-primary">
@@ -738,23 +757,23 @@
       </div>
     </section>
 
-    <section class="card p-6">
-      <div class="flex items-center justify-between mb-4">
+    <section class="card p-4">
+      <div class="flex items-center justify-between mb-3">
         <h2 class="section-title">
           <div class="section-title-icon">
             <i class="fas fa-code"></i>
           </div>
           请求数据
         </h2>
-        <span id="toggleJsonId" class="cursor-pointer p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="切换设备ID显示">
+        <span id="toggleJsonId" class="cursor-pointer p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="切换设备ID显示">
           <i class="fas fa-eye text-blue-500"></i>
         </span>
       </div>
-      <pre id="jsonPreview" class="mono text-sm overflow-auto p-5 rounded-lg json-preview"></pre>
+      <pre id="jsonPreview" class="mono text-xs overflow-auto p-4 rounded-lg json-preview"></pre>
     </section>
 
-    <section class="card p-6">
-      <div class="flex items-center justify-between mb-4">
+    <section class="card p-4">
+      <div class="flex items-center justify-between mb-3">
         <h2 class="section-title">
           <div class="section-title-icon">
             <i class="fas fa-terminal"></i>
@@ -763,7 +782,7 @@
         </h2>
         <span id="statusBadge" class="badge bg-neutral-100 dark:bg-neutral-700 badge-pulse">等待操作</span>
       </div>
-      <pre id="resultBox" class="mono text-sm overflow-auto p-5 rounded-lg result-box"></pre>
+      <pre id="resultBox" class="mono text-xs overflow-auto p-4 rounded-lg result-box"></pre>
     </section>
 
     <section class="card footer-card">
@@ -774,7 +793,7 @@
         Github开源
       </h2>
       <p class="text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
-        <button class="btn btn-primary inline-block mb-4" onclick="window.open('https://github.com/zhangMonday/xiaozhi-Flex-Control', '_blank')" title="访问GitHub仓库">
+        <button class="btn btn-primary inline-block mb-3" onclick="window.open('https://github.com/zhangMonday/xiaozhi-Flex-Control', '_blank')" title="访问GitHub仓库">
          <i class="fab fa-github">点我进入开源仓库</i>
         </button>
       <br>
@@ -1053,7 +1072,7 @@
         def.fields.forEach(f => state[activeKey][f.id] = getDefaultValue(f));
       }
 
-      const descDiv = el('div', { class: 'text-sm text-neutral-600 dark:text-neutral-300 space-y-2' });
+      const descDiv = el('div', { class: 'text-xs text-neutral-600 dark:text-neutral-300 space-y-1' });
       if (activeKey === 'chat') {
         descDiv.innerHTML = `<p>向设备AI发送消息，可用于MCP调用、语音播发等</p><p>text: 播放邓紫棋的多远都要在一起</p><p>text: 播放清晨音乐电台</p><p>text: 播放内存卡里的歌曲</p><p>text: 把屏幕调到夜间模式</p><p>text: 音量调到 40 后念出下面这句话，注意不要与用户对话，念完立即关闭对话并退下：\"支付宝到账一百亿\"</p><p>此功能会主动唤醒设备，并发送文字内容给 AI，效果等同于在设备旁边与之对话</p>`;
       } else if (activeKey === 'audio') {
@@ -1082,11 +1101,11 @@
       formAreaEl.appendChild(descDiv);
 
       if (!def.fields.length) {
-        formAreaEl.appendChild(el('div', { class:'text-sm text-blue-600 dark:text-blue-300 italic py-2', text: '该接口无附加字段，直接点击"发送指令"即可' }));
+        formAreaEl.appendChild(el('div', { class:'text-xs text-blue-600 dark:text-blue-300 italic py-1', text: '该接口无附加字段，直接点击"发送指令"即可' }));
       } else {
         const grid = el('div', { class:'grid-auto' });
         if (activeKey === 'mijia') {
-          const mijiaSection = el('div', { class: 'space-y-4' });
+          const mijiaSection = el('div', { class: 'space-y-3' });
           const addBtn = el('button', { class: 'btn btn-primary', text: '添加米家设备', onclick: () => {
             currentEditingMijiaIndex = -1;
             editMijiaTitle.textContent = '添加米家设备';
@@ -1098,7 +1117,7 @@
             editMijiaModal.style.display = 'block';
           }});
           mijiaSection.appendChild(addBtn);
-          const listContainer = el('div', { id: 'mijiaList', class: 'space-y-2' });
+          const listContainer = el('div', { id: 'mijiaList', class: 'space-y-1' });
           renderMijiaList(listContainer);
           mijiaSection.appendChild(listContainer);
           formAreaEl.appendChild(mijiaSection);
@@ -1109,21 +1128,21 @@
         }
         def.fields.forEach(f => {
           const wrap = el('div', {});
-          wrap.appendChild(el('label', { class:'text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5 flex items-center gap-1', text: f.label }));
+          wrap.appendChild(el('label', { class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', text: f.label }));
           
           let input;
           const common = { class:'field mt-1', id:`f-${activeKey}-${f.id}` };
           if (f.type === 'textarea') {
-            input = el('textarea', { ...common, placeholder:f.placeholder || '', rows:4 });
+            input = el('textarea', { ...common, placeholder:f.placeholder || '', rows:3 });
           } else if (f.type === 'select') {
             input = el('select', { ...common });
             (f.options || []).forEach(op => input.appendChild(el('option', { value:String(op), text:String(op) })));
           } else if (f.type === 'checkbox') {
-            const box = el('div', { class:'mt-1 flex items-center gap-3' });
-            input = el('input', { type:'checkbox', id:common.id, class:'w-5 h-5 rounded focus:ring-blue-500' });
+            const box = el('div', { class:'mt-1 flex items-center gap-2' });
+            input = el('input', { type:'checkbox', id:common.id, class:'w-4 h-4 rounded focus:ring-blue-500' });
             input.checked = !!state[activeKey][f.id];
             box.appendChild(input);
-            box.appendChild(el('label', { for:common.id, class:'text-sm cursor-pointer', text:'控制关闭 / 开启' }));
+            box.appendChild(el('label', { for:common.id, class:'text-xs cursor-pointer', text:'控制关闭 / 开启' }));
             wrap.appendChild(box);
             grid.appendChild(wrap);
             input.addEventListener('change', () => { state[activeKey][f.id] = input.checked; refreshPreview(); });
@@ -1349,13 +1368,13 @@
       
       if (showDeviceId) {
         toggleJsonId.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
           </svg>
         `;
       } else {
         toggleJsonId.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
