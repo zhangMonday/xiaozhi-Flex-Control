@@ -4,7 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>小智灵活远控</title>
-  <link rel="icon" href="data:,">
+  <link rel="icon" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="logo.png">
+  <meta name="theme-color" content="#3b82f6">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -794,7 +799,10 @@
       </h2>
       <p class="text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
         <button class="btn btn-primary inline-block mb-3" onclick="window.open('https://github.com/zhangMonday/xiaozhi-Flex-Control', '_blank')" title="访问GitHub仓库">
-         <i class="fab fa-github">点我进入开源仓库</i>
+         <i class="fab fa-github"></i> <strong>点我进入开源仓库</strong>
+        </button>
+        <button id="installBtn" class="btn btn-primary inline-block mb-3" title="安装PWA应用">
+         <i class="fas fa-download"></i> <strong>安装PWA应用</strong>
         </button>
       <br>
         欢迎提交issue & Pull requests～灵活固件QQ交流群：1041054478
@@ -889,6 +897,7 @@
     const editMijiaSiid = document.getElementById('editMijiaSiid');
     const saveMijiaBtn = document.getElementById('saveMijia');
     const editMijiaModalClose = editMijiaModal.querySelector('.close');
+    const installBtn = document.getElementById('installBtn');
 
     let activeKey = 'chat';
     let showDeviceId = false;
@@ -899,6 +908,8 @@
     let currentDeviceIndex = -1;
     let selectedMijiaIndex = -1;
     let currentEditingMijiaIndex = -1;
+    let deferredPrompt = null;
+    let refreshing = false;
 
     const el = (tag, attrs={}, children=[]) => {
       const n = document.createElement(tag);
@@ -1463,6 +1474,53 @@
         document.body.classList.add('dark');
       } else {
         document.body.classList.remove('dark');
+      }
+    });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                newWorker.postMessage({ action: 'skipWaiting' });
+              }
+            });
+          });
+        }).catch(err => console.error('Service Worker registration failed:', err));
+      });
+    }
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+    installBtn.addEventListener('click', () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('同意安装pwa');
+          } else {
+            console.log('pwa安装被用户拒绝');
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        const ua = navigator.userAgent.toLowerCase();
+        let message = '请使用支持PWA的浏览器安装';
+        if (ua.includes('windows')) {
+          message = '在Edge或Chrome浏览器中，点击地址栏的安装图标';
+        } else if (ua.includes('android')) {
+          message = '在Chrome浏览器中，点击菜单 > 添加到主屏幕';
+        } else if (ua.includes('iphone') || ua.includes('ipad')) {
+          message = '在Safari浏览器中，点击分享 > 添加到主屏幕，打开桌面图标时不拉起Safari浏览器即为成功';
+        }
+        alert(message);
       }
     });
   </script>
