@@ -651,6 +651,114 @@
       border-style: solid;
       border-color: var(--dark) transparent transparent transparent;
     }
+
+    .alarm-type-selector {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .alarm-type-btn {
+      flex: 1;
+      padding: 0.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    
+    .dark .alarm-type-btn {
+      background: #334155;
+      border-color: #475569;
+      color: white;
+    }
+    
+    .alarm-type-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    
+    .weekday-selector {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .weekday-btn {
+      padding: 0.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    
+    .dark .weekday-btn {
+      background: #334155;
+      border-color: #475569;
+      color: white;
+    }
+    
+    .weekday-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    
+    .date-input-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    
+    .date-input {
+      flex: 1;
+    }
+    
+    .time-input-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    
+    .time-input {
+      flex: 1;
+    }
+    
+    .alarm-tutorial-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #f1f5f9;
+      color: #334155;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      transition: all 0.2s;
+    }
+    
+    .dark .alarm-tutorial-btn {
+      background: #475569;
+      color: #e5e7eb;
+    }
+    
+    .alarm-tutorial-btn:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+    
+    .dark .alarm-tutorial-btn:hover {
+      background: #64748b;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
@@ -868,7 +976,17 @@
       { key: "mijia",    label: "米家控制",    type: "mijia",   fields: [
           { id:"state", label:"开关状态", type:"checkbox", default:false }
         ]},
+      { key: "alarm",    label: "定闹钟",     type: "alarm",    fields: [
+          { id:"alarm_type", label:"闹钟类型", type:"alarm_type", options:["weekly", "date", "workday"] },
+          { id:"days", label:"选择星期", type:"weekly_days", options:[0,1,2,3,4,5,6] },
+          { id:"date", label:"选择日期", type:"date", placeholder:"MM-DD" },
+          { id:"time", label:"时间", type:"time", placeholder:"HH:mm" },
+          { id:"name", label:"闹钟名", type:"text", placeholder:"闹钟名称" },
+          { id:"volume", label:"音量", type:"slider", attrs:{min:0,max:100} },
+          { id:"repeat", label:"每次循环", type:"checkbox", default:false }
+        ]}, 
       { key: "status",   label: "设备状态",   type: "status",   fields: [] }
+
     ];
 
     const tabsEl      = document.getElementById('tabs');
@@ -1018,7 +1136,11 @@
         type: def.type
       };
       const values = state[activeKey] || {};
-      if (activeKey === 'mijia') {
+      
+      if (activeKey === 'alarm') {
+        // 闹钟功能不发送，只生成请求数据
+        return buildAlarmPayload();
+      } else if (activeKey === 'mijia') {
         if (selectedMijiaIndex >= 0 && mijiaDevices[selectedMijiaIndex]) {
           const mijiaDev = mijiaDevices[selectedMijiaIndex];
           payload.name = mijiaDev.name;
@@ -1047,13 +1169,51 @@
       return payload;
     }
 
+    function buildAlarmPayload() {
+      const devId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
+      const values = state[activeKey] || {};
+      
+      const alarmConfig = {
+        id: values.name || "闹钟",
+        type: values.alarm_type || "weekly",
+        time: values.time || "12:00",
+        repeat: values.repeat ? 1 : 0
+      };
+      
+
+      if (values.alarm_type === "weekly") {
+        alarmConfig.day = values.days || [1];
+      } else if (values.alarm_type === "date") {
+        alarmConfig.date = values.date || "01-01";
+      }
+
+      
+      let volumeText = "";
+      if (values.volume && values.volume > 0) {
+        volumeText = `，再把音量设置为${values.volume}%`;
+      }
+      
+      alarmConfig.payload = {
+        device_id: devId,
+        type: "chat",
+        text: `请先设置${values.time || "12:00"},${values.name || "闹钟"}的日程${volumeText}，全部调好回答我“闹钟将在10分钟内响起”，再直接退下，不用说再见，其他任何内容都不要说。`
+      };
+      
+      return alarmConfig;
+    }
+
    function getPreviewPayload() {
+      if (activeKey === 'alarm') {
+        return buildAlarmPayload();
+      }
+      
       const payload = buildPayload();
       if (!showDeviceId && payload.device_id) {
         payload.device_id = '*'.repeat(payload.device_id.length);
       }
       return payload;
     }
+    
     function renderTabs(){
       tabsEl.innerHTML = '';
       INTERFACES.forEach(def => {
@@ -1074,14 +1234,19 @@
       return '';
     }
 
-    function renderForm(){
-      const def = INTERFACES.find(x => x.key === activeKey);
-      formAreaEl.innerHTML = '';
+   function renderForm(){
+  const def = INTERFACES.find(x => x.key === activeKey);
+  formAreaEl.innerHTML = '';
 
-      if (!state[activeKey]) {
-        state[activeKey] = {};
-        def.fields.forEach(f => state[activeKey][f.id] = getDefaultValue(f));
+  if (!state[activeKey]) {
+    state[activeKey] = {};
+    def.fields.forEach(f => {
+      state[activeKey][f.id] = getDefaultValue(f);
+      if (activeKey === 'alarm' && f.id === 'repeat') {
+        state[activeKey][f.id] = false;
       }
+    });
+  }
 
       const descDiv = el('div', { class: 'text-xs text-neutral-600 dark:text-neutral-300 space-y-1' });
       if (activeKey === 'chat') {
@@ -1108,6 +1273,8 @@
         descDiv.innerHTML = `<p>通过小智(ESP32)控制米家设备</p><p>name: 设备名称，例如：次卧吸顶灯</p><p>ip: 设备 ip ( 如果是 mesh 设备，需填 mesh 网关的 ip )</p><p>token: 设备 token ( 如果是 mesh 设备，需填 mesh 网关的 token )</p><p>did: 设备编号</p><p>siid: 设备子编号，例如一个开关面板上有 3 个开关按钮，siid 就表示第几个按钮</p><p>state: 控制设备状态，目前仅支持 0(关闭)、1(打开)</p><p>本接口数据可以从任意终端任意地理位置发送，但小智(ESP32)需要与米家设备处于同一 WIFI 网络下才能实现控制</p><p>支持控制小米蓝牙 mesh 设备，填写参数时注意填写 mesh 网关设备的 ip 和 token,比如蓝牙 mesh 开关面板连的小爱音响 mesh 网关，则填小爱的 ip,token</p><p>为了防止路由器重启后重新给设备分配 IP，建议在路由器管理页面将需要控制的设备设置静态 IP，尤其是 mseh 网关设备，一劳永逸</p>`;
       } else if (activeKey === 'status') {
         descDiv.innerHTML = `<p>通过WebSocket查询设备状态</p><p>设备响应将实时显示在下方返回结果区域，请求时请确保小智开机</p>`;
+      } else if (activeKey === 'alarm') {
+        descDiv.innerHTML = `<p>配置闹钟/定时执行指令</p><p>该功能实际上是通过github actions在闹钟响起前自动创建日程提醒</p><p>请仔细阅读下面的教程配置闹钟，如果嫌麻烦，请耐心等待灵活固件作者增加闹钟功能</p><p>只有在小智开机且正常联网时可用</p><p>该模式下，发送指令=复制请求数据</p><p>闹钟/定时指令设置教程仓库：<a href="https://github.com/zhangMonday/xiaozhi-flex-alarm" class="text-blue-500 hover:underline" target="_blank">点击查看</a></p>`;
       }
       formAreaEl.appendChild(descDiv);
 
@@ -1115,6 +1282,7 @@
         formAreaEl.appendChild(el('div', { class:'text-xs text-blue-600 dark:text-blue-300 italic py-1', text: '该接口无附加字段，直接点击"发送指令"即可' }));
       } else {
         const grid = el('div', { class:'grid-auto' });
+        
         if (activeKey === 'mijia') {
           const mijiaSection = el('div', { class: 'space-y-3' });
           const addBtn = el('button', { class: 'btn btn-primary', text: '添加米家设备', onclick: () => {
@@ -1136,100 +1304,322 @@
             selectedMijiaIndex = mijiaDevices.length - 1;
             refreshPreview();
           }
-        }
-        def.fields.forEach(f => {
-          const wrap = el('div', {});
-          wrap.appendChild(el('label', { class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', text: f.label }));
-          
-          let input;
-          const common = { class:'field mt-1', id:`f-${activeKey}-${f.id}` };
-          if (f.type === 'textarea') {
-            input = el('textarea', { ...common, placeholder:f.placeholder || '', rows:3 });
-          } else if (f.type === 'select') {
-            input = el('select', { ...common });
-            (f.options || []).forEach(op => input.appendChild(el('option', { value:String(op), text:String(op) })));
-          } else if (f.type === 'checkbox') {
-            const box = el('div', { class:'mt-1 flex items-center gap-2' });
-            input = el('input', { type:'checkbox', id:common.id, class:'w-4 h-4 rounded focus:ring-blue-500' });
-            input.checked = !!state[activeKey][f.id];
-            box.appendChild(input);
-            box.appendChild(el('label', { for:common.id, class:'text-xs cursor-pointer', text:'控制关闭 / 开启' }));
-            wrap.appendChild(box);
-            grid.appendChild(wrap);
-            input.addEventListener('change', () => { state[activeKey][f.id] = input.checked; refreshPreview(); });
-            return;
-          } else if (f.type === 'slider') {
-            const container = el('div', { class: 'slider-container mt-1' });
-            input = el('input', { 
-              type: 'range', 
-              class: 'slider',
-              min: f.attrs?.min || 0,
-              max: f.attrs?.max || 100,
-              step: f.attrs?.step || 1
-            });
-            const manualInput = el('input', {
-              type: 'number',
-              class: 'field slider-input',
-              min: f.attrs?.min || 0,
-              max: f.attrs?.max || 100,
-              value: state[activeKey][f.id] || getDefaultValue(f)
-            });
-            container.appendChild(input);
-            container.appendChild(manualInput);
-            wrap.appendChild(container);
-            grid.appendChild(wrap);
+        } else if (activeKey === 'alarm') {
+          // 闹钟特殊表单
+          renderAlarmForm(grid);
+        } else {
+          // 常规表单
+          def.fields.forEach(f => {
+            const wrap = el('div', {});
+            wrap.appendChild(el('label', { class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', text: f.label }));
             
-            input.value = state[activeKey][f.id] || getDefaultValue(f);
+            let input;
+            const common = { class:'field mt-1', id:`f-${activeKey}-${f.id}` };
+            if (f.type === 'textarea') {
+              input = el('textarea', { ...common, placeholder:f.placeholder || '', rows:3 });
+            } else if (f.type === 'select') {
+              input = el('select', { ...common });
+              (f.options || []).forEach(op => input.appendChild(el('option', { value:String(op), text:String(op) })));
+            } else if (f.type === 'checkbox') {
+              const box = el('div', { class:'mt-1 flex items-center gap-2' });
+              input = el('input', { type:'checkbox', id:common.id, class:'w-4 h-4 rounded focus:ring-blue-500' });
+              input.checked = !!state[activeKey][f.id];
+              box.appendChild(input);
+              box.appendChild(el('label', { for:common.id, class:'text-xs cursor-pointer', text:'控制关闭 / 开启' }));
+              wrap.appendChild(box);
+              grid.appendChild(wrap);
+              input.addEventListener('change', () => { state[activeKey][f.id] = input.checked; refreshPreview(); });
+              return;
+            } else if (f.type === 'slider') {
+              const container = el('div', { class: 'slider-container mt-1' });
+              input = el('input', { 
+                type: 'range', 
+                class: 'slider',
+                min: f.attrs?.min || 0,
+                max: f.attrs?.max || 100,
+                step: f.attrs?.step || 1
+              });
+              const manualInput = el('input', {
+                type: 'number',
+                class: 'field slider-input',
+                min: f.attrs?.min || 0,
+                max: f.attrs?.max || 100,
+                value: state[activeKey][f.id] || getDefaultValue(f)
+              });
+              container.appendChild(input);
+              container.appendChild(manualInput);
+              wrap.appendChild(container);
+              grid.appendChild(wrap);
+              
+              input.value = state[activeKey][f.id] || getDefaultValue(f);
+              input.addEventListener('input', () => {
+                state[activeKey][f.id] = input.value;
+                manualInput.value = input.value;
+                refreshPreview();
+              });
+              manualInput.addEventListener('input', () => {
+                let val = Number(manualInput.value);
+                const min = f.attrs?.min || 0;
+                const max = f.attrs?.max || 100;
+                if (isNaN(val)) val = min;
+                val = Math.max(min, Math.min(max, val));
+                state[activeKey][f.id] = val;
+                input.value = val;
+                manualInput.value = val;
+                refreshPreview();
+              });
+              return;
+            } else {
+              input = el('input', { ...common, type: f.type || 'text', placeholder: f.placeholder || '' });
+              if (f.attrs) {
+                Object.entries(f.attrs).forEach(([k,v]) => input.setAttribute(k, v));
+              }
+            }
+
+            const v = state[activeKey][f.id];
+            if (f.type === 'select') input.value = String(v ?? getDefaultValue(f));
+            else input.value = v ?? '';
+
             input.addEventListener('input', () => {
               state[activeKey][f.id] = input.value;
-              manualInput.value = input.value;
               refreshPreview();
             });
-            manualInput.addEventListener('input', () => {
-              let val = Number(manualInput.value);
-              const min = f.attrs?.min || 0;
-              const max = f.attrs?.max || 100;
-              if (isNaN(val)) val = min;
-              val = Math.max(min, Math.min(max, val));
-              state[activeKey][f.id] = val;
-              input.value = val;
-              manualInput.value = val;
-              refreshPreview();
-            });
-            return;
-          } else {
-            input = el('input', { ...common, type: f.type || 'text', placeholder: f.placeholder || '' });
-            if (f.attrs) {
-              Object.entries(f.attrs).forEach(([k,v]) => input.setAttribute(k, v));
+
+            wrap.appendChild(input);
+            
+            if ((activeKey === 'audio' || activeKey === 'image') && f.id === 'url') {
+              const uploadBtn = el('div', {
+                class: 'upload-btn',
+                text: '点这里上传文件并获取临时链接',
+                onclick: () => window.open('https://tmpfiles.org/', '_blank')
+              });
+              wrap.appendChild(uploadBtn);
             }
-          }
-
-          const v = state[activeKey][f.id];
-          if (f.type === 'select') input.value = String(v ?? getDefaultValue(f));
-          else input.value = v ?? '';
-
-          input.addEventListener('input', () => {
-            state[activeKey][f.id] = input.value;
-            refreshPreview();
+            
+            grid.appendChild(wrap);
           });
-
-          wrap.appendChild(input);
-          
-          if ((activeKey === 'audio' || activeKey === 'image') && f.id === 'url') {
-            const uploadBtn = el('div', {
-              class: 'upload-btn',
-              text: '点这里上传文件并获取临时链接',
-              onclick: () => window.open('https://tmpfiles.org/', '_blank')
-            });
-            wrap.appendChild(uploadBtn);
-          }
-          
-          grid.appendChild(wrap);
-        });
+        }
         formAreaEl.appendChild(grid);
       }
 
       refreshPreview();
+    }
+
+    function renderAlarmForm(grid) {
+       if (!state['alarm']) state['alarm'] = {};
+
+       if (state['alarm'].repeat === undefined) {
+    state['alarm'].repeat = false;
+  }
+      const values = state['alarm'] || {};
+     const isRepeatChecked = values.repeat ?? false;
+
+      
+      // 闹钟类型选择
+      const typeWrap = el('div', {});
+      typeWrap.appendChild(el('label', { 
+        class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', 
+        text: '闹钟类型' 
+      }));
+      
+      const typeSelector = el('div', { class: 'alarm-type-selector' });
+      const types = [
+        { value: 'weekly', label: '指定星期' },
+        { value: 'date', label: '指定日期' },
+        { value: 'workday', label: '工作日' }
+      ];
+      
+      types.forEach(type => {
+        const btn = el('button', {
+          type: 'button',
+          class: `alarm-type-btn ${values.alarm_type === type.value ? 'active' : ''}`,
+          text: type.label,
+          onclick: () => {
+            state['alarm'].alarm_type = type.value;
+            renderForm();
+          }
+        });
+        typeSelector.appendChild(btn);
+      });
+      
+      typeWrap.appendChild(typeSelector);
+      grid.appendChild(typeWrap);
+      
+      if (values.alarm_type === 'weekly') {
+        const daysWrap = el('div', {});
+        daysWrap.appendChild(el('label', { 
+          class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', 
+          text: '选择星期' 
+        }));
+        
+        const daysSelector = el('div', { class: 'weekday-selector' });
+        const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+        
+        weekdays.forEach((day, index) => {
+          const isActive = values.days && values.days.includes(index);
+          const btn = el('button', {
+            type: 'button',
+            class: `weekday-btn ${isActive ? 'active' : ''}`,
+            text: day,
+            onclick: () => {
+              if (!state['alarm'].days) state['alarm'].days = [];
+              
+              if (state['alarm'].days.includes(index)) {
+                state['alarm'].days = state['alarm'].days.filter(d => d !== index);
+              } else {
+                state['alarm'].days.push(index);
+                state['alarm'].days.sort();
+              }
+              
+              renderForm();
+            }
+          });
+          daysSelector.appendChild(btn);
+        });
+        
+        daysWrap.appendChild(daysSelector);
+        grid.appendChild(daysWrap);
+      } else if (values.alarm_type === 'date') {
+        const dateWrap = el('div', {});
+        dateWrap.appendChild(el('label', { 
+          class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', 
+          text: '选择日期 (月-日)' 
+        }));
+        
+        const dateContainer = el('div', { class: 'date-input-container' });
+        const dateInput = el('input', {
+          type: 'text',
+          class: 'field date-input',
+          placeholder: 'MM-DD',
+          value: values.date || '',
+          oninput: function() {
+            // 简单的日期格式验证
+            const val = this.value.replace(/[^0-9\-]/g, '');
+            if (val.length === 2 && !val.includes('-')) {
+              this.value = val + '-';
+            } else if (val.length > 5) {
+              this.value = val.slice(0, 5);
+            } else {
+              this.value = val;
+            }
+            
+            state['alarm'].date = this.value;
+            refreshPreview();
+          }
+        });
+        
+        dateContainer.appendChild(dateInput);
+        dateWrap.appendChild(dateContainer);
+        grid.appendChild(dateWrap);
+      }
+      
+      const timeWrap = el('div', {});
+      timeWrap.appendChild(el('label', { 
+        class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1 required', 
+        text: '时间' 
+      }));
+      
+      const timeContainer = el('div', { class: 'time-input-container' });
+      const timeInput = el('input', {
+        type: 'text',
+        class: 'field time-input',
+        placeholder: 'HH:mm',
+        value: values.time || '',
+        oninput: function() {
+          // 简单的时间格式验证
+          const val = this.value.replace(/[^0-9:]/g, '');
+          if (val.length === 2 && !val.includes(':')) {
+            this.value = val + ':';
+          } else if (val.length > 5) {
+            this.value = val.slice(0, 5);
+          } else {
+            this.value = val;
+          }
+          
+          state['alarm'].time = this.value;
+          refreshPreview();
+        }
+      });
+      
+      timeContainer.appendChild(timeInput);
+      timeWrap.appendChild(timeContainer);
+      grid.appendChild(timeWrap);
+      
+      const nameWrap = el('div', {});
+      nameWrap.appendChild(el('label', { 
+        class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1 required', 
+        text: '闹钟名' 
+      }));
+      
+      const nameInput = el('input', {
+        type: 'text',
+        class: 'field',
+        placeholder: '闹钟名称',
+        value: values.name || '',
+        oninput: function() {
+          state['alarm'].name = this.value;
+          refreshPreview();
+        }
+      });
+      
+      nameWrap.appendChild(nameInput);
+      grid.appendChild(nameWrap);
+      
+      const volumeWrap = el('div', {});
+      volumeWrap.appendChild(el('label', { 
+        class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', 
+        text: '音量 (可选)' 
+      }));
+      
+      const volumeContainer = el('div', { class: 'slider-container mt-1' });
+      const volumeSlider = el('input', { 
+        type: 'range', 
+        class: 'slider',
+        min: 0,
+        max: 100,
+        step: 1,
+        value: values.volume || 50
+      });
+      
+      const volumeValue = el('div', { 
+        class: 'slider-value',
+        text: `${values.volume || 50}%`
+      });
+      
+      volumeSlider.addEventListener('input', function() {
+        state['alarm'].volume = this.value;
+        volumeValue.textContent = `${this.value}%`;
+        refreshPreview();
+      });
+      
+      volumeContainer.appendChild(volumeSlider);
+      volumeContainer.appendChild(volumeValue);
+      volumeWrap.appendChild(volumeContainer);
+      grid.appendChild(volumeWrap);
+      
+      const repeatWrap = el('div', {});
+      const repeatContainer = el('div', { class: 'checkbox-field' });
+      const repeatInput = el('input', {
+        type: 'checkbox',
+        id: 'f-alarm-repeat',
+        class: 'checkbox-input',
+        checked: !!state['alarm'].repeat
+      });
+      repeatInput.checked = !!state['alarm'].repeat;
+      repeatInput.addEventListener('change', function() {
+        state['alarm'].repeat = this.checked;
+        refreshPreview();
+      });
+      
+      repeatContainer.appendChild(repeatInput);
+      repeatContainer.appendChild(el('label', { 
+        for: 'f-alarm-repeat', 
+        class: 'text-xs cursor-pointer', 
+        text: '每次循环' 
+      }));
+      
+      repeatWrap.appendChild(repeatContainer);
+      grid.appendChild(repeatWrap);
     }
 
     function refreshPreview(){
@@ -1245,6 +1635,9 @@
     async function sendNow(){
       if (activeKey === 'status') {
         return sendStatusRequest();
+      } else if (activeKey === 'alarm') {
+        copyJSON();
+        return;
       }
       
       const payload = buildPayload();
@@ -1355,7 +1748,7 @@
     }
 
     function copyJSON(){
-      const text = pretty(buildPayload());
+      const text = pretty(getPreviewPayload());
       navigator.clipboard.writeText(text).then(() => {
         setStatus('已复制', 'success');
       }).catch(()=>{
