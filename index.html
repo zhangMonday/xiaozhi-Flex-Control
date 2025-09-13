@@ -1747,15 +1747,14 @@
       }
     }
 
-    function copyJSON(){
-      const text = pretty(getPreviewPayload());
-      navigator.clipboard.writeText(text).then(() => {
-        setStatus('已复制', 'success');
-      }).catch(()=>{
-        setStatus('复制失败', 'error');
-      });
-    }
-
+function copyJSON(){
+  const text = pretty(buildPayload()); 
+  navigator.clipboard.writeText(text).then(() => {
+    setStatus('已复制', 'success');
+  }).catch(()=>{
+    setStatus('复制失败', 'error');
+  });
+}
     function resetFields(){
       const def = INTERFACES.find(x => x.key === activeKey);
       state[activeKey] = {};
