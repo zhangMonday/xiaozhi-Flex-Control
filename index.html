@@ -759,6 +759,12 @@
     .dark .alarm-tutorial-btn:hover {
       background: #64748b;
     }
+    
+    .image-tools-container {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
@@ -1388,12 +1394,28 @@
             wrap.appendChild(input);
             
             if ((activeKey === 'audio' || activeKey === 'image') && f.id === 'url') {
+              // 为图片和音频添加工具按钮
+              const toolsContainer = el('div', { class: 'image-tools-container' });
+              
+              // 改图宝按钮
+              if (activeKey === 'image') {
+                const resizeBtn = el('div', {
+                  class: 'upload-btn',
+                  text: '点击进入改图宝修改尺寸',
+                  onclick: () => window.open('https://www.gaitubao.com/', '_blank')
+                });
+                toolsContainer.appendChild(resizeBtn);
+              }
+              
+              // 上传文件按钮
               const uploadBtn = el('div', {
                 class: 'upload-btn',
-                text: '点这里上传文件并获取临时链接',
+                text: '点击上传文件并获取临时链接',
                 onclick: () => window.open('https://tmpfiles.org/', '_blank')
               });
-              wrap.appendChild(uploadBtn);
+              toolsContainer.appendChild(uploadBtn);
+              
+              wrap.appendChild(toolsContainer);
             }
             
             grid.appendChild(wrap);
