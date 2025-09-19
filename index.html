@@ -904,6 +904,20 @@
       <pre id="resultBox" class="mono text-xs overflow-auto p-4 rounded-lg result-box"></pre>
     </section>
 
+    <section class="card p-4">
+      <div class="space-y-2">
+        <button id="exportConfig" class="btn btn-secondary w-full">
+          <i class="fas fa-download"></i>
+          导出配置
+        </button>
+        <button id="importConfig" class="btn btn-secondary w-full">
+          <i class="fas fa-upload"></i>
+          导入配置
+        </button>
+        <input id="importFileInput" type="file" accept=".json" style="display: none;">
+      </div>
+    </section>
+
     <section class="card footer-card">
       <h2 class="section-title justify-center">
         <div class="section-title-icon">
@@ -979,6 +993,10 @@
           { id:"text", label:"文案",    placeholder:"显示在设备的信息胶囊", type:"text" },
           { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
         ]},
+      { key: "button",   label: "模拟按钮",   type: "button",   fields: [
+          { id:"key", label:"按键编号", type:"select", options:[1,2,3] },  // 1：BOOT 键，唤醒打断 2：VOL+ 键，音量加 3：VOL- 键，音量减
+          { id:"event", label:"按键动作", type:"select", options:[1,2,3] }  // 1：单击 2：双击 3：长按
+        ]},
       { key: "mijia",    label: "米家控制",    type: "mijia",   fields: [
           { id:"state", label:"开关状态", type:"checkbox", default:false }
         ]},
@@ -1022,6 +1040,9 @@
     const saveMijiaBtn = document.getElementById('saveMijia');
     const editMijiaModalClose = editMijiaModal.querySelector('.close');
     const installBtn = document.getElementById('installBtn');
+    const exportConfigBtn = document.getElementById('exportConfig');
+    const importConfigBtn = document.getElementById('importConfig');
+    const importFileInput = document.getElementById('importFileInput');
 
     let activeKey = 'chat';
     let showDeviceId = false;
@@ -1275,6 +1296,8 @@
         descDiv.innerHTML = `<p>控制设备主题模式，修改后会立即存储</p><p>value: 注意只能是 浅色 或 深色</p>`;
       } else if (activeKey === 'image') {
         descDiv.innerHTML = `<p>给设备发送图文消息</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p><p>请先将图片修改至设备屏幕对应的尺寸（在“设备状态”中可以查询），再上传</p><p>推送后不显示图片请尝试更换<a href="https://bing.com/search?q=%E5%9B%BE%E5%BA%8A" class="text-blue-500 hover:underline" target="_blank">图床</a></p>`;
+      } else if (activeKey === 'button') {
+        descDiv.innerHTML = `<p>远程触发设备按键</p><p>key: 按键编号 1：BOOT 键，唤醒打断 2：VOL+ 键，音量加 3：VOL- 键，音量减</p><p>event: 按键动作 1：单击 2：双击 3：长按</p><p>此接口可以通过 ESP8266、ESP32C3 等手持遥控去控制不方便接触到物理按键的场景</p>`;
       } else if (activeKey === 'mijia') {
         descDiv.innerHTML = `<p>通过小智(ESP32)控制米家设备</p><p>name: 设备名称，例如：次卧吸顶灯</p><p>ip: 设备 ip ( 如果是 mesh 设备，需填 mesh 网关的 ip )</p><p>token: 设备 token ( 如果是 mesh 设备，需填 mesh 网关的 token )</p><p>did: 设备编号</p><p>siid: 设备子编号，例如一个开关面板上有 3 个开关按钮，siid 就表示第几个按钮</p><p>state: 控制设备状态，目前仅支持 0(关闭)、1(打开)</p><p>本接口数据可以从任意终端任意地理位置发送，但小智(ESP32)需要与米家设备处于同一 WIFI 网络下才能实现控制</p><p>支持控制小米蓝牙 mesh 设备，填写参数时注意填写 mesh 网关设备的 ip 和 token,比如蓝牙 mesh 开关面板连的小爱音响 mesh 网关，则填小爱的 ip,token</p><p>为了防止路由器重启后重新给设备分配 IP，建议在路由器管理页面将需要控制的设备设置静态 IP，尤其是 mseh 网关设备，一劳永逸</p>`;
       } else if (activeKey === 'status') {
@@ -1809,6 +1832,51 @@ function copyJSON(){
       refreshPreview();
     }
 
+    function exportConfig() {
+      const config = {
+        devices: devices,
+        mijiaDevices: mijiaDevices
+      };
+      const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'xiaozhi-flex-config.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function importConfigHandler(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (typeof data === 'object' && Array.isArray(data.devices) && Array.isArray(data.mijiaDevices)) {
+            devices = data.devices;
+            mijiaDevices = data.mijiaDevices;
+            saveDevices();
+            saveMijiaDevices();
+            renderDeviceList();
+            renderDeviceSelect();
+            if (activeKey === 'mijia') {
+              renderMijiaList(document.getElementById('mijiaList'));
+            }
+            alert('配置导入成功');
+          } else {
+            alert('无效的配置文件格式');
+          }
+        } catch (err) {
+          alert('配置文件解析失败: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
     renderDeviceSelect();
     renderTabs();
     renderForm();
@@ -1878,6 +1946,14 @@ function copyJSON(){
     btnSend.addEventListener('click', sendNow);
     btnCopy.addEventListener('click', copyJSON);
     btnReset.addEventListener('click', resetFields);
+
+    exportConfigBtn.addEventListener('click', exportConfig);
+
+    importConfigBtn.addEventListener('click', () => {
+      importFileInput.click();
+    });
+
+    importFileInput.addEventListener('change', importConfigHandler);
 
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.body.classList.add('dark');
