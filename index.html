@@ -1262,9 +1262,9 @@
       } else if (activeKey === 'music') {
         descDiv.innerHTML = `<p>调用设备线上音乐能力，相比于远程对话点歌，该功能静默执行在线音乐搜索并播放，不会唤醒 AI</p><p>例如: 多远都要在一起 邓紫棋 （尽量使用准确的歌曲和歌手名称并以空格分隔）</p>`;
       } else if (activeKey === 'radio') {
-        descDiv.innerHTML = `<p>调用设备网络电台能力，相比于远程对话播放电台，该功能静默执行电台播放，不会唤醒 AI</p><p>id: 电台编号，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p><p>text: 电台名称 ，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p>`;
+        descDiv.innerHTML = `<p>调用设备网络电台能力，相比于远程对话播放电台，该功能静默执行电台播放，不会唤醒 AI</p><p>id: 电台编号，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p><p>名称: 电台名称 ，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p>`;
       } else if (activeKey === 'message') {
-        descDiv.innerHTML = `<p>给设备留言，内容会显示在设备的信息胶囊和对话界面</p><p>标题: 消息标题，由于是在壁纸底部的胶囊显示，建议不要太长</p><p>content: 留言内容，会记录在 AI 对话界面</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+        descDiv.innerHTML = `<p>给设备留言，内容会显示在设备的信息胶囊和对话界面</p><p>标题: 消息标题，由于是在壁纸底部的胶囊显示，建议不要太长</p><p>内容: 留言内容，会记录在 AI 对话界面</p><p>提示音: 提示音编号 1~22，为 0 则不播放提示音</p>`;
       } else if (activeKey === 'qrcode') {
         descDiv.innerHTML = `<p>向设备发送二维码消息</p><p>content: 二维码内容,文字或 URL 链接等，为空则关闭二维码</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
       } else if (activeKey === 'volume') {
