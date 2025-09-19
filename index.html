@@ -1274,7 +1274,7 @@
       } else if (activeKey === 'theme') {
         descDiv.innerHTML = `<p>控制设备主题模式，修改后会立即存储</p><p>value: 注意只能是 浅色 或 深色</p>`;
       } else if (activeKey === 'image') {
-        descDiv.innerHTML = `<p>给设备发送图文消息</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+        descDiv.innerHTML = `<p>给设备发送图文消息</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p><p>请先将图片修改至设备屏幕对应的尺寸（在“设备状态”中可以查询），再上传</p><p>推送后不显示图片请尝试更换<a href="https://bing.com/search?q=%E5%9B%BE%E5%BA%8A&form=QBLH&sp=-1&lq=0&pq=tu%27c&sc=12-4&qs=n&sk=&cvid=FACEA6C27A264BFA959742E4B8684D0A" class="text-blue-500 hover:underline" target="_blank">图床 >></a></p>`;
       } else if (activeKey === 'mijia') {
         descDiv.innerHTML = `<p>通过小智(ESP32)控制米家设备</p><p>name: 设备名称，例如：次卧吸顶灯</p><p>ip: 设备 ip ( 如果是 mesh 设备，需填 mesh 网关的 ip )</p><p>token: 设备 token ( 如果是 mesh 设备，需填 mesh 网关的 token )</p><p>did: 设备编号</p><p>siid: 设备子编号，例如一个开关面板上有 3 个开关按钮，siid 就表示第几个按钮</p><p>state: 控制设备状态，目前仅支持 0(关闭)、1(打开)</p><p>本接口数据可以从任意终端任意地理位置发送，但小智(ESP32)需要与米家设备处于同一 WIFI 网络下才能实现控制</p><p>支持控制小米蓝牙 mesh 设备，填写参数时注意填写 mesh 网关设备的 ip 和 token,比如蓝牙 mesh 开关面板连的小爱音响 mesh 网关，则填小爱的 ip,token</p><p>为了防止路由器重启后重新给设备分配 IP，建议在路由器管理页面将需要控制的设备设置静态 IP，尤其是 mseh 网关设备，一劳永逸</p>`;
       } else if (activeKey === 'status') {
