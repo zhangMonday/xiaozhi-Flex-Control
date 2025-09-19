@@ -828,17 +828,6 @@
             添加设备
           </button>
         </div>
-        <div class="space-y-2 mt-4">
-          <button id="exportConfig" class="btn btn-secondary w-full">
-            <i class="fas fa-download"></i>
-            导出配置
-          </button>
-          <button id="importConfig" class="btn btn-secondary w-full">
-            <i class="fas fa-upload"></i>
-            导入配置
-          </button>
-          <input id="importFileInput" type="file" accept=".json" style="display: none;">
-        </div>
       </div>
     </div>
 
@@ -913,6 +902,20 @@
         <span id="statusBadge" class="badge bg-neutral-100 dark:bg-neutral-700 badge-pulse">等待操作</span>
       </div>
       <pre id="resultBox" class="mono text-xs overflow-auto p-4 rounded-lg result-box"></pre>
+    </section>
+
+    <section class="card p-4">
+      <div class="space-y-2">
+        <button id="exportConfig" class="btn btn-secondary w-full">
+          <i class="fas fa-download"></i>
+          导出配置
+        </button>
+        <button id="importConfig" class="btn btn-secondary w-full">
+          <i class="fas fa-upload"></i>
+          导入配置
+        </button>
+        <input id="importFileInput" type="file" accept=".json" style="display: none;">
+      </div>
     </section>
 
     <section class="card footer-card">
