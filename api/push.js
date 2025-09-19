@@ -37,6 +37,9 @@ export default async function handler(req, res) {
       case 'theme':
         requiredFields = [ 'value' ];
         break;
+      case 'button':
+        requiredFields = [ 'key','event'];
+        break;
       case 'mijia':
         requiredFields = ['name', 'ip', 'token', 'did', 'siid', 'state'];
         break;
