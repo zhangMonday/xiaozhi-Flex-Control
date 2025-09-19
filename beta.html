@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>小智灵活远控</title>
+  <link rel="icon" href="/logo/logo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="logo.png">
+  <meta name="theme-color" content="#3b82f6">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark: #1e293b;
+      --light: #f8fafc;
+    }
+    
+    .grid-auto {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+    
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .dark .card {
+      background: #1e293b;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .dark .card:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .field {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+    }
+    
+    .dark .field {
+      background: #334155;
+      border-color: #475569;
+      color: white;
+    }
+    
+    .field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .dark .field:focus {
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+    }
+    
+    .tab {
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem 0.5rem 0 0;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      font-size: 0.85rem;
+    }
+    
+    .tab-active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 -3px 0 var(--primary) inset;
+    }
+    
+    .dark .tab-active {
+      background: #334155;
+      color: #60a5fa;
+    }
+    
+    .tab-idle {
+      background: transparent;
+      color: #64748b;
+    }
+    
+    .tab-idle:hover {
+      background: #f1f5f9;
+      color: #475569;
+    }
+    
+    .dark .tab-idle:hover {
+      background: #475569;
+      color: #cbd5e1;
+    }
+    
+    .btn {
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #d1d5db;
+    }
+    
+    .dark .btn-secondary {
+      background: #475569;
+      color: #e5e7eb;
+      border-color: #64748b;
+    }
+    
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+    
+    .dark .btn-secondary:hover {
+      background: #64748b;
+    }
+    
+    .btn-success {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    }
+    
+    .btn-success:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
+    }
+    
+    .badge {
+      padding: 0.3rem 0.7rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    .badge-pulse {
+      position: relative;
+    }
+    
+    .badge-pulse::before {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.8;
+      top: 50%;
+      left: 0.5rem;
+      transform: translateY(-50%);
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 0.3; }
+      100% { opacity: 0.8; }
+    }
+    
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(to bottom, rgba(248, 250, 252, 0.95) 0%, rgba(248, 250, 252, 0.95) 90%, transparent 100%);
+      z-index: 10;
+      padding: 0.8rem 0;
+      backdrop-filter: blur(5px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .dark .sticky-header {
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.95) 90%, transparent 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    @media (max-width: 640px) {
+      body {
+        font-size: 13px;
+      }
+      
+      h1 {
+        font-size: 1.3rem !important;
+      }
+      
+      .btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.75rem;
+      }
+      
+      .field {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.8rem;
+      }
+      
+      .tab {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+      
+      .section-title {
+        font-size: 1rem !important;
+        margin-bottom: 1rem !important;
+      }
+      
+      .section-title-icon {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.9rem !important;
+      }
+      
+      .json-preview, .result-box {
+        font-size: 0.75rem !important;
+        padding: 0.7rem !important;
+        min-height: 120px !important;
+        max-height: 250px !important;
+      }
+      
+      .modal-content {
+        width: 95% !important;
+        padding: 12px !important;
+        margin: 5% auto !important;
+      }
+      
+      .grid-auto {
+        gap: 0.8rem !important;
+      }
+      
+      .card {
+        padding: 0.8rem !important;
+      }
+      
+      .action-buttons {
+        gap: 0.8rem !important;
+        margin-top: 1rem !important;
+        padding-top: 1rem !important;
+      }
+    }
+    
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    
+    .slider {
+      flex: 1;
+      height: 5px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #d1d5db;
+      border-radius: 5px;
+      outline: none;
+    }
+    
+    .dark .slider {
+      background: #475569;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: 2px solid white;
+    }
+    
+    .slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: 2px solid white;
+    }
+    
+    .slider-value {
+      width: 70px;
+      min-width: 70px;
+      text-align: center;
+      font-weight: 600;
+      padding: 0.4rem;
+      background: #f1f5f9;
+      border-radius: 0.375rem;
+    }
+    
+    .dark .slider-value {
+      background: #475569;
+      color: white;
+    }
+    
+    .slider-input {
+      width: 70px;
+      text-align: center;
+      padding: 0.4rem;
+    }
+    
+    .upload-btn {
+      margin-top: 0.6rem;
+      padding: 0.4rem 0.8rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 0.5rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-block;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+    
+    .upload-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+    }
+    
+    .password-container {
+      position: relative;
+    }
+    
+    .toggle-password {
+      position: absolute;
+      right: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #64748b;
+    }
+    
+    .toggle-password:hover {
+      color: var(--primary);
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+      backdrop-filter: blur(3px);
+      animation: fadeIn 0.2s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 15px;
+      border: none;
+      width: 95%;
+      max-width: 500px;
+      border-radius: 0.75rem;
+      box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.1), 0 8px 8px -5px rgba(0, 0, 0, 0.04);
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateY(-15px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .dark .modal-content {
+      background-color: #334155;
+      color: white;
+    }
+    
+    .close {
+      color: #94a3b8;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 1;
+      transition: all 0.2s ease;
+    }
+    
+    .close:hover,
+    .close:focus {
+      color: #64748b;
+      cursor: pointer;
+    }
+    
+    .dark .close {
+      color: #94a3b8;
+    }
+    
+    .dark .close:hover,
+    .dark .close:focus {
+      color: #cbd5e1;
+    }
+    
+    .json-preview {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+    }
+    
+    .dark .json-preview {
+      background: #111827;
+      border-color: #374151;
+      color: #e5e7eb;
+    }
+    
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #1e293b;
+    }
+    
+    .dark .section-title {
+      color: #f1f5f9;
+    }
+    
+    .section-title-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+    
+    .dark .section-title-icon {
+      background: rgba(96, 165, 250, 0.1);
+    }
+    
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .dark .action-buttons {
+      border-top: 1px solid #334155;
+    }
+    
+    .footer-card {
+      text-align: center;
+      padding: 1.5rem;
+    }
+    
+    .footer-card p {
+      margin-bottom: 1.2rem;
+      line-height: 1.6;
+    }
+    
+    .device-select-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    
+    .device-select-label {
+      font-weight: 600;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+    }
+    
+    .dark .device-select-label {
+      color: #e2e8f0;
+    }
+    
+    .device-select-wrapper {
+      display: flex;
+      gap: 0.6rem;
+    }
+    
+    .device-select-wrapper select {
+      flex: 1;
+    }
+    
+    .result-box {
+      min-height: 120px;
+      max-height: 250px;
+      overflow-y: auto;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .dark .result-box {
+      background: #0f172a;
+      border-color: #334155;
+    }
+    
+    .form-description {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 0.8rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      margin-bottom: 1.2rem;
+      font-size: 0.85rem;
+    }
+    
+    .dark .form-description {
+      background: #1e3a8a;
+      border-left-color: #60a5fa;
+    }
+    
+    .form-field-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+    }
+    
+    .form-field-label.required::after {
+      content: "*";
+      color: var(--danger);
+      margin-left: 0.2rem;
+    }
+    
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 0.4rem;
+    }
+    
+    .checkbox-input {
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 0.25rem;
+      border: 2px solid #cbd5e1;
+      accent-color: var(--primary);
+    }
+    
+    .dark .checkbox-input {
+      border-color: #64748b;
+    }
+    
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+    }
+    
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 180px;
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      border-radius: 0.5rem;
+      padding: 0.6rem;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+    
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .tooltip .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--dark) transparent transparent transparent;
+    }
+
+    .alarm-type-selector {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .alarm-type-btn {
+      flex: 1;
+      padding: 0.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    
+    .dark .alarm-type-btn {
+      background: #334155;
+      border-color: #475569;
+      color: white;
+    }
+    
+    .alarm-type-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    
+    .weekday-selector {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .weekday-btn {
+      padding: 0.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    
+    .dark .weekday-btn {
+      background: #334155;
+      border-color: #475569;
+      color: white;
+    }
+    
+    .weekday-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    
+    .date-input-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    
+    .date-input {
+      flex: 1;
+    }
+    
+    .time-input-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    
+    .time-input {
+      flex: 1;
+    }
+    
+    .alarm-tutorial-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #f1f5f9;
+      color: #334155;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      transition: all 0.2s;
+    }
+    
+    .dark .alarm-tutorial-btn {
+      background: #475569;
+      color: #e5e7eb;
+    }
+    
+    .alarm-tutorial-btn:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+    
+    .dark .alarm-tutorial-btn:hover {
+      background: #64748b;
+    }
+    
+    .image-tools-container {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
+  <header class="max-w-6xl mx-auto px-4 pt-6 pb-4">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
+          <i class="fas fa-robot text-blue-500"></i>
+          小智灵活远控
+        </h1>
+        <p class="text-xs text-neutral-600 dark:text-neutral-300 mt-2 max-w-3xl">
+          本网站仅用于调用<a href="https://nodelua.com/home_iot/docs/#/guide/socket" class="text-blue-500 hover:underline font-medium" target="_blank">灵活接口</a>，远程控制小智AI。
+          所有功能均由<a href="https://nodelua.com/home_iot/docs/#/guide/flex" class="text-blue-500 hover:underline font-medium" target="_blank">灵活固件</a>提供，本网站站主与灵活固件作者没有从属关系。
+        </p>
+      </div>
+      <div class="flex gap-3">
+        <a href="green-hand.html" class="bg-blue-100 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg text-blue-800 dark:text-blue-200 text-xs font-medium">
+          <i class="fas fa-graduation-cap mr-1"></i>新手模式
+        </a>
+        <div class="bg-blue-100 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg text-blue-800 dark:text-blue-200 text-xs font-medium">
+          <i class="fas fa-microchip mr-1"></i>By zhangMonday & 六哥(CrisXie)
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pb-12 space-y-4">
+    <section class="card p-4">
+      <div class="grid-auto">
+        <div class="device-select-container">
+          <label class="device-select-label">
+            <i class="fas fa-microchip"></i>
+            选择设备
+          </label>
+          <div class="device-select-wrapper">
+            <select id="deviceSelect" class="field">
+            </select>
+            <button id="manageDevices" class="btn btn-secondary">
+              <i class="fas fa-cog"></i>
+              管理设备
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="deviceModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+          <i class="fas fa-cogs text-blue-500"></i>
+          管理设备
+        </h2>
+        <div id="deviceList" class="space-y-3 mb-4">
+        </div>
+        <div class="space-y-2">
+          <input id="newDeviceName" type="text" class="field" placeholder="设备名称" />
+          <input id="newDeviceId" type="text" class="field" placeholder="让小智查固件版本和设备编号，填编号（字母+数字）" />
+          <button id="addDevice" class="btn btn-primary w-full">
+            <i class="fas fa-plus"></i>
+            添加设备
+          </button>
+        </div>
+        <div class="space-y-2 mt-4">
+          <button id="exportConfig" class="btn btn-secondary w-full">
+            <i class="fas fa-download"></i>
+            导出配置
+          </button>
+          <button id="importConfig" class="btn btn-secondary w-full">
+            <i class="fas fa-upload"></i>
+            导入配置
+          </button>
+          <input id="importFileInput" type="file" accept=".json" style="display: none;">
+        </div>
+      </div>
+    </div>
+
+    <div id="editMijiaModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="text-lg font-bold mb-4 flex items-center gap-2" id="editMijiaTitle">
+          <i class="fas fa-cogs text-blue-500"></i>
+          编辑米家设备
+        </h2>
+        <div class="space-y-2">
+          <input id="editMijiaName" type="text" class="field" placeholder="设备名称，例如：次卧吸顶灯" />
+          <input id="editMijiaIp" type="text" class="field" placeholder="设备 IP" />
+          <input id="editMijiaToken" type="text" class="field" placeholder="设备 Token" />
+          <input id="editMijiaDid" type="text" class="field" placeholder="设备编号 (DID)" />
+          <input id="editMijiaSiid" type="text" class="field" placeholder="设备子编号 (SIID)" />
+          <button id="saveMijia" class="btn btn-primary w-full">
+            <i class="fas fa-save"></i>
+            保存
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section class="sticky-header">
+      <div id="tabs" class="flex flex-wrap gap-2">
+      </div>
+    </section>
+
+    <section class="card p-4">
+      <div id="formArea" class="space-y-4">
+      </div>
+      <div class="action-buttons">
+        <button id="btnSend" class="btn btn-primary">
+          <i class="fas fa-paper-plane"></i>
+          发送指令
+        </button>
+        <button id="btnCopy" class="btn btn-secondary">
+          <i class="fas fa-copy"></i>
+          复制请求数据
+        </button>
+        <button id="btnReset" class="btn btn-secondary">
+          <i class="fas fa-redo"></i>
+          重置
+        </button>
+      </div>
+    </section>
+
+    <section class="card p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="section-title">
+          <div class="section-title-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          请求数据
+        </h2>
+        <span id="toggleJsonId" class="cursor-pointer p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="切换设备ID显示">
+          <i class="fas fa-eye text-blue-500"></i>
+        </span>
+      </div>
+      <pre id="jsonPreview" class="mono text-xs overflow-auto p-4 rounded-lg json-preview"></pre>
+    </section>
+
+    <section class="card p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="section-title">
+          <div class="section-title-icon">
+            <i class="fas fa-terminal"></i>
+          </div>
+          返回结果
+        </h2>
+        <span id="statusBadge" class="badge bg-neutral-100 dark:bg-neutral-700 badge-pulse">等待操作</span>
+      </div>
+      <pre id="resultBox" class="mono text-xs overflow-auto p-4 rounded-lg result-box"></pre>
+    </section>
+
+    <section class="card footer-card">
+      <h2 class="section-title justify-center">
+        <div class="section-title-icon">
+          <i class="fas fa-heart text-red-500"></i>
+        </div>
+        开源地址&PWA应用安装
+      </h2>
+      <p class="text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
+        <button class="btn btn-primary inline-block mb-3" onclick="window.open('https://github.com/zhangMonday/xiaozhi-Flex-Control', '_blank')" title="访问GitHub仓库">
+         <i class="fab fa-github"></i> <strong>点我进入开源仓库</strong>
+        </button>
+        <button id="installBtn" class="btn btn-primary inline-block mb-3" title="安装PWA应用">
+         <i class="fas fa-download"></i> <strong>安装PWA应用</strong>
+        </button>
+      <br>
+        欢迎提交issue & Pull requests～灵活固件QQ交流群：1041054478
+      </p>
+    </section>
+  </main>
+
+  <script>
+    console.log(`
+来控制台干什么，快来陪我van♂
+　               ▃▆█▇▄▖
+         　 　▟◤▖　　　◥█▎
+       　　◢◤　 ▐　　　　▐▉
+        ▗◤　　　▂　▗▖　　▕█▎
+        ◤　▗▅▖◥▄　▀◣　　█▊
+       ▐　▕▎◥▖◣◤　　　◢██
+       █◣　◥▅█▀　   ▐██◤
+       ▐█▙▂　　　      ██◤
+        ◥██◣　　　 ◢▄◤
+              ▀██▅▇▀
+`);
+    const INTERFACES = [
+      { key: "chat",     label: "远程对话",     type: "chat",    fields: [
+          { id:"text", label:"内容", placeholder:"例如：播放邓紫棋的多远都要在一起", type:"text" }
+        ]},
+      { key: "audio",    label: "发送音频",    type: "audio",   fields: [
+          { id:"url",  label:"链接", placeholder:"https://example.com/xxx.mp3", type:"text" },
+          { id:"text", label:"简介",    placeholder:"将显示在设备的信息胶囊", type:"text" }
+        ]},
+      { key: "music",    label: "播放音乐",    type: "music",   fields: [
+          { id:"text", label:"关键词", placeholder:"多远都要在一起 邓紫棋", type:"text" }
+        ]},
+      { key: "radio",    label: "播放电台",    type: "radio",   fields: [
+          { id:"id",   label:"ID", placeholder:"数字 ID", type:"number", attrs:{min:1} },
+          { id:"text", label:"名称", placeholder:"电台名称", type:"text" }
+        ]},
+      { key: "message",  label: "发消息",  type: "message", fields: [
+          { id:"text",    label:"标题",  placeholder:"不要太长的标题", type:"text" },
+          { id:"content", label:"内容",placeholder:"留言内容", type:"textarea" },
+          { id:"sound",   label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
+        ]},
+      { key: "qrcode",   label: "投送二维码",   type: "qrcode",  fields: [
+          { id:"content", label:"内容", placeholder:"https://example.com 或文本", type:"text" },
+          { id:"text",    label:"文案",    placeholder:"显示在信息胶囊", type:"text" },
+          { id:"sound",   label:"提示音",       placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
+        ]},
+      { key: "volume",   label: "改音量",   type: "volume",  fields: [
+          { id:"value", label:"值", placeholder:"音量值", type:"slider", attrs:{min:0,max:100} },
+          { id:"save",  label:"是否保存", type:"checkbox", default:false }
+        ]},
+      { key: "brightness", label:"改亮度", type:"brightness", fields: [
+          { id:"value", label:"值", placeholder:"亮度值", type:"slider", attrs:{min:0,max:100} },
+          { id:"save",  label:"是否保存", type:"checkbox", default:false }
+        ]},
+      { key: "theme",    label:"改主题",    type: "theme",    fields: [
+          { id:"value", label:"模式", type:"select", options:["light","dark"] }
+        ]},
+      { key: "image",    label: "发图片",    type: "image",   fields: [
+          { id:"url",  label:"链接", placeholder:"https://example.com/xxx.jpg", type:"text" },
+          { id:"text", label:"文案",    placeholder:"显示在设备的信息胶囊", type:"text" },
+          { id:"sound", label:"提示音", placeholder:"0 为不提示", type:"number", attrs:{min:0,max:22} }
+        ]},
+      { key: "button",   label: "模拟按钮",   type: "button",   fields: [
+          { id:"key", label:"按键编号", type:"select", options:[1,2,3] },  // 1：BOOT 键，唤醒打断 2：VOL+ 键，音量加 3：VOL- 键，音量减
+          { id:"event", label:"按键动作", type:"select", options:[1,2,3] }  // 1：单击 2：双击 3：长按
+        ]},
+      { key: "mijia",    label: "米家控制",    type: "mijia",   fields: [
+          { id:"state", label:"开关状态", type:"checkbox", default:false }
+        ]},
+      { key: "alarm",    label: "定闹钟/定时指令",     type: "alarm",    fields: [
+          { id:"alarm_type", label:"闹钟类型", type:"alarm_type", options:["weekly", "date", "workday"] },
+          { id:"days", label:"选择星期", type:"weekly_days", options:[0,1,2,3,4,5,6] },
+          { id:"date", label:"选择日期", type:"date", placeholder:"MM-DD" },
+          { id:"time", label:"时间", type:"time", placeholder:"HH:mm" },
+          { id:"name", label:"闹钟名", type:"text", placeholder:"闹钟名称" },
+          { id:"volume", label:"音量", type:"slider", attrs:{min:0,max:100} },
+          { id:"repeat", label:"每次循环", type:"checkbox", default:false }
+        ]}, 
+      { key: "status",   label: "设备状态",   type: "status",   fields: [] }
+
+    ];
+
+    const tabsEl      = document.getElementById('tabs');
+    const formAreaEl  = document.getElementById('formArea');
+    const jsonPreview = document.getElementById('jsonPreview');
+    const resultBox   = document.getElementById('resultBox');
+    const statusBadge = document.getElementById('statusBadge');
+    const deviceSelect = document.getElementById('deviceSelect');
+    const manageDevicesBtn = document.getElementById('manageDevices');
+    const deviceModal = document.getElementById('deviceModal');
+    const deviceListEl = document.getElementById('deviceList');
+    const newDeviceName = document.getElementById('newDeviceName');
+    const newDeviceId = document.getElementById('newDeviceId');
+    const addDeviceBtn = document.getElementById('addDevice');
+    const toggleJsonId = document.getElementById('toggleJsonId');
+    const btnSend     = document.getElementById('btnSend');
+    const btnCopy     = document.getElementById('btnCopy');
+    const btnReset    = document.getElementById('btnReset');
+    const modalClose = deviceModal.querySelector('.close');
+    const editMijiaModal = document.getElementById('editMijiaModal');
+    const editMijiaTitle = document.getElementById('editMijiaTitle');
+    const editMijiaName = document.getElementById('editMijiaName');
+    const editMijiaIp = document.getElementById('editMijiaIp');
+    const editMijiaToken = document.getElementById('editMijiaToken');
+    const editMijiaDid = document.getElementById('editMijiaDid');
+    const editMijiaSiid = document.getElementById('editMijiaSiid');
+    const saveMijiaBtn = document.getElementById('saveMijia');
+    const editMijiaModalClose = editMijiaModal.querySelector('.close');
+    const installBtn = document.getElementById('installBtn');
+    const exportConfigBtn = document.getElementById('exportConfig');
+    const importConfigBtn = document.getElementById('importConfig');
+    const importFileInput = document.getElementById('importFileInput');
+
+    let activeKey = 'chat';
+    let showDeviceId = false;
+    let websocket = null;
+    const state = {};
+    let devices = JSON.parse(localStorage.getItem('devices')) || [];
+    let mijiaDevices = JSON.parse(localStorage.getItem('mijiaDevices')) || [];
+    let currentDeviceIndex = -1;
+    let selectedMijiaIndex = -1;
+    let currentEditingMijiaIndex = -1;
+    let deferredPrompt = null;
+    let refreshing = false;
+
+    const el = (tag, attrs={}, children=[]) => {
+      const n = document.createElement(tag);
+      for (const [k,v] of Object.entries(attrs)) {
+        if (k === 'class') n.className = v;
+        else if (k === 'text') n.textContent = v;
+        else if (k.startsWith('on') && typeof v === 'function') n[k] = v;
+        else n.setAttribute(k, v);
+      }
+      (Array.isArray(children) ? children : [children]).filter(Boolean).forEach(c => n.appendChild(c));
+      return n;
+    };
+
+    const pretty = (obj) => JSON.stringify(obj, null, 2);
+
+    function saveDevices() {
+      localStorage.setItem('devices', JSON.stringify(devices));
+    }
+
+    function saveMijiaDevices() {
+      localStorage.setItem('mijiaDevices', JSON.stringify(mijiaDevices));
+    }
+
+    function renderDeviceSelect() {
+      deviceSelect.innerHTML = '';
+      if (devices.length === 0) {
+        deviceSelect.appendChild(el('option', { value: '-1', text: '无设备' }));
+      } else {
+        devices.forEach((dev, idx) => {
+          deviceSelect.appendChild(el('option', { value: idx, text: dev.name }));
+        });
+        if (currentDeviceIndex === -1 && devices.length > 0) {
+          currentDeviceIndex = 0;
+        }
+        deviceSelect.value = currentDeviceIndex;
+      }
+      refreshPreview();
+    }
+
+    function renderDeviceList() {
+      deviceListEl.innerHTML = '';
+      devices.forEach((dev, idx) => {
+        const item = el('div', { class: 'flex items-center justify-between gap-2' });
+        const nameInput = el('input', { class: 'field flex-1', type: 'text', value: dev.name });
+        const idInput = el('input', { class: 'field flex-1', type: 'text', value: dev.id });
+        const delBtn = el('button', { class: 'btn btn-secondary', text: '删除', onclick: () => {
+          devices.splice(idx, 1);
+          saveDevices();
+          renderDeviceList();
+          renderDeviceSelect();
+          if (currentDeviceIndex >= devices.length) currentDeviceIndex = devices.length - 1;
+        }});
+        nameInput.addEventListener('input', () => { dev.name = nameInput.value; saveDevices(); renderDeviceSelect(); });
+        idInput.addEventListener('input', () => { 
+          dev.id = idInput.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); 
+          idInput.value = dev.id; 
+          saveDevices(); 
+        });
+        item.appendChild(nameInput);
+        item.appendChild(idInput);
+        item.appendChild(delBtn);
+        deviceListEl.appendChild(item);
+      });
+    }
+
+    function renderMijiaList(container) {
+      container.innerHTML = '';
+      mijiaDevices.forEach((dev, idx) => {
+        const item = el('div', { class: 'flex items-center gap-2 border-b pb-2' });
+        const radio = el('input', { type: 'radio', name: 'mijiaSelect', class: 'checkbox-input', checked: selectedMijiaIndex === idx });
+        radio.addEventListener('change', () => {
+          selectedMijiaIndex = idx;
+          refreshPreview();
+        });
+        const info = el('div', { class: 'flex-1', text: `${dev.name} (IP: ${dev.ip}, DID: ${dev.did}, SIID: ${dev.siid})` });
+        const editBtn = el('button', { class: 'btn btn-secondary', text: '编辑', onclick: () => {
+          currentEditingMijiaIndex = idx;
+          editMijiaTitle.textContent = '编辑米家设备';
+          editMijiaName.value = dev.name;
+          editMijiaIp.value = dev.ip;
+          editMijiaToken.value = dev.token;
+          editMijiaDid.value = dev.did;
+          editMijiaSiid.value = dev.siid;
+          editMijiaModal.style.display = 'block';
+        }});
+        const delBtn = el('button', { class: 'btn btn-secondary', text: '删除', onclick: () => {
+          mijiaDevices.splice(idx, 1);
+          saveMijiaDevices();
+          if (selectedMijiaIndex === idx) selectedMijiaIndex = -1;
+          renderMijiaList(document.getElementById('mijiaList'));
+          refreshPreview();
+        }});
+        item.appendChild(radio);
+        item.appendChild(info);
+        item.appendChild(editBtn);
+        item.appendChild(delBtn);
+        container.appendChild(item);
+      });
+    }
+
+    function buildPayload(){
+      const devId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
+      const def   = INTERFACES.find(x => x.key === activeKey);
+      const payload = {
+        device_id: devId,
+        type: def.type
+      };
+      const values = state[activeKey] || {};
+      
+      if (activeKey === 'alarm') {
+        // 闹钟功能不发送，只生成请求数据
+        return buildAlarmPayload();
+      } else if (activeKey === 'mijia') {
+        if (selectedMijiaIndex >= 0 && mijiaDevices[selectedMijiaIndex]) {
+          const mijiaDev = mijiaDevices[selectedMijiaIndex];
+          payload.name = mijiaDev.name;
+          payload.ip = mijiaDev.ip;
+          payload.token = mijiaDev.token;
+          payload.did = mijiaDev.did;
+          payload.siid = mijiaDev.siid;
+          payload.state = values.state ? 1 : 0;
+        }
+      } else {
+        for (const f of def.fields) {
+          const val = values[f.id];
+          if (f.type === 'checkbox') {
+            if (typeof val === 'boolean') payload[f.id] = val;
+          } else if (val !== undefined && val !== null && val !== '') {
+            if (f.type === 'number' || f.type === 'slider') {
+              payload[f.id] = Number(val);
+            } else if (typeof val === 'string') {
+              payload[f.id] = val.replace(/"/g, '＂').replace(/'/g, '＇');
+            } else {
+              payload[f.id] = val;
+            }
+          }
+        }
+      }
+      return payload;
+    }
+
+    function buildAlarmPayload() {
+      const devId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
+      const values = state[activeKey] || {};
+      
+      const alarmConfig = {
+        id: values.name || "闹钟",
+        type: values.alarm_type || "weekly",
+        time: values.time || "12:00",
+        repeat: values.repeat ? 1 : 0
+      };
+      
+
+      if (values.alarm_type === "weekly") {
+        alarmConfig.day = values.days || [1];
+      } else if (values.alarm_type === "date") {
+        alarmConfig.date = values.date || "01-01";
+      }
+
+      
+      let volumeText = "";
+      if (values.volume && values.volume > 0) {
+        volumeText = `，再把音量设置为${values.volume}%`;
+      }
+      
+      alarmConfig.payload = {
+        device_id: devId,
+        type: "chat",
+        text: `请先设置${values.time || "12:00"},${values.name || "闹钟"}的日程${volumeText}，全部调好回答我“闹钟将在10分钟内响起”，再直接退下，不用说再见，其他任何内容都不要说。`
+      };
+      
+      return alarmConfig;
+    }
+
+   function getPreviewPayload() {
+      if (activeKey === 'alarm') {
+        return buildAlarmPayload();
+      }
+      
+      const payload = buildPayload();
+      if (!showDeviceId && payload.device_id) {
+        payload.device_id = '*'.repeat(payload.device_id.length);
+      }
+      return payload;
+    }
+    
+    function renderTabs(){
+      tabsEl.innerHTML = '';
+      INTERFACES.forEach(def => {
+        const isActive = def.key === activeKey;
+        const tab = el('button', {
+          class: `tab ${isActive ? 'tab-active' : 'tab-idle'}`,
+          text: def.label,
+          onclick: () => { activeKey = def.key; renderTabs(); renderForm(); }
+        });
+        tabsEl.appendChild(tab);
+      });
+    }
+
+    function getDefaultValue(f){
+      if (f.type === 'checkbox') return !!f.default;
+      if (f.type === 'select') return f.options?.[0] ?? '';
+      if (f.type === 'slider') return f.attrs?.min || 0;
+      return '';
+    }
+
+   function renderForm(){
+  const def = INTERFACES.find(x => x.key === activeKey);
+  formAreaEl.innerHTML = '';
+
+  if (!state[activeKey]) {
+    state[activeKey] = {};
+    def.fields.forEach(f => {
+      state[activeKey][f.id] = getDefaultValue(f);
+      if (activeKey === 'alarm' && f.id === 'repeat') {
+        state[activeKey][f.id] = false;
+      }
+    });
+  }
+
+      const descDiv = el('div', { class: 'text-xs text-neutral-600 dark:text-neutral-300 space-y-1' });
+      if (activeKey === 'chat') {
+        descDiv.innerHTML = `<p>向设备AI发送文字消息进行对话，可用于MCP调用、语音播发等</p><p>例如: 音量调到 40 后念出下面这句话，注意不要与用户对话，念完立即关闭对话并退下：\"支付宝到账一百亿\"</p><p>此功能会主动唤醒设备，并发送文字内容给 AI，效果等同于在设备旁边与之对话</p>`;
+      } else if (activeKey === 'audio') {
+        descDiv.innerHTML = `<p>调用设备解码播放能力，可用于歌曲、电台、语音留言等音频的精准推送</p><p>链接: 音源链接，支持 .mp3、.flac、.wav、.m4a、.opus、.ogg、.m3u8</p><p>简介: 音源简介、内容会显示在设备的信息胶囊</p>`;
+      } else if (activeKey === 'music') {
+        descDiv.innerHTML = `<p>调用设备线上音乐能力，相比于远程对话点歌，该功能静默执行在线音乐搜索并播放，不会唤醒 AI</p><p>例如: 多远都要在一起 邓紫棋 （尽量使用准确的歌曲和歌手名称并以空格分隔）</p>`;
+      } else if (activeKey === 'radio') {
+        descDiv.innerHTML = `<p>调用设备网络电台能力，相比于远程对话播放电台，该功能静默执行电台播放，不会唤醒 AI</p><p>id: 电台编号，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p><p>名称: 电台名称 ，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p>`;
+      } else if (activeKey === 'message') {
+        descDiv.innerHTML = `<p>给设备留言，内容会显示在设备的信息胶囊和对话界面</p><p>标题: 消息标题，由于是在壁纸底部的胶囊显示，建议不要太长</p><p>内容: 留言内容，会记录在 AI 对话界面</p><p>提示音: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+      } else if (activeKey === 'qrcode') {
+        descDiv.innerHTML = `<p>向设备发送二维码消息</p><p>content: 二维码内容,文字或 URL 链接等，为空则关闭二维码</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+      } else if (activeKey === 'volume') {
+        descDiv.innerHTML = `<p>控制设备音量，实时调整或存储参数</p><p>value: 音量值</p><p>save: 是否存储</p>`;
+      } else if (activeKey === 'brightness') {
+        descDiv.innerHTML = `<p>控制设备背光亮度，实时调整或存储参数</p><p>value: 亮度值</p><p>save: 是否存储</p>`;
+      } else if (activeKey === 'theme') {
+        descDiv.innerHTML = `<p>控制设备主题模式，修改后会立即存储</p><p>value: 注意只能是 浅色 或 深色</p>`;
+      } else if (activeKey === 'image') {
+        descDiv.innerHTML = `<p>给设备发送图文消息</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p><p>请先将图片修改至设备屏幕对应的尺寸（在“设备状态”中可以查询），再上传</p><p>推送后不显示图片请尝试更换<a href="https://bing.com/search?q=%E5%9B%BE%E5%BA%8A" class="text-blue-500 hover:underline" target="_blank">图床</a></p>`;
+      } else if (activeKey === 'button') {
+        descDiv.innerHTML = `<p>远程触发设备按键</p><p>key: 按键编号 1：BOOT 键，唤醒打断 2：VOL+ 键，音量加 3：VOL- 键，音量减</p><p>event: 按键动作 1：单击 2：双击 3：长按</p><p>此接口可以通过 ESP8266、ESP32C3 等手持遥控去控制不方便接触到物理按键的场景</p>`;
+      } else if (activeKey === 'mijia') {
+        descDiv.innerHTML = `<p>通过小智(ESP32)控制米家设备</p><p>name: 设备名称，例如：次卧吸顶灯</p><p>ip: 设备 ip ( 如果是 mesh 设备，需填 mesh 网关的 ip )</p><p>token: 设备 token ( 如果是 mesh 设备，需填 mesh 网关的 token )</p><p>did: 设备编号</p><p>siid: 设备子编号，例如一个开关面板上有 3 个开关按钮，siid 就表示第几个按钮</p><p>state: 控制设备状态，目前仅支持 0(关闭)、1(打开)</p><p>本接口数据可以从任意终端任意地理位置发送，但小智(ESP32)需要与米家设备处于同一 WIFI 网络下才能实现控制</p><p>支持控制小米蓝牙 mesh 设备，填写参数时注意填写 mesh 网关设备的 ip 和 token,比如蓝牙 mesh 开关面板连的小爱音响 mesh 网关，则填小爱的 ip,token</p><p>为了防止路由器重启后重新给设备分配 IP，建议在路由器管理页面将需要控制的设备设置静态 IP，尤其是 mseh 网关设备，一劳永逸</p>`;
+      } else if (activeKey === 'status') {
+        descDiv.innerHTML = `<p>通过WebSocket查询设备状态</p><p>设备响应将实时显示在下方返回结果区域，请求时请确保小智开机</p>`;
+      } else if (activeKey === 'alarm') {
+        descDiv.innerHTML = `<p>配置闹钟/定时执行指令</p><p>该功能实际上是通过github actions在闹钟响起前自动创建日程提醒</p><p>请仔细阅读下面的教程配置闹钟，如果嫌麻烦，请耐心等待灵活固件作者增加闹钟功能</p><p>只有在小智开机且正常联网时可用</p><p>该模式下，发送指令=复制请求数据</p><p>闹钟/定时指令设置教程仓库（打不开请自行解决网络问题）：<a href="https://github.com/zhangMonday/xiaozhi-flex-alarm" class="text-blue-500 hover:underline" target="_blank">点击查看</a></p>`;
+      }
+      formAreaEl.appendChild(descDiv);
+
+      if (!def.fields.length) {
+        formAreaEl.appendChild(el('div', { class:'text-xs text-blue-600 dark:text-blue-300 italic py-1', text: '该接口无附加字段，直接点击"发送指令"即可' }));
+      } else {
+        const grid = el('div', { class:'grid-auto' });
+        
+        if (activeKey === 'mijia') {
+          const mijiaSection = el('div', { class: 'space-y-3' });
+          const addBtn = el('button', { class: 'btn btn-primary', text: '添加米家设备', onclick: () => {
+            currentEditingMijiaIndex = -1;
+            editMijiaTitle.textContent = '添加米家设备';
+            editMijiaName.value = '';
+            editMijiaIp.value = '';
+            editMijiaToken.value = '';
+            editMijiaDid.value = '';
+            editMijiaSiid.value = '';
+            editMijiaModal.style.display = 'block';
+          }});
+          mijiaSection.appendChild(addBtn);
+          const listContainer = el('div', { id: 'mijiaList', class: 'space-y-1' });
+          renderMijiaList(listContainer);
+          mijiaSection.appendChild(listContainer);
+          formAreaEl.appendChild(mijiaSection);
+          if (selectedMijiaIndex === -1 && mijiaDevices.length > 0) {
+            selectedMijiaIndex = mijiaDevices.length - 1;
+            refreshPreview();
+          }
+        } else if (activeKey === 'alarm') {
+          // 闹钟特殊表单
+          renderAlarmForm(grid);
+        } else {
+          // 常规表单
+          def.fields.forEach(f => {
+            const wrap = el('div', {});
+            wrap.appendChild(el('label', { class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', text: f.label }));
+            
+            let input;
+            const common = { class:'field mt-1', id:`f-${activeKey}-${f.id}` };
+            if (f.type === 'textarea') {
+              input = el('textarea', { ...common, placeholder:f.placeholder || '', rows:3 });
+            } else if (f.type === 'select') {
+              input = el('select', { ...common });
+              (f.options || []).forEach(op => input.appendChild(el('option', { value:String(op), text:String(op) })));
+            } else if (f.type === 'checkbox') {
+              const box = el('div', { class:'mt-1 flex items-center gap-2' });
+              input = el('input', { type:'checkbox', id:common.id, class:'w-4 h-4 rounded focus:ring-blue-500' });
+              input.checked = !!state[activeKey][f.id];
+              box.appendChild(input);
+              box.appendChild(el('label', { for:common.id, class:'text-xs cursor-pointer', text:'控制关闭 / 开启' }));
+              wrap.appendChild(box);
+              grid.appendChild(wrap);
+              input.addEventListener('change', () => { state[activeKey][f.id] = input.checked; refreshPreview(); });
+              return;
+            } else if (f.type === 'slider') {
+              const container = el('div', { class: 'slider-container mt-1' });
+              input = el('input', { 
+                type: 'range', 
+                class: 'slider',
+                min: f.attrs?.min || 0,
+                max: f.attrs?.max || 100,
+                step: f.attrs?.step || 1
+              });
+              const manualInput = el('input', {
+                type: 'number',
+                class: 'field slider-input',
+                min: f.attrs?.min || 0,
+                max: f.attrs?.max || 100,
+                value: state[activeKey][f.id] || getDefaultValue(f)
+              });
+              container.appendChild(input);
+              container.appendChild(manualInput);
+              wrap.appendChild(container);
+              grid.appendChild(wrap);
+              
+              input.value = state[activeKey][f.id] || getDefaultValue(f);
+              input.addEventListener('input', () => {
+                state[activeKey][f.id] = input.value;
+                manualInput.value = input.value;
+                refreshPreview();
+              });
+              manualInput.addEventListener('input', () => {
+                let val = Number(manualInput.value);
+                const min = f.attrs?.min || 0;
+                const max = f.attrs?.max || 100;
+                if (isNaN(val)) val = min;
+                val = Math.max(min, Math.min(max, val));
+                state[activeKey][f.id] = val;
+                input.value = val;
+                manualInput.value = val;
+                refreshPreview();
+              });
+              return;
+            } else {
+              input = el('input', { ...common, type: f.type || 'text', placeholder: f.placeholder || '' });
+              if (f.attrs) {
+                Object.entries(f.attrs).forEach(([k,v]) => input.setAttribute(k, v));
+              }
+            }
+
+            const v = state[activeKey][f.id];
+            if (f.type === 'select') input.value = String(v ?? getDefaultValue(f));
+            else input.value = v ?? '';
+
+            input.addEventListener('input', () => {
+              state[activeKey][f.id] = input.value;
+              refreshPreview();
+            });
+
+            wrap.appendChild(input);
+            
+            if ((activeKey === 'audio' || activeKey === 'image') && f.id === 'url') {
+              // 为图片和音频添加工具按钮
+              const toolsContainer = el('div', { class: 'image-tools-container' });
+              
+              // 改图宝按钮
+              if (activeKey === 'image') {
+                const resizeBtn = el('div', {
+                  class: 'upload-btn',
+                  text: '进入改图宝修改尺寸',
+                  onclick: () => window.open('https://www.gaitubao.com/', '_blank')
+                });
+                toolsContainer.appendChild(resizeBtn);
+              }
+              
+              // 上传文件按钮
+              const uploadBtn = el('div', {
+                class: 'upload-btn',
+                text: '上传文件并获取临时链接',
+                onclick: () => window.open('https://tmpfiles.org/', '_blank')
+              });
+              toolsContainer.appendChild(uploadBtn);
+              
+              wrap.appendChild(toolsContainer);
+            }
+            
+            grid.appendChild(wrap);
+          });
+        }
+        formAreaEl.appendChild(grid);
+      }
+
+      refreshPreview();
+    }
+
+    function renderAlarmForm(grid) {
+       if (!state['alarm']) state['alarm'] = {};
+
+       if (state['alarm'].repeat === undefined) {
+    state['alarm'].repeat = false;
+  }
+      const values = state['alarm'] || {};
+     const isRepeatChecked = values.repeat ?? false;
+
+      
+      // 闹钟类型选择
+      const typeWrap = el('div', {});
+      typeWrap.appendChild(el('label', { 
+        class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', 
+        text: '闹钟类型' 
+      }));
+      
+      const typeSelector = el('div', { class: 'alarm-type-selector' });
+      const types = [
+        { value: 'weekly', label: '指定星期' },
+        { value: 'date', label: '指定日期' },
+        { value: 'workday', label: '工作日' }
+      ];
+      
+      types.forEach(type => {
+        const btn = el('button', {
+          type: 'button',
+          class: `alarm-type-btn ${values.alarm_type === type.value ? 'active' : ''}`,
+          text: type.label,
+          onclick: () => {
+            state['alarm'].alarm_type = type.value;
+            renderForm();
+          }
+        });
+        typeSelector.appendChild(btn);
+      });
+      
+      typeWrap.appendChild(typeSelector);
+      grid.appendChild(typeWrap);
+      
+      if (values.alarm_type === 'weekly') {
+        const daysWrap = el('div', {});
+        daysWrap.appendChild(el('label', { 
+          class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', 
+          text: '选择星期' 
+        }));
+        
+        const daysSelector = el('div', { class: 'weekday-selector' });
+        const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+        
+        weekdays.forEach((day, index) => {
+          const isActive = values.days && values.days.includes(index);
+          const btn = el('button', {
+            type: 'button',
+            class: `weekday-btn ${isActive ? 'active' : ''}`,
+            text: day,
+            onclick: () => {
+              if (!state['alarm'].days) state['alarm'].days = [];
+              
+              if (state['alarm'].days.includes(index)) {
+                state['alarm'].days = state['alarm'].days.filter(d => d !== index);
+              } else {
+                state['alarm'].days.push(index);
+                state['alarm'].days.sort();
+              }
+              
+              renderForm();
+            }
+          });
+          daysSelector.appendChild(btn);
+        });
+        
+        daysWrap.appendChild(daysSelector);
+        grid.appendChild(daysWrap);
+      } else if (values.alarm_type === 'date') {
+        const dateWrap = el('div', {});
+        dateWrap.appendChild(el('label', { 
+          class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', 
+          text: '选择日期 (月-日)' 
+        }));
+        
+        const dateContainer = el('div', { class: 'date-input-container' });
+        const dateInput = el('input', {
+          type: 'text',
+          class: 'field date-input',
+          placeholder: 'MM-DD',
+          value: values.date || '',
+          oninput: function() {
+            // 简单的日期格式验证
+            const val = this.value.replace(/[^0-9\-]/g, '');
+            if (val.length === 2 && !val.includes('-')) {
+              this.value = val + '-';
+            } else if (val.length > 5) {
+              this.value = val.slice(0, 5);
+            } else {
+              this.value = val;
+            }
+            
+            state['alarm'].date = this.value;
+            refreshPreview();
+          }
+        });
+        
+        dateContainer.appendChild(dateInput);
+        dateWrap.appendChild(dateContainer);
+        grid.appendChild(dateWrap);
+      }
+      
+      const timeWrap = el('div', {});
+      timeWrap.appendChild(el('label', { 
+        class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1 required', 
+        text: '时间' 
+      }));
+      
+      const timeContainer = el('div', { class: 'time-input-container' });
+      const timeInput = el('input', {
+        type: 'text',
+        class: 'field time-input',
+        placeholder: 'HH:mm',
+        value: values.time || '',
+        oninput: function() {
+          // 简单的时间格式验证
+          const val = this.value.replace(/[^0-9:]/g, '');
+          if (val.length === 2 && !val.includes(':')) {
+            this.value = val + ':';
+          } else if (val.length > 5) {
+            this.value = val.slice(0, 5);
+          } else {
+            this.value = val;
+          }
+          
+          state['alarm'].time = this.value;
+          refreshPreview();
+        }
+      });
+      
+      timeContainer.appendChild(timeInput);
+      timeWrap.appendChild(timeContainer);
+      grid.appendChild(timeWrap);
+      
+      const nameWrap = el('div', {});
+      nameWrap.appendChild(el('label', { 
+        class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1 required', 
+        text: '闹钟名' 
+      }));
+      
+      const nameInput = el('input', {
+        type: 'text',
+        class: 'field',
+        placeholder: '闹钟名称',
+        value: values.name || '',
+        oninput: function() {
+          state['alarm'].name = this.value;
+          refreshPreview();
+        }
+      });
+      
+      nameWrap.appendChild(nameInput);
+      grid.appendChild(nameWrap);
+      
+      const volumeWrap = el('div', {});
+      volumeWrap.appendChild(el('label', { 
+        class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', 
+        text: '音量 (可选，保持50%不动即为不修改)' 
+      }));
+      
+      const volumeContainer = el('div', { class: 'slider-container mt-1' });
+      const volumeSlider = el('input', { 
+        type: 'range', 
+        class: 'slider',
+        min: 0,
+        max: 100,
+        step: 1,
+        value: values.volume || 50
+      });
+      
+      const volumeValue = el('div', { 
+        class: 'slider-value',
+        text: `${values.volume || 50}%`
+      });
+      
+      volumeSlider.addEventListener('input', function() {
+        state['alarm'].volume = this.value;
+        volumeValue.textContent = `${this.value}%`;
+        refreshPreview();
+      });
+      
+      volumeContainer.appendChild(volumeSlider);
+      volumeContainer.appendChild(volumeValue);
+      volumeWrap.appendChild(volumeContainer);
+      grid.appendChild(volumeWrap);
+      
+      const repeatWrap = el('div', {});
+      const repeatContainer = el('div', { class: 'checkbox-field' });
+      const repeatInput = el('input', {
+        type: 'checkbox',
+        id: 'f-alarm-repeat',
+        class: 'checkbox-input',
+        checked: !!state['alarm'].repeat
+      });
+      repeatInput.checked = !!state['alarm'].repeat;
+      repeatInput.addEventListener('change', function() {
+        state['alarm'].repeat = this.checked;
+        refreshPreview();
+      });
+      
+      repeatContainer.appendChild(repeatInput);
+      repeatContainer.appendChild(el('label', { 
+        for: 'f-alarm-repeat', 
+        class: 'text-xs cursor-pointer', 
+        text: '每次循环' 
+      }));
+      
+      repeatWrap.appendChild(repeatContainer);
+      grid.appendChild(repeatWrap);
+    }
+
+    function refreshPreview(){
+      const payload = getPreviewPayload();
+      jsonPreview.textContent = pretty(payload);
+    }
+
+    function setStatus(text, type){
+      statusBadge.textContent = text;
+      statusBadge.className = `badge ${type ? (type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : (type === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200')) : 'bg-neutral-100 dark:bg-neutral-700 dark:text-neutral-300'}`;
+    }
+
+    async function sendNow(){
+      if (activeKey === 'status') {
+        return sendStatusRequest();
+      } else if (activeKey === 'alarm') {
+        copyJSON();
+        return;
+      }
+      
+      const payload = buildPayload();
+      resultBox.textContent = '正在向设备发送数据...';
+      setStatus('发送中', 'info');
+
+      const url = '/api/push';
+
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 20000);
+
+      try {
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        clearTimeout(timer);
+
+        let dataText = await resp.text();
+        let parsed = null;
+        try { parsed = JSON.parse(dataText); } catch {}
+        const out = {
+          http状态: resp.status + ' ' + resp.statusText,
+          请求地址: 'https://nodelua.com/home_iot/api/push.php',
+          请求数据: payload,
+          返回结果: parsed || dataText,
+        };
+        resultBox.textContent = pretty(out);
+        setStatus(resp.ok ? '发送成功' : '发送失败', resp.ok ? 'success' : 'error');
+      } catch (err) {
+        clearTimeout(timer);
+        const out = {
+          错误: String(err),
+          提示: '请检查网络连接或接口地址'
+        };
+        resultBox.textContent = pretty(out);
+        setStatus('网络错误', 'error');
+      }
+    }
+
+    function sendStatusRequest() {
+      const deviceId = currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '';
+      if (!deviceId) {
+        setStatus('设备ID不能为空', 'error');
+        resultBox.textContent = '错误：请先选择或添加设备';
+        return;
+      }
+
+      resultBox.textContent = '正在连接WebSocket服务器...';
+      setStatus('连接中', 'info');
+
+      if (websocket) {
+        websocket.close();
+      }
+
+      try {
+        websocket = new WebSocket('wss://nodelua.com/wss');
+
+        websocket.onopen = function(event) {
+          setStatus('已连接', 'success');
+          resultBox.textContent = 'WebSocket连接已成功建立，发送状态查询请求...\n';
+          
+          const request = {
+            push: deviceId,
+            type: "status"
+          };
+          websocket.send(JSON.stringify(request));
+          resultBox.textContent += '已发送: ' + JSON.stringify(request, null, 2) + '\n\n';
+        };
+
+        websocket.onmessage = function(event) {
+          resultBox.textContent += '收到响应: ' + event.data + '\n';
+          setStatus('收到响应', 'success');
+          
+          try {
+            const data = JSON.parse(event.data);
+            resultBox.textContent += '解析后的JSON:\n' + JSON.stringify(data, null, 2) + '\n';
+          } catch (e) {
+            resultBox.textContent += '响应不是有效的JSON格式\n';
+          }
+        };
+
+        websocket.onerror = function(error) {
+          resultBox.textContent += 'WebSocket错误: ' + JSON.stringify(error) + '\n';
+          setStatus('连接错误', 'error');
+        };
+
+        websocket.onclose = function(event) {
+          resultBox.textContent += `WebSocket连接已关闭，代码: ${event.code}, 原因: ${event.reason || '无'}\n`;
+          setStatus('连接关闭', 'info');
+          websocket = null;
+        };
+
+        setTimeout(() => {
+          if (websocket && websocket.readyState === WebSocket.OPEN) {
+            resultBox.textContent += '查询超时/查询结束，正在关闭连接...\n';
+            setStatus('查询超时/查询结束', 'error');
+            websocket.close();
+          }
+        }, 10000);
+
+      } catch (error) {
+        resultBox.textContent = '创建WebSocket连接时发生错误: ' + error.message;
+        setStatus('连接失败', 'error');
+      }
+    }
+
+function copyJSON(){
+  const text = pretty(buildPayload()); 
+  navigator.clipboard.writeText(text).then(() => {
+    setStatus('已复制', 'success');
+  }).catch(()=>{
+    setStatus('复制失败', 'error');
+  });
+}
+    function resetFields(){
+      const def = INTERFACES.find(x => x.key === activeKey);
+      state[activeKey] = {};
+      def.fields.forEach(f => state[activeKey][f.id] = getDefaultValue(f));
+      if (activeKey === 'mijia') {
+        selectedMijiaIndex = -1;
+      }
+      renderForm();
+      setStatus('已重置', 'info');
+    }
+
+    function toggleDeviceIdVisibility() {
+      showDeviceId = !showDeviceId;
+      
+      if (showDeviceId) {
+        toggleJsonId.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+          </svg>
+        `;
+      } else {
+        toggleJsonId.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        `;
+      }
+      
+      refreshPreview();
+    }
+
+    function exportConfig() {
+      const config = {
+        devices: devices,
+        mijiaDevices: mijiaDevices
+      };
+      const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'xiaozhi-flex-config.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function importConfigHandler(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (typeof data === 'object' && Array.isArray(data.devices) && Array.isArray(data.mijiaDevices)) {
+            devices = data.devices;
+            mijiaDevices = data.mijiaDevices;
+            saveDevices();
+            saveMijiaDevices();
+            renderDeviceList();
+            renderDeviceSelect();
+            if (activeKey === 'mijia') {
+              renderMijiaList(document.getElementById('mijiaList'));
+            }
+            alert('配置导入成功');
+          } else {
+            alert('无效的配置文件格式');
+          }
+        } catch (err) {
+          alert('配置文件解析失败: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    renderDeviceSelect();
+    renderTabs();
+    renderForm();
+    setStatus('等待操作');
+
+    deviceSelect.addEventListener('change', () => {
+      currentDeviceIndex = parseInt(deviceSelect.value);
+      refreshPreview();
+    });
+
+    manageDevicesBtn.addEventListener('click', () => {
+      renderDeviceList();
+      deviceModal.style.display = 'block';
+    });
+
+    modalClose.addEventListener('click', () => {
+      deviceModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target === deviceModal) {
+        deviceModal.style.display = 'none';
+      } else if (event.target === editMijiaModal) {
+        editMijiaModal.style.display = 'none';
+      }
+    });
+
+    addDeviceBtn.addEventListener('click', () => {
+      const name = newDeviceName.value.trim();
+      const id = newDeviceId.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      if (name && id) {
+        devices.push({ name, id });
+        saveDevices();
+        renderDeviceList();
+        renderDeviceSelect();
+        newDeviceName.value = '';
+        newDeviceId.value = '';
+      }
+    });
+
+    saveMijiaBtn.addEventListener('click', () => {
+      const name = editMijiaName.value.trim();
+      const ip = editMijiaIp.value.trim();
+      const token = editMijiaToken.value.trim();
+      const did = editMijiaDid.value.trim();
+      const siid = editMijiaSiid.value.trim();
+      if (name && ip && token && did && siid) {
+        if (currentEditingMijiaIndex === -1) {
+          mijiaDevices.push({ name, ip, token, did, siid });
+          selectedMijiaIndex = mijiaDevices.length - 1;
+        } else {
+          mijiaDevices[currentEditingMijiaIndex] = { name, ip, token, did, siid };
+        }
+        saveMijiaDevices();
+        renderMijiaList(document.getElementById('mijiaList'));
+        refreshPreview();
+        editMijiaModal.style.display = 'none';
+      }
+    });
+
+    editMijiaModalClose.addEventListener('click', () => {
+      editMijiaModal.style.display = 'none';
+    });
+
+    toggleJsonId.addEventListener('click', toggleDeviceIdVisibility);
+
+    btnSend.addEventListener('click', sendNow);
+    btnCopy.addEventListener('click', copyJSON);
+    btnReset.addEventListener('click', resetFields);
+
+    exportConfigBtn.addEventListener('click', exportConfig);
+
+    importConfigBtn.addEventListener('click', () => {
+      importFileInput.click();
+    });
+
+    importFileInput.addEventListener('change', importConfigHandler);
+
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.body.classList.add('dark');
+    }
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    darkModeMediaQuery.addEventListener('change', (e) => {
+      if (e.matches) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+    });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                newWorker.postMessage({ action: 'skipWaiting' });
+              }
+            });
+          });
+        }).catch(err => console.error('Service Worker registration failed:', err));
+      });
+    }
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+    installBtn.addEventListener('click', () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('同意安装pwa');
+          } else {
+            console.log('pwa安装被用户拒绝');
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        const ua = navigator.userAgent.toLowerCase();
+        let message = '请使用支持PWA的浏览器安装';
+        if (ua.includes('windows')) {
+          message = '在Edge或Chrome浏览器中，点击地址栏的安装图标';
+        } else if (ua.includes('android')) {
+          message = '在Chrome浏览器中，点击菜单 > 添加到主屏幕';
+        } else if (ua.includes('iphone') || ua.includes('ipad')) {
+          message = '在Safari浏览器中，点击分享 > 添加到主屏幕，打开桌面图标时不拉起Safari浏览器即为成功';
+        }
+        alert(message);
+      }
+    });
+  </script>
+</body>
+</html>
