@@ -1256,15 +1256,15 @@
 
       const descDiv = el('div', { class: 'text-xs text-neutral-600 dark:text-neutral-300 space-y-1' });
       if (activeKey === 'chat') {
-        descDiv.innerHTML = `<p>向设备AI发送消息，可用于MCP调用、语音播发等</p><p>text: 播放邓紫棋的多远都要在一起</p><p>text: 播放清晨音乐电台</p><p>text: 播放内存卡里的歌曲</p><p>text: 把屏幕调到夜间模式</p><p>text: 音量调到 40 后念出下面这句话，注意不要与用户对话，念完立即关闭对话并退下：\"支付宝到账一百亿\"</p><p>此功能会主动唤醒设备，并发送文字内容给 AI，效果等同于在设备旁边与之对话</p>`;
+        descDiv.innerHTML = `<p>向设备AI发送文字消息进行对话，可用于MCP调用、语音播发等</p><p>例如: 音量调到 40 后念出下面这句话，注意不要与用户对话，念完立即关闭对话并退下：\"支付宝到账一百亿\"</p><p>此功能会主动唤醒设备，并发送文字内容给 AI，效果等同于在设备旁边与之对话</p>`;
       } else if (activeKey === 'audio') {
-        descDiv.innerHTML = `<p>调用设备解码播放能力，可用于歌曲、电台、语音留言等音频的精准推送</p><p>url: 音源链接，支持 .mp3、.flac、.wav、.m4a、.opus、.ogg、.m3u8</p><p>text: 音源简介、内容会显示在设备的信息胶囊</p>`;
+        descDiv.innerHTML = `<p>调用设备解码播放能力，可用于歌曲、电台、语音留言等音频的精准推送</p><p>链接: 音源链接，支持 .mp3、.flac、.wav、.m4a、.opus、.ogg、.m3u8</p><p>简介: 音源简介、内容会显示在设备的信息胶囊</p>`;
       } else if (activeKey === 'music') {
-        descDiv.innerHTML = `<p>调用设备线上音乐能力，相比于Chat接口点歌，此接口静默执行在线音乐搜索并播放，不会唤醒 AI</p><p>text: 多远都要在一起 邓紫棋 （尽量使用准确的歌曲和歌手名称并以空格分隔）</p>`;
+        descDiv.innerHTML = `<p>调用设备线上音乐能力，相比于远程对话点歌，该功能静默执行在线音乐搜索并播放，不会唤醒 AI</p><p>例如: 多远都要在一起 邓紫棋 （尽量使用准确的歌曲和歌手名称并以空格分隔）</p>`;
       } else if (activeKey === 'radio') {
-        descDiv.innerHTML = `<p>调用设备网络电台能力，相比于Chat接口播放电台，此接口静默执行电台播放，不会唤醒 AI</p><p>id: 电台编号，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p><p>text: 电台名称 ，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p>`;
+        descDiv.innerHTML = `<p>调用设备网络电台能力，相比于远程对话播放电台，该功能静默执行电台播放，不会唤醒 AI</p><p>id: 电台编号，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p><p>text: 电台名称 ，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p>`;
       } else if (activeKey === 'message') {
-        descDiv.innerHTML = `<p>给设备留言，内容会显示在设备的信息胶囊和对话界面</p><p>text: 消息标题，由于是在胶囊显示，建议不要太长</p><p>content: 留言内容，会记录在 AI 对话界面</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
+        descDiv.innerHTML = `<p>给设备留言，内容会显示在设备的信息胶囊和对话界面</p><p>标题: 消息标题，由于是在壁纸底部的胶囊显示，建议不要太长</p><p>content: 留言内容，会记录在 AI 对话界面</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
       } else if (activeKey === 'qrcode') {
         descDiv.innerHTML = `<p>向设备发送二维码消息</p><p>content: 二维码内容,文字或 URL 链接等，为空则关闭二维码</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p>`;
       } else if (activeKey === 'volume') {
@@ -1401,7 +1401,7 @@
               if (activeKey === 'image') {
                 const resizeBtn = el('div', {
                   class: 'upload-btn',
-                  text: '点击进入改图宝修改尺寸',
+                  text: '进入改图宝修改尺寸',
                   onclick: () => window.open('https://www.gaitubao.com/', '_blank')
                 });
                 toolsContainer.appendChild(resizeBtn);
@@ -1410,7 +1410,7 @@
               // 上传文件按钮
               const uploadBtn = el('div', {
                 class: 'upload-btn',
-                text: '点击上传文件并获取临时链接',
+                text: '上传文件并获取临时链接',
                 onclick: () => window.open('https://tmpfiles.org/', '_blank')
               });
               toolsContainer.appendChild(uploadBtn);
