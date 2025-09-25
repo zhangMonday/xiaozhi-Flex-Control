@@ -1295,7 +1295,7 @@
       } else if (activeKey === 'theme') {
         descDiv.innerHTML = `<p>控制设备主题模式，修改后会立即存储</p><p>value: 注意只能是 浅色 或 深色</p>`;
       } else if (activeKey === 'image') {
-        descDiv.innerHTML = `<p>给设备发送图文消息</p><p>url: 图片链接，支持 .jpg</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p><p>请先将图片修改至设备屏幕对应的尺寸（在“设备状态”中可以查询），再上传</p><p>推送后不显示图片请尝试更换<a href="https://bing.com/search?q=%E5%9B%BE%E5%BA%8A" class="text-blue-500 hover:underline" target="_blank">图床</a></p>`;
+        descDiv.innerHTML = `<p>给设备发送图文消息</p><p>url: 图片链接，支持 .jpg或.png</p><p>text: 附带的文字、内容会显示在设备的信息胶囊</p><p>sound: 提示音编号 1~22，为 0 则不播放提示音</p><p>请先将图片修改至设备屏幕对应的尺寸（在“设备状态”中可以查询），再上传</p><p>推送后不显示图片请尝试更换<a href="https://bing.com/search?q=%E5%9B%BE%E5%BA%8A" class="text-blue-500 hover:underline" target="_blank">图床</a></p>`;
       } else if (activeKey === 'button') {
         descDiv.innerHTML = `<p>远程触发设备按键</p><p>key: 按键编号 1：BOOT 键，唤醒打断 2：VOL+ 键，音量加 3：VOL- 键，音量减</p><p>event: 按键动作 1：单击 2：双击 3：长按</p><p>此功能可以用在 ESP8266、ESP32C3 等手持遥控控制不方便接触到物理按键的场景</p>`;
       } else if (activeKey === 'mijia') {
