@@ -765,6 +765,57 @@
       gap: 0.5rem;
       margin-top: 0.6rem;
     }
+
+    .music-search-container {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-end;
+    }
+    
+    .music-source-select {
+      width: 120px;
+    }
+    
+    .music-search-input {
+      flex: 1;
+    }
+    
+    .music-results {
+      margin-top: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+      space-y: 1rem;
+    }
+    
+    .music-result-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .dark .music-result-card {
+      background: #1f2937;
+      border-color: #374151;
+    }
+    
+    .music-info {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .music-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .play-btn {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.75rem;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
@@ -1000,12 +1051,12 @@
       { key: "mijia",    label: "米家控制",    type: "mijia",   fields: [
           { id:"state", label:"开关状态", type:"checkbox", default:false }
         ]},
-      { key: "alarm",    label: "定闹钟/定时指令",     type: "alarm",    fields: [
-          { id:"alarm_type", label:"闹钟类型", type:"alarm_type", options:["weekly", "date", "workday"] },
+      { key: "alarm",    label: "定时指令",     type: "alarm",    fields: [
+          { id:"alarm_type", label:"定时类型", type:"alarm_type", options:["weekly", "date", "workday"] },
           { id:"days", label:"选择星期", type:"weekly_days", options:[0,1,2,3,4,5,6] },
           { id:"date", label:"选择日期", type:"date", placeholder:"MM-DD" },
           { id:"time", label:"时间", type:"time", placeholder:"HH:mm" },
-          { id:"name", label:"闹钟名", type:"text", placeholder:"闹钟名称" },
+          { id:"name", label:"名称", type:"text", placeholder:"名称" },
           { id:"volume", label:"音量", type:"slider", attrs:{min:0,max:100} },
           { id:"repeat", label:"每次循环", type:"checkbox", default:false }
         ]}, 
@@ -1055,6 +1106,7 @@
     let currentEditingMijiaIndex = -1;
     let deferredPrompt = null;
     let refreshing = false;
+    let currentAudio = null; // 用于管理试听音频
 
     const el = (tag, attrs={}, children=[]) => {
       const n = document.createElement(tag);
@@ -1165,7 +1217,7 @@
       const values = state[activeKey] || {};
       
       if (activeKey === 'alarm') {
-        // 闹钟功能不发送，只生成请求数据
+        // 定时功能不发送，只生成请求数据
         return buildAlarmPayload();
       } else if (activeKey === 'mijia') {
         if (selectedMijiaIndex >= 0 && mijiaDevices[selectedMijiaIndex]) {
@@ -1201,7 +1253,7 @@
       const values = state[activeKey] || {};
       
       const alarmConfig = {
-        id: values.name || "闹钟",
+        id: values.name || "定时",
         type: values.alarm_type || "weekly",
         time: values.time || "12:00",
         repeat: values.repeat ? 1 : 0
@@ -1281,7 +1333,7 @@
       } else if (activeKey === 'audio') {
         descDiv.innerHTML = `<p>调用设备解码播放能力，可用于歌曲、电台、语音留言等音频的精准推送</p><p>链接: 音源链接，支持 .mp3、.flac、.wav、.m4a、.opus、.ogg、.m3u8</p><p>简介: 音源简介、内容会显示在设备的信息胶囊</p>`;
       } else if (activeKey === 'music') {
-        descDiv.innerHTML = `<p>调用设备线上音乐能力，相比于远程对话点歌，该功能静默执行在线音乐搜索并播放，不会唤醒 AI</p><p>例如: 多远都要在一起 邓紫棋 （尽量使用准确的歌曲和歌手名称并以空格分隔）</p>`;
+        descDiv.innerHTML = `<p>调用设备线上音乐能力，相比于远程对话点歌，该功能静默执行在线音乐搜索并播放，不会唤醒 AI</p><p>例如: 多远都要在一起 邓紫棋 （尽量使用准确的歌曲和歌手名称并以空格分隔）</p><p>搜索模式：支持网易云/酷我/joox搜索，试听并推送音频直链到小智</p>`;
       } else if (activeKey === 'radio') {
         descDiv.innerHTML = `<p>调用设备网络电台能力，相比于远程对话播放电台，该功能静默执行电台播放，不会唤醒 AI</p><p>id: 电台编号，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p><p>名称: 电台名称 ，具体查阅 <a href="https://nodelua.com/home_iot/docs/#/guide/mcp?id=%e7%94%b5%e5%8f%b0%e5%88%97%e8%a1%a8" class="text-blue-500 hover:underline" target="_blank">电台列表 >></a></p>`;
       } else if (activeKey === 'message') {
@@ -1303,7 +1355,7 @@
       } else if (activeKey === 'status') {
         descDiv.innerHTML = `<p>通过WebSocket查询设备状态</p><p>设备响应将实时显示在下方返回结果区域，请求时请确保小智开机</p>`;
       } else if (activeKey === 'alarm') {
-        descDiv.innerHTML = `<p>配置闹钟/定时执行指令</p><p>该功能实际上是通过github actions在闹钟响起前自动创建日程提醒</p><p>请仔细阅读下面的教程配置闹钟，如果嫌麻烦，请耐心等待灵活固件作者增加闹钟功能</p><p>只有在小智开机且正常联网时可用</p><p>该模式下，发送指令=复制请求数据</p><p>闹钟/定时指令设置教程仓库（打不开请自行解决网络问题）：<a href="https://github.com/zhangMonday/xiaozhi-flex-alarm" class="text-blue-500 hover:underline" target="_blank">点击查看</a></p>`;
+        descDiv.innerHTML = `<p>配置闹钟/定时执行指令</p><p>该功能实际上是通过github actions自动化推送信息</p><p>请仔细阅读下面的教程配置闹钟，如果嫌麻烦，请耐心等待灵活固件作者增加闹钟功能</p><p>只有在小智开机且正常联网时可用</p><p>该模式下，发送指令=复制请求数据</p><p>闹钟/定时指令设置教程仓库（打不开请自行解决网络问题）：<a href="https://github.com/zhangMonday/xiaozhi-flex-alarm" class="text-blue-500 hover:underline" target="_blank">点击查看</a></p>`;
       }
       formAreaEl.appendChild(descDiv);
 
@@ -1334,8 +1386,11 @@
             refreshPreview();
           }
         } else if (activeKey === 'alarm') {
-          // 闹钟特殊表单
+          // 特殊表单
           renderAlarmForm(grid);
+        } else if (activeKey === 'music') {
+          // 增强的音乐表单
+          renderMusicForm(grid);
         } else {
           // 常规表单
           def.fields.forEach(f => {
@@ -1460,11 +1515,11 @@
      const isRepeatChecked = values.repeat ?? false;
 
       
-      // 闹钟类型选择
+      // 定时类型选择
       const typeWrap = el('div', {});
       typeWrap.appendChild(el('label', { 
         class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', 
-        text: '闹钟类型' 
+        text: '定时类型' 
       }));
       
       const typeSelector = el('div', { class: 'alarm-type-selector' });
@@ -1593,13 +1648,13 @@
       const nameWrap = el('div', {});
       nameWrap.appendChild(el('label', { 
         class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1 required', 
-        text: '闹钟名' 
+        text: '任务名' 
       }));
       
       const nameInput = el('input', {
         type: 'text',
         class: 'field',
-        placeholder: '闹钟名称',
+        placeholder: '任务名称',
         value: values.name || '',
         oninput: function() {
           state['alarm'].name = this.value;
@@ -1667,6 +1722,156 @@
       grid.appendChild(repeatWrap);
     }
 
+    function renderMusicForm(grid) {
+      // 原有关键词输入
+      const keywordWrap = el('div', {});
+      keywordWrap.appendChild(el('label', { class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 flex items-center gap-1', text: '关键词 (文字推送模式)' }));
+      const keywordInput = el('input', { class:'field mt-1', type: 'text', id:'f-music-text', placeholder: '多远都要在一起 邓紫棋' });
+      keywordInput.value = state.music.text || '';
+      keywordInput.addEventListener('input', () => {
+        state.music.text = keywordInput.value;
+        refreshPreview();
+      });
+      keywordWrap.appendChild(keywordInput);
+      grid.appendChild(keywordWrap);
+
+      // 搜索模式
+      const searchWrap = el('div', { class: 'col-span-full' });
+      searchWrap.appendChild(el('label', { class:'text-xs font-semibold text-neutral-700 dark:text-neutral-200 mb-1 block', text: '搜索音乐 (搜索推送模式)' }));
+
+      const searchContainer = el('div', { class: 'music-search-container' });
+      
+      const sourceSelect = el('select', { class: 'field music-source-select' });
+      ['netease', 'kuwo', 'joox'].forEach(src => {
+        sourceSelect.appendChild(el('option', { value: src, text: src.charAt(0).toUpperCase() + src.slice(1) }));
+      });
+      sourceSelect.value = state.music.source || 'netease';
+      sourceSelect.addEventListener('change', () => {
+        state.music.source = sourceSelect.value;
+      });
+
+      const searchInput = el('input', { 
+        class: 'field music-search-input', 
+        type: 'text', 
+        placeholder: '搜索歌曲、歌手或专辑' 
+      });
+      searchInput.value = state.music.searchKeyword || '';
+
+      const searchBtn = el('button', { 
+        class: 'btn btn-primary', 
+        text: '搜索',
+        onclick: async () => {
+          const keyword = searchInput.value.trim();
+          if (!keyword) return;
+          
+          state.music.searchKeyword = keyword;
+          const source = sourceSelect.value;
+          
+          setStatus('搜索中...', 'info');
+          const resultsContainer = document.getElementById('musicResults');
+          resultsContainer.innerHTML = '';
+          
+          try {
+            const searchUrl = `https://music-api.gdstudio.xyz/api.php?types=search&source=${source}&name=${encodeURIComponent(keyword)}&count=20&pages=1`;
+            const resp = await fetch(searchUrl);
+            const data = await resp.json();
+            
+            if (Array.isArray(data)) {
+              data.forEach(track => {
+                const artist = Array.isArray(track.artist) ? track.artist.join(', ') : track.artist || '未知';
+                const card = el('div', { class: 'music-result-card' });
+                
+                card.appendChild(el('div', { class: 'music-info', text: `${track.name} - ${artist} (${track.album || '未知专辑'})` }));
+                
+                const actions = el('div', { class: 'music-actions' });
+                
+                const playBtn = el('button', { 
+                  class: 'btn btn-secondary play-btn', 
+                  text: '试听',
+                  onclick: async () => {
+                    if (currentAudio && !currentAudio.paused && currentAudio.dataset.trackId === track.id) {
+                      currentAudio.pause();
+                      playBtn.textContent = '试听';
+                      return;
+                    }
+                    
+                    if (currentAudio) {
+                      currentAudio.pause();
+                      const prevBtn = document.querySelector(`button[data-track-id="${currentAudio.dataset.trackId}"]`);
+                      if (prevBtn) prevBtn.textContent = '试听';
+                    }
+                    
+                    setStatus('获取音频链接...', 'info');
+                    const urlUrl = `https://music-api.gdstudio.xyz/api.php?types=url&source=${source}&id=${track.id}&br=320`;
+                    const urlResp = await fetch(urlUrl);
+                    const urlData = await urlResp.json();
+                    
+                    if (urlData.url) {
+                      currentAudio = new Audio(urlData.url);
+                      currentAudio.dataset.trackId = track.id;
+                      currentAudio.play();
+                      playBtn.textContent = '暂停';
+                      setStatus('正在试听', 'success');
+                      
+                      currentAudio.onended = () => {
+                        playBtn.textContent = '试听';
+                      };
+                    } else {
+                      setStatus('无法获取音频链接', 'error');
+                    }
+                  }
+                });
+                playBtn.dataset.trackId = track.id;
+                actions.appendChild(playBtn);
+                
+                const pushBtn = el('button', { 
+                  class: 'btn btn-primary play-btn', 
+                  text: '推送',
+                  onclick: async () => {
+                    setStatus('获取音频链接...', 'info');
+                    const urlUrl = `https://music-api.gdstudio.xyz/api.php?types=url&source=${source}&id=${track.id}&br=320`;
+                    const urlResp = await fetch(urlUrl);
+                    const urlData = await urlResp.json();
+                    
+                    if (urlData.url) {
+                      const customPayload = {
+                        device_id: currentDeviceIndex >= 0 ? devices[currentDeviceIndex].id : '',
+                        type: 'audio',
+                        url: urlData.url,
+                        text: `${track.name} - ${artist}`
+                      };
+                      await sendPayload(customPayload);
+                    } else {
+                      setStatus('无法获取音频链接', 'error');
+                    }
+                  }
+                });
+                actions.appendChild(pushBtn);
+                
+                card.appendChild(actions);
+                resultsContainer.appendChild(card);
+              });
+              setStatus('搜索完成', 'success');
+            } else {
+              setStatus('无搜索结果', 'warning');
+            }
+          } catch (err) {
+            setStatus('搜索失败: ' + err.message, 'error');
+          }
+        }
+      });
+
+      searchContainer.appendChild(sourceSelect);
+      searchContainer.appendChild(searchInput);
+      searchContainer.appendChild(searchBtn);
+      searchWrap.appendChild(searchContainer);
+
+      const resultsContainer = el('div', { id: 'musicResults', class: 'music-results' });
+      searchWrap.appendChild(resultsContainer);
+
+      formAreaEl.appendChild(searchWrap);
+    }
+
     function refreshPreview(){
       const payload = getPreviewPayload();
       jsonPreview.textContent = pretty(payload);
@@ -1674,18 +1879,10 @@
 
     function setStatus(text, type){
       statusBadge.textContent = text;
-      statusBadge.className = `badge ${type ? (type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : (type === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200')) : 'bg-neutral-100 dark:bg-neutral-700 dark:text-neutral-300'}`;
+      statusBadge.className = `badge ${type ? (type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : (type === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : (type === 'warning' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'))) : 'bg-neutral-100 dark:bg-neutral-700 dark:text-neutral-300'}`;
     }
 
-    async function sendNow(){
-      if (activeKey === 'status') {
-        return sendStatusRequest();
-      } else if (activeKey === 'alarm') {
-        copyJSON();
-        return;
-      }
-      
-      const payload = buildPayload();
+    async function sendPayload(payload) {
       resultBox.textContent = '正在向设备发送数据...';
       setStatus('发送中', 'info');
 
@@ -1723,6 +1920,18 @@
         resultBox.textContent = pretty(out);
         setStatus('网络错误', 'error');
       }
+    }
+
+    async function sendNow(){
+      if (activeKey === 'status') {
+        return sendStatusRequest();
+      } else if (activeKey === 'alarm') {
+        copyJSON();
+        return;
+      }
+      
+      const payload = buildPayload();
+      await sendPayload(payload);
     }
 
     function sendStatusRequest() {
@@ -1806,6 +2015,10 @@ function copyJSON(){
       def.fields.forEach(f => state[activeKey][f.id] = getDefaultValue(f));
       if (activeKey === 'mijia') {
         selectedMijiaIndex = -1;
+      }
+      if (activeKey === 'music') {
+        const resultsContainer = document.getElementById('musicResults');
+        if (resultsContainer) resultsContainer.innerHTML = '';
       }
       renderForm();
       setStatus('已重置', 'info');
