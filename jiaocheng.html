@@ -12,7 +12,8 @@
   <meta name="theme-color" content="#3b82f6">
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="3eb95323-807d-4694-9e56-d56967a5507b"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- 使用Font Awesome 6.4.0完整版本 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     :root {
       --primary: #3b82f6;
@@ -865,6 +866,23 @@
     .dark hr {
       background: #334155;
     }
+    
+    /* 图标修复样式 */
+    .icon-fix {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.25em;
+    }
+    
+    /* 确保所有图标正确对齐 */
+    .fa-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1em;
+      height: 1em;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
@@ -872,12 +890,12 @@
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
       <div class="flex items-center gap-3">
         <button onclick="window.location.href='https://xiaozhi.zhangmonday.top'" class="btn btn-secondary">
-          <i class="fas fa-arrow-left"></i>
+          <i class="fas fa-arrow-left icon-fix"></i>
           返回
         </button>
         <div>
           <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
-            <i class="fas fa-graduation-cap text-blue-500"></i>
+            <i class="fas fa-graduation-cap text-blue-500 icon-fix"></i>
             使用教程
           </h1>
         </div>
@@ -889,7 +907,7 @@
     <section class="card p-4">
       <h2 class="section-title">
         <div class="section-title-icon">
-          <i class="fas fa-id-card"></i>
+          <i class="fas fa-id-card icon-fix"></i>
         </div>
         设备ID获取教程
       </h2>
@@ -912,24 +930,24 @@
     <section class="card p-4">
       <h2 class="section-title">
         <div class="section-title-icon">
-          <i class="fas fa-mobile-alt"></i>
+          <i class="fas fa-mobile-alt icon-fix"></i>
         </div>
         PWA应用安装教程
       </h2>
       
       <h3 class="text-lg font-semibold mb-3 mt-6 flex items-center gap-2 text-neutral-700 dark:text-neutral-200">
-        <i class="fas fa-apple text-gray-500"></i>
+        <i class="fab fa-apple text-gray-500 icon-fix"></i>
         苹果安装PWA应用
       </h3>
       <ol class="tutorial-list space-y-2">
         <li>使用Safari浏览器打开 <a href="https://xiaozhi.zhangmonday.top" class="text-blue-500 hover:underline font-medium" target="_blank">https://xiaozhi.zhangmonday.top</a>（注意一定要用Safari浏览器）</li>
-        <li>点击分享按钮 → 选择“添加到主屏幕”</li>
+        <li>点击分享按钮 → 选择"添加到主屏幕"</li>
         <li>等待图标完全加载后确认添加</li>
-        <li>在主屏幕上点击“小智灵活远控”图标，如果可以直接打开而没有跳转到浏览器，则为安装成功</li>
+        <li>在主屏幕上点击"小智灵活远控"图标，如果可以直接打开而没有跳转到浏览器，则为安装成功</li>
       </ol>
 
       <h3 class="text-lg font-semibold mb-3 mt-6 flex items-center gap-2 text-neutral-700 dark:text-neutral-200">
-        <i class="fas fa-android text-green-500"></i>
+        <i class="fab fa-android text-green-500 icon-fix"></i>
         安卓/电脑端安装PWA应用（推荐，体验更佳）
       </h3>
       <ul class="tutorial-list space-y-2 mb-3">
@@ -938,7 +956,7 @@
       </ul>
       <ol class="tutorial-list space-y-2">
         <li>打开 <a href="https://xiaozhi.zhangmonday.top" class="text-blue-500 hover:underline font-medium" target="_blank">https://xiaozhi.zhangmonday.top</a></li>
-        <li>划到页面最底端，点击“安装PWA应用”即可安装</li>
+        <li>划到页面最底端，点击"安装PWA应用"即可安装</li>
       </ol>
     </section>
 
@@ -947,7 +965,7 @@
     <section class="card p-4">
       <h2 class="section-title">
         <div class="section-title-icon">
-          <i class="fas fa-wifi-slash"></i>
+          <i class="fas fa-wifi-slash icon-fix"></i>
         </div>
         设备离线问题排查
       </h2>
@@ -961,15 +979,32 @@
   </main>
 
   <script>
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.body.classList.add('dark');
-    }
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    darkModeMediaQuery.addEventListener('change', (e) => {
-      if (e.matches) {
+    // 确保图标正确加载
+    document.addEventListener('DOMContentLoaded', function() {
+      // 检测暗色模式
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.body.classList.add('dark');
-      } else {
-        document.body.classList.remove('dark');
+      }
+      const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      darkModeMediaQuery.addEventListener('change', (e) => {
+        if (e.matches) {
+          document.body.classList.add('dark');
+        } else {
+          document.body.classList.remove('dark');
+        }
+      });
+      
+      // 确保Font Awesome图标正确显示
+      if (typeof FontAwesome === 'undefined') {
+        console.warn('Font Awesome not loaded properly, attempting fallback');
+        // 如果Font Awesome未正确加载，可以尝试重新加载
+        const faStylesheet = document.createElement('link');
+        faStylesheet.rel = 'stylesheet';
+        faStylesheet.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        faStylesheet.integrity = 'sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==';
+        faStylesheet.crossOrigin = 'anonymous';
+        faStylesheet.referrerPolicy = 'no-referrer';
+        document.head.appendChild(faStylesheet);
       }
     });
   </script>
