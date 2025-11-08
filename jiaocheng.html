@@ -1,37 +1,977 @@
-<h1>设备ID获取教程</h1>
-<ol>
-<li>登录虾哥小智后台：<a href="https://xiaozhi.me">https://xiaozhi.me</a></li>
-<li>找到你设备的MAC地址，例如：<code>10:b3:4d:e6:c8:a7</code></li>
-<li>设备ID是MAC地址的后三组数字，去掉冒号，并将字母改为大写。
-<ul>
-<li>示例：上述MAC地址的设备ID是 <code>E6C8A7</code></li>
-</ul>
-</li>
-</ol>
-<p><strong>注意</strong>：设备ID尽量不要让别人知道，否则别人可以远程控制你的小智或给你的小智发消息。</p>
-<hr>
-<h1>PWA应用安装教程</h1>
-<h2>苹果安装PWA应用</h2>
-<ol>
-<li>使用Safari浏览器打开 <a href="https://xiaozhi.zhangmonday.top">https://xiaozhi.zhangmonday.top</a>（注意一定要用Safari浏览器）</li>
-<li>点击分享按钮 → 选择“添加到主屏幕”</li>
-<li>等待图标完全加载后确认添加</li>
-<li>在主屏幕上点击“小智灵活远控”图标，如果可以直接打开而没有跳转到浏览器，则为安装成功</li>
-</ol>
-<h2>安卓/电脑端安装PWA应用（推荐，体验更佳）</h2>
-<ul>
-<li><strong>安卓</strong>：可使用Chrome、狐猴浏览器等支持安装PWA应用的浏览器</li>
-<li><strong>电脑</strong>：可使用Edge、Chrome等主流浏览器</li>
-</ul>
-<ol>
-<li>打开 <a href="https://xiaozhi.zhangmonday.top">https://xiaozhi.zhangmonday.top</a></li>
-<li>划到页面最底端，点击“安装PWA应用”即可安装</li>
-</ol>
-<hr>
-<h1>设备离线问题排查</h1>
-<p>如果设备开机但推送结果显示设备已离线，可能原因：</p>
-<ol>
-<li>使用的不是灵活固件</li>
-<li>灵活固件版本不是1.6.3.28以上</li>
-<li>设备ID填写不正确。一般设备ID是大写字母和数字的组合</li>
-</ol>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>使用教程</title>
+  <link rel="icon" href="/logo/logo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="logo.png">
+  <meta name="theme-color" content="#3b82f6">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="3eb95323-807d-4694-9e56-d56967a5507b"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark: #1e293b;
+      --light: #f8fafc;
+    }
+    
+    .grid-auto {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+    
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .dark .card {
+      background: #1e293b;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .dark .card:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .field {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+    }
+    
+    .dark .field {
+      background: #334155;
+      border-color: #475569;
+      color: white;
+    }
+    
+    .field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .dark .field:focus {
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+    }
+    
+    .tab {
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem 0.5rem 0 0;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      font-size: 0.85rem;
+    }
+    
+    .tab-active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 -3px 0 var(--primary) inset;
+    }
+    
+    .dark .tab-active {
+      background: #334155;
+      color: #60a5fa;
+    }
+    
+    .tab-idle {
+      background: transparent;
+      color: #64748b;
+    }
+    
+    .tab-idle:hover {
+      background: #f1f5f9;
+      color: #475569;
+    }
+    
+    .dark .tab-idle:hover {
+      background: #475569;
+      color: #cbd5e1;
+    }
+    
+    .btn {
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #d1d5db;
+    }
+    
+    .dark .btn-secondary {
+      background: #475569;
+      color: #e5e7eb;
+      border-color: #64748b;
+    }
+    
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+    
+    .dark .btn-secondary:hover {
+      background: #64748b;
+    }
+    
+    .btn-success {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    }
+    
+    .btn-success:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
+    }
+    
+    .badge {
+      padding: 0.3rem 0.7rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    .badge-pulse {
+      position: relative;
+    }
+    
+    .badge-pulse::before {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.8;
+      top: 50%;
+      left: 0.5rem;
+      transform: translateY(-50%);
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 0.3; }
+      100% { opacity: 0.8; }
+    }
+    
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(to bottom, rgba(248, 250, 252, 0.95) 0%, rgba(248, 250, 252, 0.95) 90%, transparent 100%);
+      z-index: 10;
+      padding: 0.8rem 0;
+      backdrop-filter: blur(5px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .dark .sticky-header {
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.95) 90%, transparent 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    @media (max-width: 640px) {
+      body {
+        font-size: 13px;
+      }
+      
+      h1 {
+        font-size: 1.3rem !important;
+      }
+      
+      .btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.75rem;
+      }
+      
+      .field {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.8rem;
+      }
+      
+      .tab {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+      
+      .section-title {
+        font-size: 1rem !important;
+        margin-bottom: 1rem !important;
+      }
+      
+      .section-title-icon {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.9rem !important;
+      }
+      
+      .json-preview, .result-box {
+        font-size: 0.75rem !important;
+        padding: 0.7rem !important;
+        min-height: 120px !important;
+        max-height: 250px !important;
+      }
+      
+      .modal-content {
+        width: 95% !important;
+        padding: 12px !important;
+        margin: 5% auto !important;
+      }
+      
+      .grid-auto {
+        gap: 0.8rem !important;
+      }
+      
+      .card {
+        padding: 0.8rem !important;
+      }
+      
+      .action-buttons {
+        gap: 0.8rem !important;
+        margin-top: 1rem !important;
+        padding-top: 1rem !important;
+      }
+    }
+    
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    
+    .slider {
+      flex: 1;
+      height: 5px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #d1d5db;
+      border-radius: 5px;
+      outline: none;
+    }
+    
+    .dark .slider {
+      background: #475569;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: 2px solid white;
+    }
+    
+    .slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: 2px solid white;
+    }
+    
+    .slider-value {
+      width: 70px;
+      min-width: 70px;
+      text-align: center;
+      font-weight: 600;
+      padding: 0.4rem;
+      background: #f1f5f9;
+      border-radius: 0.375rem;
+    }
+    
+    .dark .slider-value {
+      background: #475569;
+      color: white;
+    }
+    
+    .slider-input {
+      width: 70px;
+      text-align: center;
+      padding: 0.4rem;
+    }
+    
+    .upload-btn {
+      margin-top: 0.6rem;
+      padding: 0.4rem 0.8rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 0.5rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-block;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+    
+    .upload-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+    }
+    
+    .password-container {
+      position: relative;
+    }
+    
+    .toggle-password {
+      position: absolute;
+      right: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #64748b;
+    }
+    
+    .toggle-password:hover {
+      color: var(--primary);
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+      backdrop-filter: blur(3px);
+      animation: fadeIn 0.2s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 15px;
+      border: none;
+      width: 95%;
+      max-width: 500px;
+      border-radius: 0.75rem;
+      box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.1), 0 8px 8px -5px rgba(0, 0, 0, 0.04);
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateY(-15px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .dark .modal-content {
+      background-color: #334155;
+      color: white;
+    }
+    
+    .close {
+      color: #94a3b8;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 1;
+      transition: all 0.2s ease;
+    }
+    
+    .close:hover,
+    .close:focus {
+      color: #64748b;
+      cursor: pointer;
+    }
+    
+    .dark .close {
+      color: #94a3b8;
+    }
+    
+    .dark .close:hover,
+    .dark .close:focus {
+      color: #cbd5e1;
+    }
+    
+    .json-preview {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+    }
+    
+    .dark .json-preview {
+      background: #111827;
+      border-color: #374151;
+      color: #e5e7eb;
+    }
+    
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #1e293b;
+    }
+    
+    .dark .section-title {
+      color: #f1f5f9;
+    }
+    
+    .section-title-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+    
+    .dark .section-title-icon {
+      background: rgba(96, 165, 250, 0.1);
+    }
+    
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .dark .action-buttons {
+      border-top: 1px solid #334155;
+    }
+    
+    .footer-card {
+      text-align: center;
+      padding: 1.5rem;
+    }
+    
+    .footer-card p {
+      margin-bottom: 1.2rem;
+      line-height: 1.6;
+    }
+    
+    .device-select-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    
+    .device-select-label {
+      font-weight: 600;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+    }
+    
+    .dark .device-select-label {
+      color: #e2e8f0;
+    }
+    
+    .device-select-wrapper {
+      display: flex;
+      gap: 0.6rem;
+    }
+    
+    .device-select-wrapper select {
+      flex: 1;
+    }
+    
+    .result-box {
+      min-height: 120px;
+      max-height: 250px;
+      overflow-y: auto;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .dark .result-box {
+      background: #0f172a;
+      border-color: #334155;
+    }
+    
+    .form-description {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 0.8rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      margin-bottom: 1.2rem;
+      font-size: 0.85rem;
+    }
+    
+    .dark .form-description {
+      background: #1e3a8a;
+      border-left-color: #60a5fa;
+    }
+    
+    .form-field-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+    }
+    
+    .form-field-label.required::after {
+      content: "*";
+      color: var(--danger);
+      margin-left: 0.2rem;
+    }
+    
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 0.4rem;
+    }
+    
+    .checkbox-input {
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 0.25rem;
+      border: 2px solid #cbd5e1;
+      accent-color: var(--primary);
+    }
+    
+    .dark .checkbox-input {
+      border-color: #64748b;
+    }
+    
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+    }
+    
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 180px;
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      border-radius: 0.5rem;
+      padding: 0.6rem;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+    
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .tooltip .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--dark) transparent transparent transparent;
+    }
+
+    .alarm-type-selector {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .alarm-type-btn {
+      flex: 1;
+      padding: 0.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    
+    .dark .alarm-type-btn {
+      background: #334155;
+      border-color: #475569;
+      color: white;
+    }
+    
+    .alarm-type-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    
+    .weekday-selector {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .weekday-btn {
+      padding: 0.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    
+    .dark .weekday-btn {
+      background: #334155;
+      border-color: #475569;
+      color: white;
+    }
+    
+    .weekday-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    
+    .date-input-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    
+    .date-input {
+      flex: 1;
+    }
+    
+    .time-input-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    
+    .time-input {
+      flex: 1;
+    }
+    
+    .alarm-tutorial-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #f1f5f9;
+      color: #334155;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      transition: all 0.2s;
+    }
+    
+    .dark .alarm-tutorial-btn {
+      background: #475569;
+      color: #e5e7eb;
+    }
+    
+    .alarm-tutorial-btn:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+    
+    .dark .alarm-tutorial-btn:hover {
+      background: #64748b;
+    }
+    
+    .image-tools-container {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+
+    .music-search-container {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-end;
+    }
+    
+    .music-source-select {
+      width: 120px;
+    }
+    
+    .music-search-input {
+      flex: 1;
+    }
+    
+    .music-results {
+      margin-top: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+      space-y: 1rem;
+    }
+    
+    .music-result-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .dark .music-result-card {
+      background: #1f2937;
+      border-color: #374151;
+    }
+    
+    .music-info {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .music-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .play-btn {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.75rem;
+    }
+
+    .tutorial-list {
+      list-style-position: inside;
+      padding-left: 1.25rem;
+      line-height: 1.6;
+    }
+
+    .dark .tutorial-list {
+      color: #e5e7eb;
+    }
+
+    .tutorial-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    .tutorial-code {
+      background: #f1f5f9;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+      font-size: 0.875rem;
+      color: #374151;
+    }
+
+    .dark .tutorial-code {
+      background: #334155;
+      color: #e5e7eb;
+    }
+
+    .tutorial-strong {
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    .dark .tutorial-strong {
+      color: #f87171;
+    }
+
+    hr {
+      border: none;
+      height: 1px;
+      background: #e5e7eb;
+      margin: 2rem 0;
+    }
+
+    .dark hr {
+      background: #334155;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-[#0f172a] dark:to-[#1e293b] text-neutral-800 dark:text-neutral-100">
+  <header class="max-w-6xl mx-auto px-4 pt-6 pb-4">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <button onclick="window.location.href='https://xiaozhi.zhangmonday.top'" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i>
+          返回
+        </button>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
+            <i class="fas fa-graduation-cap text-blue-500"></i>
+            使用教程
+          </h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pb-12 space-y-6">
+    <section class="card p-4">
+      <h2 class="section-title">
+        <div class="section-title-icon">
+          <i class="fas fa-id-card"></i>
+        </div>
+        设备ID获取教程
+      </h2>
+      <ol class="tutorial-list space-y-2">
+        <li>登录虾哥小智后台：<a href="https://xiaozhi.me" class="text-blue-500 hover:underline font-medium" target="_blank">https://xiaozhi.me</a></li>
+        <li>找到你设备的MAC地址，例如：<code class="tutorial-code">10:b3:4d:e6:c8:a7</code></li>
+        <li>设备ID是MAC地址的后三组数字，去掉冒号，并将字母改为大写。
+          <ul class="tutorial-list mt-2 pl-4 list-disc">
+            <li class="mt-1">示例：上述MAC地址的设备ID是 <code class="tutorial-code">E6C8A7</code></li>
+          </ul>
+        </li>
+      </ol>
+      <p class="mt-4">
+        <strong class="tutorial-strong">注意</strong>：设备ID尽量不要让别人知道，否则别人可以远程控制你的小智或给你的小智发消息。
+      </p>
+    </section>
+
+    <hr>
+
+    <section class="card p-4">
+      <h2 class="section-title">
+        <div class="section-title-icon">
+          <i class="fas fa-mobile-alt"></i>
+        </div>
+        PWA应用安装教程
+      </h2>
+      
+      <h3 class="text-lg font-semibold mb-3 mt-6 flex items-center gap-2 text-neutral-700 dark:text-neutral-200">
+        <i class="fas fa-apple text-gray-500"></i>
+        苹果安装PWA应用
+      </h3>
+      <ol class="tutorial-list space-y-2">
+        <li>使用Safari浏览器打开 <a href="https://xiaozhi.zhangmonday.top" class="text-blue-500 hover:underline font-medium" target="_blank">https://xiaozhi.zhangmonday.top</a>（注意一定要用Safari浏览器）</li>
+        <li>点击分享按钮 → 选择“添加到主屏幕”</li>
+        <li>等待图标完全加载后确认添加</li>
+        <li>在主屏幕上点击“小智灵活远控”图标，如果可以直接打开而没有跳转到浏览器，则为安装成功</li>
+      </ol>
+
+      <h3 class="text-lg font-semibold mb-3 mt-6 flex items-center gap-2 text-neutral-700 dark:text-neutral-200">
+        <i class="fas fa-android text-green-500"></i>
+        安卓/电脑端安装PWA应用（推荐，体验更佳）
+      </h3>
+      <ul class="tutorial-list space-y-2 mb-3">
+        <li><strong>安卓</strong>：可使用Chrome、狐猴浏览器等支持安装PWA应用的浏览器</li>
+        <li><strong>电脑</strong>：可使用Edge、Chrome等主流浏览器</li>
+      </ul>
+      <ol class="tutorial-list space-y-2">
+        <li>打开 <a href="https://xiaozhi.zhangmonday.top" class="text-blue-500 hover:underline font-medium" target="_blank">https://xiaozhi.zhangmonday.top</a></li>
+        <li>划到页面最底端，点击“安装PWA应用”即可安装</li>
+      </ol>
+    </section>
+
+    <hr>
+
+    <section class="card p-4">
+      <h2 class="section-title">
+        <div class="section-title-icon">
+          <i class="fas fa-wifi-slash"></i>
+        </div>
+        设备离线问题排查
+      </h2>
+      <p class="mb-3">如果设备开机但推送结果显示设备已离线，可能原因：</p>
+      <ol class="tutorial-list space-y-2">
+        <li>使用的不是灵活固件</li>
+        <li>灵活固件版本不是1.6.3.28以上</li>
+        <li>设备ID填写不正确。一般设备ID是大写字母和数字的组合</li>
+      </ol>
+    </section>
+  </main>
+
+  <script>
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.body.classList.add('dark');
+    }
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    darkModeMediaQuery.addEventListener('change', (e) => {
+      if (e.matches) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+    });
+  </script>
+</body>
+</html>
