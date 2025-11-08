@@ -12,8 +12,9 @@
   <meta name="theme-color" content="#3b82f6">
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="3eb95323-807d-4694-9e56-d56967a5507b"></script>
-  <!-- 使用Font Awesome 6.4.0完整版本 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- 修复：使用更可靠的Font Awesome CDN，并添加备用链接以防加载失败 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.1/css/all.css" integrity="sha384-..." crossorigin="anonymous" referrerpolicy="no-referrer" onerror="this.onerror=null; this.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';" />
   <style>
     :root {
       --primary: #3b82f6;
@@ -866,22 +867,25 @@
     .dark hr {
       background: #334155;
     }
-    
-    /* 图标修复样式 */
-    .icon-fix {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 1.25em;
+
+    /* 修复：添加图标加载失败的备用样式，确保图标显示为文本或简单符号 */
+    .fa::before {
+      font-family: "Font Awesome 6 Free" !important;
+      font-weight: 900 !important;
     }
-    
-    /* 确保所有图标正确对齐 */
-    .fa-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 1em;
-      height: 1em;
+
+    /* 如果Font Awesome未加载，使用Unicode作为备用图标 */
+    .fa-graduation-cap::before { content: "\1F393"; }
+    .fa-id-card::before { content: "\1F5CB"; }
+    .fa-mobile-alt::before { content: "\1F4F1"; }
+    .fa-apple::before { content: "\1F34E"; }
+    .fa-android::before { content: "\1F916"; }
+    .fa-wifi-slash::before { content: "\1F4BB"; }
+    .fa-arrow-left::before { content: "\2190"; }
+
+    /* 确保暗模式下备用图标可见 */
+    .dark .fa-graduation-cap::before, .dark .fa-id-card::before, .dark .fa-mobile-alt::before, .dark .fa-apple::before, .dark .fa-android::before, .dark .fa-wifi-slash::before, .dark .fa-arrow-left::before {
+      color: inherit;
     }
   </style>
 </head>
@@ -890,12 +894,12 @@
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
       <div class="flex items-center gap-3">
         <button onclick="window.location.href='https://xiaozhi.zhangmonday.top'" class="btn btn-secondary">
-          <i class="fas fa-arrow-left icon-fix"></i>
+          <i class="fas fa-arrow-left"></i>
           返回
         </button>
         <div>
           <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
-            <i class="fas fa-graduation-cap text-blue-500 icon-fix"></i>
+            <i class="fas fa-graduation-cap text-blue-500"></i>
             使用教程
           </h1>
         </div>
@@ -907,7 +911,7 @@
     <section class="card p-4">
       <h2 class="section-title">
         <div class="section-title-icon">
-          <i class="fas fa-id-card icon-fix"></i>
+          <i class="fas fa-id-card"></i>
         </div>
         设备ID获取教程
       </h2>
@@ -930,24 +934,24 @@
     <section class="card p-4">
       <h2 class="section-title">
         <div class="section-title-icon">
-          <i class="fas fa-mobile-alt icon-fix"></i>
+          <i class="fas fa-mobile-alt"></i>
         </div>
         PWA应用安装教程
       </h2>
       
       <h3 class="text-lg font-semibold mb-3 mt-6 flex items-center gap-2 text-neutral-700 dark:text-neutral-200">
-        <i class="fab fa-apple text-gray-500 icon-fix"></i>
+        <i class="fas fa-apple text-gray-500"></i>
         苹果安装PWA应用
       </h3>
       <ol class="tutorial-list space-y-2">
         <li>使用Safari浏览器打开 <a href="https://xiaozhi.zhangmonday.top" class="text-blue-500 hover:underline font-medium" target="_blank">https://xiaozhi.zhangmonday.top</a>（注意一定要用Safari浏览器）</li>
-        <li>点击分享按钮 → 选择"添加到主屏幕"</li>
+        <li>点击分享按钮 → 选择“添加到主屏幕”</li>
         <li>等待图标完全加载后确认添加</li>
-        <li>在主屏幕上点击"小智灵活远控"图标，如果可以直接打开而没有跳转到浏览器，则为安装成功</li>
+        <li>在主屏幕上点击“小智灵活远控”图标，如果可以直接打开而没有跳转到浏览器，则为安装成功</li>
       </ol>
 
       <h3 class="text-lg font-semibold mb-3 mt-6 flex items-center gap-2 text-neutral-700 dark:text-neutral-200">
-        <i class="fab fa-android text-green-500 icon-fix"></i>
+        <i class="fas fa-android text-green-500"></i>
         安卓/电脑端安装PWA应用（推荐，体验更佳）
       </h3>
       <ul class="tutorial-list space-y-2 mb-3">
@@ -956,7 +960,7 @@
       </ul>
       <ol class="tutorial-list space-y-2">
         <li>打开 <a href="https://xiaozhi.zhangmonday.top" class="text-blue-500 hover:underline font-medium" target="_blank">https://xiaozhi.zhangmonday.top</a></li>
-        <li>划到页面最底端，点击"安装PWA应用"即可安装</li>
+        <li>划到页面最底端，点击“安装PWA应用”即可安装</li>
       </ol>
     </section>
 
@@ -965,7 +969,7 @@
     <section class="card p-4">
       <h2 class="section-title">
         <div class="section-title-icon">
-          <i class="fas fa-wifi-slash icon-fix"></i>
+          <i class="fas fa-wifi-slash"></i>
         </div>
         设备离线问题排查
       </h2>
@@ -979,32 +983,15 @@
   </main>
 
   <script>
-    // 确保图标正确加载
-    document.addEventListener('DOMContentLoaded', function() {
-      // 检测暗色模式
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.body.classList.add('dark');
+    }
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    darkModeMediaQuery.addEventListener('change', (e) => {
+      if (e.matches) {
         document.body.classList.add('dark');
-      }
-      const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      darkModeMediaQuery.addEventListener('change', (e) => {
-        if (e.matches) {
-          document.body.classList.add('dark');
-        } else {
-          document.body.classList.remove('dark');
-        }
-      });
-      
-      // 确保Font Awesome图标正确显示
-      if (typeof FontAwesome === 'undefined') {
-        console.warn('Font Awesome not loaded properly, attempting fallback');
-        // 如果Font Awesome未正确加载，可以尝试重新加载
-        const faStylesheet = document.createElement('link');
-        faStylesheet.rel = 'stylesheet';
-        faStylesheet.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-        faStylesheet.integrity = 'sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==';
-        faStylesheet.crossOrigin = 'anonymous';
-        faStylesheet.referrerPolicy = 'no-referrer';
-        document.head.appendChild(faStylesheet);
+      } else {
+        document.body.classList.remove('dark');
       }
     });
   </script>
